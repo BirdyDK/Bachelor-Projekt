@@ -1,0 +1,48 @@
+How:
+- Model training
+- Data
+ - States
+ - Quests
+  - Fetch, main, faction, story
+ - Preexisting quests
+- Getting into game (concept)
+ - Size
+ - output structure
+- output
+- "RAG"
+ - Document retrieval
+
+What: 
+- Flavoring
+- Previous actions
+- Add context to generic "things"
+
+Why:
+- Playthroughs Unique
+
+Evaluation:
+- Does RAG work?
+
+"State":
+- Existing quest system (can add)
+- Existing entities (named or otherwise)
+- New characters
+- Stats
+- Faction Alligance
+
+TODO: **DO before monday**
+- Update hypothesis, be specific and update with what you want to achieve
+- Shorten description
+
+Datasets:
+- kaggle
+- csv on Teams chanel
+
+First step:
+- **Train a model**
+- View how others have done it
+
+Project:
+- Zotero (literature management)
+- Note sharing (Github)
+- Note taking
