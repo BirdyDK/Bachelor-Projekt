@@ -1,0 +1,31 @@
+Data generation:
+- How do you create quest
+- How does i.e. Skyrim do it
+ - In this case scrape the game
+- Read on how to use LLM to generate good data
+ - What LLM should be used/Which LLM is best for the task
+
+Data:
+- Preexisting
+ - Side quest
+- Format
+
+Model:
+- This can be the first section in the thesis [Research]
+ - We look at a few models and say which we chose
+
+Project:
+- Start by reading articles, research papers
+- Write notes on what you have read and can it be used for the report
+- Template for thesis: https://www.overleaf.com/read/sxxqcmvsjmfb
+- Map out the project, what do you want to do/achieve, who focusses on what
+- Document all of the work during the process and the report will be easier
+
+RAG:
+- How would you do it, how is the data stored
+- Begin soon but good idea to have made something to use it on
+- We can use Langchain
+
+Currently:
+- Looking at training data
+- How do you train a SLM
