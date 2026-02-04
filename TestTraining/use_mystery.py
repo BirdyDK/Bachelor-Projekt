@@ -2,8 +2,8 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from peft import PeftModel
 
-BASE_MODEL = "microsoft/Phi-3-mini-4k-instruct"
-ADAPTER_PATH = "./final_mystery_adapter"
+BASE_MODEL = "meta-llama/Llama-3.2-1B-Instruct"
+ADAPTER_PATH = "./TestTraining"
 
 # 1. Load Base Model
 model = AutoModelForCausalLM.from_pretrained(
