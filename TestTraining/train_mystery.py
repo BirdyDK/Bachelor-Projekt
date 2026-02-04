@@ -13,7 +13,7 @@ from trl import SFTTrainer
 MODEL_ID = "meta-llama/Llama-3.2-1B-Instruct" # You can change to Gemma-2b or others
 CSV_FILE = "tranquilville_mysteries.csv"
 
-dataset = load_dataset('csv', data_files=CSV_FILE, split='train')
+dataset = load_dataset('csv', data_files=CSV_FILE, sep=';', quotechar='"', split='train')
 
 def format_mystery(example):
     # We use the 'input_names_only' as the prompt and 'output' as the target
