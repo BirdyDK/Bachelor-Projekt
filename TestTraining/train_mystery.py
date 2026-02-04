@@ -10,8 +10,8 @@ from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 from trl import SFTTrainer
 
 # 1. SETUP & DATA
-MODEL_ID = "microsoft/Phi-3-mini-4k-instruct" # You can change to Gemma-2b or others
-CSV_FILE = "your_data.csv"
+MODEL_ID = "meta-llama/Llama-3.2-1B-Instruct" # You can change to Gemma-2b or others
+CSV_FILE = "tranquilville_mysteries.csv"
 
 dataset = load_dataset('csv', data_files=CSV_FILE, split='train')
 
