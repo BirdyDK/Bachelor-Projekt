@@ -68,5 +68,5 @@ trainer = SFTTrainer(
 )
 
 trainer.train()
-model.save_pretrained("./final_mystery_adapter")
-print("Training Complete! Adapter saved to ./final_mystery_adapter")
+model.save_pretrained("./TestTraining")
+print("Training Complete! Adapter saved to ./TestTraining")
