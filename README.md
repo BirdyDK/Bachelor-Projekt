@@ -6,3 +6,7 @@ Procedurally generating quests in an open-world RPG video game setting, like Sky
 
 ### Project Hypothesis: 
 We believe that by leveraging a RAG-enhanced SLM we can generate quests that are completable by the player, while increasing narrative and gameplay variety compared to regular template-based systems. The model will be trained on artificially created game-state data, fabricated quests, and output criteria. While we don’t intend to implement it in a game in this project, we will put some thought into how the output could be formatted to interface with a game.
+
+## Paper
+The paper is written in LaTeX in the Overleaf program and be found here: https://www.overleaf.com/project/6985d47bee63fb2990113ad1.
+This is also where we will be keeping our bibliography.
