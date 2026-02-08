@@ -11,7 +11,7 @@ from trl import SFTTrainer
 
 # 1. SETUP & DATA
 MODEL_ID = "meta-llama/Llama-3.2-1B-Instruct" # You can change to Gemma-2b or others
-CSV_FILE = "tranquilville_mysteries.csv"
+CSV_FILE = ".\\tranquilville_mysteries.csv"
 
 dataset = load_dataset('csv', data_files=CSV_FILE, sep=';', quotechar='"', split='train')
 

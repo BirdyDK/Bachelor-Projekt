@@ -10,3 +10,45 @@ We believe that by leveraging a RAG-enhanced SLM we can generate quests that are
 ## Paper
 The paper is written in LaTeX in the Overleaf program and be found here: https://www.overleaf.com/project/6985d47bee63fb2990113ad1.
 This is also where we will be keeping our bibliography.
+
+
+## Setting up the program
+### Virtual Environment
+#### Set Up
+This should only be done one per project.\
+Make sure you're cd'ed into the project folder.\
+Give the command:
+
+```sh
+python -m venv .venv
+```
+
+The venv can from then on be activated with:
+
+```sh
+./.venv/Scrits/Activate.ps1
+```
+
+Once your venv is running (indicated by green bit before the powershell path) run:
+
+```sh
+python -m pip install --upgrade pip
+```
+
+If you get `No module named pip` then try this:
+```sh
+python -m ensurepip --upgrade
+```
+
+Lastly you have to install all of the required packages with:
+
+```sh
+pip install -r requirements.txt
+```
+
+#### Regular Use
+The vscode extension [Python Environments](https://marketplace.visualstudio.com/items?itemName=ms-python.vscode-python-envs) makes it easy to activate the environment. Just close your terminal and open it again (the latter can be done with `ctrl + æ`).
+
+If that doesn't work, then the activation command can be used to activate it as well.
+
+If you need to deactivate it, you can just run the command `deactivate`.
