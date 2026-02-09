@@ -36,15 +36,29 @@ python -m pip install --upgrade pip
 ```
 
 If you get `No module named pip` then try this:
+
 ```sh
 python -m ensurepip --upgrade
 ```
 
+Then you need to check what CUDA version your GPU, if you have one, is. This determines what torch package you need.\
+Run the following command and scroll up to the top to see it.
+
+```sh
+nvidia-smi
+```
+
+If your version already has a `req-cudaXXX.txt`, then skip to next step.\
+If not, make a new `req-cudaXXX.txt` where you replace `XXX` with your version without a period (12.6 -> 126).\
+Then copy over one of the other reqs and edit the `cuXXX` in the first two lines to match your version.
+
 Lastly you have to install all of the required packages with:
 
 ```sh
-pip install -r requirements.txt
+pip install -r requirements/req-cudaXXX.txt
 ```
+
+Replace `XXX` with your CUDA version or if you don't have a CUDA, then replace `cudaXXX` with `cpu`.
 
 #### Regular Use
 The vscode extension [Python Environments](https://marketplace.visualstudio.com/items?itemName=ms-python.vscode-python-envs) makes it easy to activate the environment. Just close your terminal and open it again (the latter can be done with `ctrl + æ`).
@@ -52,3 +66,7 @@ The vscode extension [Python Environments](https://marketplace.visualstudio.com/
 If that doesn't work, then the activation command can be used to activate it as well.
 
 If you need to deactivate it, you can just run the command `deactivate`.
+
+### Setting up the Model
+To set up the model you need a `.env` file in root.
+In it, make sure to define the following env_var: `HF_TOKEN = "YOUR_HUGGING_FACE_LLAMA_TOKEN_HERE"
