@@ -23,11 +23,23 @@ Give the command:
 python -m venv .venv
 ```
 
-The venv can from then on be activated with:
+The venv can from then on be activated the first command for powershell or the second for wsl:
 
 ```sh
-./.venv/Scrits/Activate.ps1
+./.venv/Scripts/Activate.ps1
+
+source .venv/bin/activate
 ```
+
+If you get permission issues, check your permissions in an admin powershell. You can then set it with the second command. It needs to be `RemoteSigned`, but you can probably fiddle with the scope as shown [here](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.security/set-executionpolicy?view=powershell-7.5).
+
+```sh
+Get-ExecutionPolicy -List
+
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+
 
 Once your venv is running (indicated by green bit before the powershell path) run:
 
@@ -36,11 +48,28 @@ python -m pip install --upgrade pip
 ```
 
 If you get `No module named pip` then try this:
+
 ```sh
 python -m ensurepip --upgrade
 ```
 
-Lastly you have to install all of the required packages with:
+Then you need to check what CUDA version your GPU, if you have one, is. This determines what torch package you need.\
+Run the following command and scroll up to the top to see it.
+
+```sh
+nvidia-smi
+```
+
+If you have a CUDA, then run first of the following commands where you replace `XXX` with your version number (12.6 -> 126).\
+If you don't have CUDA, then run the second command.
+
+```sh
+pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cuXXX
+
+pip3 install torch torchvision
+```
+
+Finally, run this command to install any remaining packages.
 
 ```sh
 pip install -r requirements.txt
@@ -52,3 +81,7 @@ The vscode extension [Python Environments](https://marketplace.visualstudio.com/
 If that doesn't work, then the activation command can be used to activate it as well.
 
 If you need to deactivate it, you can just run the command `deactivate`.
+
+### Setting up the Model
+To set up the model you need a `.env` file in root.
+In it, make sure to define the following env_var: `HF_TOKEN = "YOUR_HUGGING_FACE_LLAMA_TOKEN_HERE"

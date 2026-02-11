@@ -1,4 +1,5 @@
 import torch
+import os
 from datasets import load_dataset
 from transformers import (
     AutoModelForCausalLM, 
@@ -8,11 +9,31 @@ from transformers import (
 )
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 from trl import SFTTrainer
+from huggingface_hub import login
+from dotenv import load_dotenv
+
+print(f"CUDA available: {torch.cuda.is_available()}")
+print(f"Device count: {torch.cuda.device_count()}")
+if torch.cuda.is_available():
+    print(f"Current device: {torch.cuda.current_device()}")
+    print(f"Device name: {torch.cuda.get_device_name(0)}")
+else:
+    print("No CUDA, this will take very long")
+
+load_dotenv()
 
 # 1. SETUP & DATA
 MODEL_ID = "meta-llama/Llama-3.2-1B-Instruct" # You can change to Gemma-2b or others
-CSV_FILE = ".\\tranquilville_mysteries.csv"
+ACCESS_TOKEN = os.getenv("HF_TOKEN")
+CSV_FILE = "TestTraining\\tranquilville_mysteries.csv"
 
+# Login to HuggingFace with the token from .env
+if ACCESS_TOKEN:
+    login(token=ACCESS_TOKEN)
+else:
+    raise ValueError("HF_TOKEN not found in .env file. Please add your Hugging Face token.")
+
+# Load dataset
 dataset = load_dataset('csv', data_files=CSV_FILE, sep=';', quotechar='"', split='train')
 
 def format_mystery(example):
@@ -53,8 +74,6 @@ model = get_peft_model(model, peft_config)
 trainer = SFTTrainer(
     model=model,
     train_dataset=dataset,
-    dataset_text_field="text",
-    max_seq_length=2048,
     args=TrainingArguments(
         output_dir="./mystery_adapter",
         per_device_train_batch_size=2,
@@ -62,7 +81,7 @@ trainer = SFTTrainer(
         learning_rate=2e-4,
         num_train_epochs=3,
         logging_steps=10,
-        fp16=True, # Set to False if using CPU/older GPU
+        bf16=True, # Set to False if using CPU/older GPU
         save_strategy="epoch"
     ),
 )
