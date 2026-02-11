@@ -23,10 +23,12 @@ Give the command:
 python -m venv .venv
 ```
 
-The venv can from then on be activated with:
+The venv can from then on be activated the first command for powershell or the second for wsl:
 
 ```sh
 ./.venv/Scripts/Activate.ps1
+
+source .venv/bin/activate
 ```
 
 If you get permission issues, check your permissions in an admin powershell. You can then set it with the second command. It needs to be `RemoteSigned`, but you can probably fiddle with the scope as shown [here](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.security/set-executionpolicy?view=powershell-7.5).
