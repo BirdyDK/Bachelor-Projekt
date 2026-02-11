@@ -1,0 +1,22 @@
+we talk about training times, he usually uses os to read the token in the terminal.
+there is usually in the small language models there is an instruct model and one without, the instruct model has been finetuned more.
+if it is used to seeing a named characters data directly it may faster to train it to understand a new character than if it only understands character motivation from context clues.
+often the more complicated the error it gives, the smaller the problem is, and the easier you can fix it
+he likes using a learning rate of (2-3)e-5 and use 3 epochs
+try num_train_epochs 1
+and max_steps to 5
+make sure you are using the gpu and not the cpu
+pad tokens are there to fill out blank space.
+the eos token are there to terminate the process
+remember to explicitly reorganize the eos and pad tokens. ask chatgpt
+look up how you are formatting for training, and remember this for when you run the model, usually you make your own function for formatting input correctly
+load_datasets uses the huggingfaces training set data type
+we should look up datatypes of storing quest data
+start tinkering with what a quest needs and an early version of what our model needs to train on, and what the game needs
+another important thing is figuring out our format for our training data
+it would be nice to have an idea of what structure a quest has in the training data
+look at questville from different perspectives
+the bert model referred to in the questville paper might not be a causal model
+try and find a smaller model and try to use lora, it might be using all your vram
+have effecient note taking
+it is good practice to write something down to document your process, it makes it easier later.
