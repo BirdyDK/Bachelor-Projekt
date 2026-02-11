@@ -26,8 +26,18 @@ python -m venv .venv
 The venv can from then on be activated with:
 
 ```sh
-./.venv/Scrits/Activate.ps1
+./.venv/Scripts/Activate.ps1
 ```
+
+If you get permission issues, check your permissions in an admin powershell. You can then set it with the second command. It needs to be `RemoteSigned`, but you can probably fiddle with the scope as shown [here](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.security/set-executionpolicy?view=powershell-7.5).
+
+```sh
+Get-ExecutionPolicy -List
+
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+
 
 Once your venv is running (indicated by green bit before the powershell path) run:
 
@@ -48,17 +58,20 @@ Run the following command and scroll up to the top to see it.
 nvidia-smi
 ```
 
-If your version already has a `req-cudaXXX.txt`, then skip to next step.\
-If not, make a new `req-cudaXXX.txt` where you replace `XXX` with your version without a period (12.6 -> 126).\
-Then copy over one of the other reqs and edit the `cuXXX` in the first two lines to match your version.
-
-Lastly you have to install all of the required packages with:
+If you have a CUDA, then run first of the following commands where you replace `XXX` with your version number (12.6 -> 126).\
+If you don't have CUDA, then run the second command.
 
 ```sh
-pip install -r requirements/req-cudaXXX.txt
+pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cuXXX
+
+pip3 install torch torchvision
 ```
 
-Replace `XXX` with your CUDA version or if you don't have a CUDA, then replace `cudaXXX` with `cpu`.
+Finally, run this command to install any remaining packages.
+
+```sh
+pip install -r requirements.txt
+```
 
 #### Regular Use
 The vscode extension [Python Environments](https://marketplace.visualstudio.com/items?itemName=ms-python.vscode-python-envs) makes it easy to activate the environment. Just close your terminal and open it again (the latter can be done with `ctrl + æ`).
