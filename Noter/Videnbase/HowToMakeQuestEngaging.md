@@ -17,5 +17,5 @@ one last note is that tie ins to things done earlier in the game also helps imme
 
 
 # sources
-- https://docseuss.medium.com/how-do-you-make-a-great-video-game-quest-4193b5ecba9d
-- https://www.mellowgolem.com/posts/how-to-make-sidequests-more-interesting
+1.  https://docseuss.medium.com/how-do-you-make-a-great-video-game-quest-4193b5ecba9d
+2.  https://www.mellowgolem.com/posts/how-to-make-sidequests-more-interesting
