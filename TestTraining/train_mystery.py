@@ -23,7 +23,7 @@ else:
 load_dotenv()
 
 # 1. SETUP & DATA
-MODEL_ID = "meta-llama/Llama-3.2-1B-Instruct" # You can change to Gemma-2b or others
+MODEL_ID = "meta-llama/Llama-3.2-1B-Instruct" # You can change to Gemma-2b, SMOL, QWEN, or others
 ACCESS_TOKEN = os.getenv("HF_TOKEN")
 CSV_FILE = "TestTraining\\tranquilville_mysteries.csv"
 
@@ -78,8 +78,8 @@ trainer = SFTTrainer(
         output_dir="./mystery_adapter",
         per_device_train_batch_size=2,
         gradient_accumulation_steps=4,
-        learning_rate=2e-4,
-        num_train_epochs=3,
+        learning_rate=3e-5,
+        num_train_epochs=1,
         logging_steps=10,
         bf16=True, # Set to False if using CPU/older GPU
         save_strategy="epoch"
