@@ -3,7 +3,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from peft import PeftModel
 
 BASE_MODEL = "meta-llama/Llama-3.2-1B-Instruct"
-ADAPTER_PATH = "./TestTraining"
+ADAPTER_PATH = "./../mystery_adapter"
 
 # 1. Load Base Model
 model = AutoModelForCausalLM.from_pretrained(
@@ -15,11 +15,12 @@ tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL)
 
 # 2. Load the Adapter (The trained mystery "brain")
 model = PeftModel.from_pretrained(model, ADAPTER_PATH)
+model.eval()
 
 # 3. Generate a Mystery
 def solve_mystery(input_text):
     prompt = f"### Instruction: Create a mystery story from these details:\n{input_text}\n\n### Response:"
-    inputs = tokenizer(prompt, return_tensors="pt").to("cuda")
+    inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
     
     outputs = model.generate(
         **inputs, 
