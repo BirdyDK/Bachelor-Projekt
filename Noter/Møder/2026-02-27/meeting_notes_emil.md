@@ -10,7 +10,7 @@ four potential pillars:
 training - Adam
 sampledata - Simon
 quest structure (grammar and what's data is relevant and querying at runtime) - Emil
-understanding the wider context of the procedural generation (a part of the project is understanding why it's interesting. Why are we doing this. What is a success and what have people done in the past. Documenting wht we know) - Mathias
+understanding the wider context of the procedural generation (a part of the project is understanding why it's interesting. Why are we doing this. What is a success and what have people done in the past. Documenting what we know) - Mathias
 
 
 evaluation of the output. - Mathias
