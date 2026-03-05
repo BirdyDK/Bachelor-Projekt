@@ -23,7 +23,7 @@ else:
 load_dotenv()
 
 # 1. SETUP & DATA
-MODEL_ID = "meta-llama/Llama-3.2-1B-Instruct" # You can change to Gemma-2b, SMOL, QWEN, or others
+MODEL_ID = "openai-community/gpt2" # You can change to Gemma-2b, SMOL, QWEN, or others
 ACCESS_TOKEN = os.getenv("HF_TOKEN")
 CSV_FILE = "TestTraining\\tranquilville_mysteries.csv"
 
