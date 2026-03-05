@@ -38,7 +38,7 @@ dataset = load_dataset('csv', data_files=CSV_FILE, sep=';', quotechar='"', split
 
 def format_mystery(example):
     # We use the 'input_names_only' as the prompt and 'output' as the target
-    text = f"### Instruction: Create a mystery story from these details:\n{example['input_names_only']}\n\n### Response: {example['output']}"
+    text = f"### Instruction: Create a mystery story from these details:\n{example['input_names_only']}\n\n### Response: {example['output']}{tokenizer.eos_token}"
     return {"text": text}
 
 dataset = dataset.map(format_mystery)
@@ -62,8 +62,8 @@ tokenizer.pad_token = tokenizer.eos_token
 # 3. CONFIGURE LoRA (The PEFT part)
 model = prepare_model_for_kbit_training(model)
 peft_config = LoraConfig(
-    r=32, 
-    lora_alpha=64,
+    r=8, 
+    lora_alpha=16,
     target_modules="all-linear", # Targets all important layers for better creativity
     lora_dropout=0.1,
     task_type="CAUSAL_LM"
@@ -78,8 +78,8 @@ trainer = SFTTrainer(
         output_dir="./mystery_adapter",
         per_device_train_batch_size=2,
         gradient_accumulation_steps=4,
-        learning_rate=3e-5,
-        num_train_epochs=1,
+        learning_rate=1e-5,
+        num_train_epochs=3-5,
         logging_steps=10,
         bf16=True, # Set to False if using CPU/older GPU
         save_strategy="epoch"
