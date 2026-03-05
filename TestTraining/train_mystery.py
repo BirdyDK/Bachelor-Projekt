@@ -37,11 +37,15 @@ else:
 dataset = load_dataset('csv', data_files=CSV_FILE, sep=';', quotechar='"', split='train')
 
 def format_mystery(example):
-    # We use the 'input_names_only' as the prompt and 'output' as the target
-    text = f"### Instruction: Create a mystery story from these details:\n{example['input_names_only']}\n\n### Response: {example['output']}"
+    messages = [
+        {"role": "user", "content": f"Create a mystery story from these details:\n{example['input_names_only']}"},
+        {"role": "assistant", "content": example["output"]}
+    ]
+    text = tokenizer.apply_chat_template(messages, tokenize=False)
     return {"text": text}
 
 dataset = dataset.map(format_mystery)
+dataset = dataset.shuffle(seed=42)
 
 # 2. LOAD MODEL IN 4-BIT (Memory Efficient)
 bnb_config = BitsAndBytesConfig(
@@ -74,8 +78,9 @@ model = get_peft_model(model, peft_config)
 trainer = SFTTrainer(
     model=model,
     train_dataset=dataset,
+    max_seq_length=1024,
     args=TrainingArguments(
-        output_dir="./mystery_adapter",
+        output_dir="./TestTraining",
         per_device_train_batch_size=2,
         gradient_accumulation_steps=4,
         learning_rate=3e-5,
