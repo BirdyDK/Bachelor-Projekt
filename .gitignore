@@ -206,3 +206,6 @@ pip-selfcheck.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode,virtualenv
 .obsidian
+
+quest_generator/display_output/
+quest_data.csv

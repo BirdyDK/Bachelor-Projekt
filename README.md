@@ -85,3 +85,19 @@ If you need to deactivate it, you can just run the command `deactivate`.
 ### Setting up the Model
 To set up the model you need a `.env` file in root.
 In it, make sure to define the following env_var: `HF_TOKEN = "YOUR_HUGGING_FACE_LLAMA_TOKEN_HERE"
+
+
+## Quest Generator
+Run the quest generator with
+
+```sh
+python ./quest_generator/main.py
+```
+
+and then run
+
+```sh
+python ./quest_generator/generate_displays.py
+```
+
+to get the output in a human readable format.
