@@ -1,0 +1,10 @@
+try giving hpc another try, it is about learning not getting a finished product.
+we go through our chatgpt quests, and try and refine it with our supervisors.
+something should select something that is relevant when choosing what quest to make.
+what is the exact step we want reach in our scope. examples could be the quest structure, a map, a summary of the quest, the different steps of the quest.
+we need to figure out what we give as input.
+either sort through data and make the quest on the most applicable 
+theres is a gulf between where we are and where we could end up. we want to be inventive.
+look if our ideas are realized somewhere else, check the internet.
+færste omgang er at få slm til at bruge kontekst, full stop, glem alt det andet smarte som vi tænker over. hold det rigtigt enkelt.
+kig på similarity searches i forhold til at lave quest strukturen.
