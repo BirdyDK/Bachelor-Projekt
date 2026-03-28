@@ -11,6 +11,7 @@ EXPERIMENTS = []
 
 # Define Hyperparameter Grid
 models = [
+    {"id": "meta-llama/Llama-3.2-1B-Instruct", "script": "./TestTraining/trainA.py"},
     {"id": "Qwen/Qwen2.5-0.5B-Instruct", "script": "./TestTraining/trainB.py"},
     {"id": "HuggingFaceTB/SmolLM2-1.7B-Instruct", "script": "./TestTraining/trainB.py"}
 ]

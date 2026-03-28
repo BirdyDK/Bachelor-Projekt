@@ -1,55 +1,85 @@
-import argparse
-import time
-from datetime import timedelta
 import torch
+import os
 import pandas as pd
 from datasets import Dataset
-from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig, TrainingArguments
+from transformers import (
+    AutoModelForCausalLM, 
+    AutoTokenizer, 
+    BitsAndBytesConfig, 
+    TrainingArguments
+)
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 from trl import SFTTrainer
+from huggingface_hub import login
+from dotenv import load_dotenv
 import gc
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--model_id", type=str)
-parser.add_argument("--batch_size", type=int)
-parser.add_argument("--grad_accum", type=int, default=1)
-parser.add_argument("--learning_rate", type=float)
-parser.add_argument("--lora_r", type=int, default=16)
-parser.add_argument("--lora_alpha", type=int, default=32)
-parser.add_argument("--output_dir", type=str)
-parser.add_argument("--epochs", type=int, default=1)
-args = parser.parse_args()
+print(f"CUDA available: {torch.cuda.is_available()}")
+if torch.cuda.is_available():
+    print(f"Device name: {torch.cuda.get_device_name(0)}")
+    print(f"Memory: {torch.cuda.get_device_properties(0).total_memory / 1e9:.2f} GB")
+else:
+    print("No CUDA, this will take very long")
 
+load_dotenv()
+
+# 1. SETUP & DATA
+MODEL_ID = "HuggingFaceTB/SmolLM2-1.7B-Instruct"  # Using instruct version
 CSV_FILE = "TestTraining/tranquilville_mysteries.csv"
+OUTPUT_DIR = "./TestTraining/Results/SmolLM2-1.7B-Instruct_ebs32_lr5e-05_r32_epochs3"
 
+# Clear GPU cache
 torch.cuda.empty_cache()
 gc.collect()
 
-tokenizer = AutoTokenizer.from_pretrained(args.model_id)
+# 2. LOAD TOKENIZER FIRST
+tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
 tokenizer.pad_token = tokenizer.eos_token
-tokenizer.padding_side = "right"
+tokenizer.padding_side = "right"  # Important for causal LM
 
-def load_dataset_custom(csv_path):
-    df = pd.read_csv(csv_path, sep=";", quotechar='"')
-
-    def format_row(row):
-        messages = [
-            {"role": "system", "content": (
-                "You are a mystery writer. Always respond with a story containing "
-                "OPENING SCENE:, PLOT SUMMARY:, INVESTIGATION CLUES:, and RED HERRING EXPLANATION:."
-            )},
-            {"role": "user", "content": f"Create a mystery story from these details:\n{row['input_names_only']}"},
-            {"role": "assistant", "content": row["output"]}
-        ]
-        return {"text": tokenizer.apply_chat_template(messages, tokenize=False)}
-
+# 3. LOAD AND FORMAT DATASET
+def load_and_format_dataset(csv_path):
+    """Load CSV and format with system prompt and consistent structure"""
+    df = pd.read_csv(csv_path, sep=';', quotechar='"')
+    
+    def format_with_system_prompt(row):
+        # System message to enforce output structure
+        system_message = {
+            "role": "system", 
+            "content": "You are a mystery writer. Always respond with a story containing these exact sections: OPENING SCENE:, PLOT SUMMARY:, INVESTIGATION CLUES:, and RED HERRING EXPLANATION:. Each section must start with the heading on its own line."
+        }
+        
+        # User message with the structured input
+        user_message = {
+            "role": "user", 
+            "content": f"Create a mystery story from these details:\n{row['input_names_only']}"
+        }
+        
+        # Assistant message with the full output
+        assistant_message = {
+            "role": "assistant", 
+            "content": row['output']
+        }
+        
+        # Apply chat template
+        messages = [system_message, user_message, assistant_message]
+        text = tokenizer.apply_chat_template(messages, tokenize=False)
+        return {"text": text}
+    
+    # Create dataset and apply formatting
     dataset = Dataset.from_pandas(df)
-    dataset = dataset.map(format_row)
+    dataset = dataset.map(format_with_system_prompt)
     dataset = dataset.shuffle(seed=42)
-    return dataset.train_test_split(test_size=0.1, seed=42)
+    
+    # Split into train/validation
+    split_dataset = dataset.train_test_split(test_size=0.1, seed=42)
+    return split_dataset["train"], split_dataset["test"]
 
-train_dataset, eval_dataset = load_dataset_custom(CSV_FILE).values()
+print("Loading and formatting dataset...")
+train_dataset, eval_dataset = load_and_format_dataset(CSV_FILE)
+print(f"Train samples: {len(train_dataset)}, Eval samples: {len(eval_dataset)}")
 
+# 4. LOAD MODEL WITH 4-BIT QUANTIZATION
 bnb_config = BitsAndBytesConfig(
     load_in_4bit=True,
     bnb_4bit_quant_type="nf4",
@@ -58,39 +88,56 @@ bnb_config = BitsAndBytesConfig(
 )
 
 model = AutoModelForCausalLM.from_pretrained(
-    args.model_id,
-    quantization_config=bnb_config,
-    device_map="auto"
+    MODEL_ID, 
+    quantization_config=bnb_config, 
+    device_map="auto",
+    trust_remote_code=True,
 )
 
+# 5. CONFIGURE LORA (Optimized for 0.5B model)
 model = prepare_model_for_kbit_training(model)
+
+# Enable gradient checkpointing to save memory
 model.gradient_checkpointing_enable()
 
 peft_config = LoraConfig(
-    r=args.lora_r,
-    lora_alpha=args.lora_alpha,
-    target_modules="all-linear",
+    r=32,  # Reduced from 32 for better generalization with smaller model
+    lora_alpha=64,  # Adjusted proportionally
+    target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],  # Specific modules instead of "all-linear"
     lora_dropout=0.1,
+    bias="none",
     task_type="CAUSAL_LM"
 )
 model = get_peft_model(model, peft_config)
+model.print_trainable_parameters()  # Shows % of trainable parameters
 
+# 6. TRAINING ARGUMENTS
 training_args = TrainingArguments(
-    output_dir=args.output_dir,
-    num_train_epochs=args.epochs,
-    per_device_train_batch_size=args.batch_size,
-    gradient_accumulation_steps=args.grad_accum,
-    learning_rate=args.learning_rate,
+    output_dir=OUTPUT_DIR,
+    num_train_epochs=3, 
+    per_device_train_batch_size=4,
+    per_device_eval_batch_size=4,
+    gradient_accumulation_steps=8,
+    learning_rate=5e-5,  # Slightly higher for LoRA
+    weight_decay=0.01,
     warmup_ratio=0.03,
     lr_scheduler_type="cosine",
     logging_steps=10,
-    eval_strategy="epoch",
-    save_strategy="no",
+    eval_strategy="steps",
+    eval_steps=100,
+    save_strategy="steps",
+    save_steps=100,
+    load_best_model_at_end=True,
+    metric_for_best_model="eval_loss",
+    greater_is_better=False,
     bf16=True,
+    gradient_checkpointing=True,
     optim="paged_adamw_8bit",
-    report_to="none"
+    max_grad_norm=0.3,
+    remove_unused_columns=False,
 )
 
+# 7. TRAINER
 trainer = SFTTrainer(
     model=model,
     train_dataset=train_dataset,
@@ -98,21 +145,17 @@ trainer = SFTTrainer(
     args=training_args,
 )
 
-# Precise timing
-start_time = time.perf_counter()
-train_output = trainer.train()
-eval_metrics = trainer.evaluate()
-end_time = time.perf_counter()
+# 8. TRAIN AND SAVE
+print("Starting training...")
+trainer.train()
 
-duration = end_time - start_time
-duration_str = str(timedelta(seconds=int(duration)))
+# Save the final model
+trainer.save_model(OUTPUT_DIR)
+tokenizer.save_pretrained(OUTPUT_DIR)
 
-with open(f"{args.output_dir}/metrics.txt", "w") as f:
-    f.write(f"experiment: {args.output_dir}\n")
-    f.write(f"train_loss: {train_output.training_loss}\n")
-    f.write(f"eval_loss: {eval_metrics.get('eval_loss', 'N/A')}\n")
-    f.write(f"duration_seconds: {duration:.2f}\n")
-    f.write(f"duration_hms: {duration_str}\n")
+print(f"Training Complete! Model saved to {OUTPUT_DIR}")
 
-trainer.save_model(args.output_dir)
-tokenizer.save_pretrained(args.output_dir)
+# Optional: Merge and save full model (if you want a standalone model)
+# from peft import PeftModel
+# merged_model = model.merge_and_unload()
+# merged_model.save_pretrained(f"{OUTPUT_DIR}_merged")

@@ -3,13 +3,13 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from peft import PeftModel
 
-RESULTS_ROOT = "./TestTraining/results"
-OUTPUT_FILE = "trainingResults2.md"
+RESULTS_ROOT = "./TestTraining/Results"
+OUTPUT_FILE = "trainingResultsEpochsNoChatTemplate.md"
 
 TEST_INPUT = "Who: Silas the Blacksmith. Where: The Forge. Victim: Mayor Higgins."
 
 def solve_mystery(model, tokenizer, input_text):
-    messages = [
+    """messages = [
         {
             "role": "system",
             "content": (
@@ -30,9 +30,8 @@ def solve_mystery(model, tokenizer, input_text):
         messages,
         tokenize=False,
         add_generation_prompt=True
-    )
-
-
+    )"""
+    prompt = f"### Instruction: Create a mystery story from these details:\n{input_text}\n\n### Response:"
     inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
 
     outputs = model.generate(
