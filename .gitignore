@@ -209,3 +209,6 @@ pip-selfcheck.json
 
 quest_generator/display_output/
 quest_data.csv
+pcg/world_data/*
+pcg/output/*
+!pcg/world_data/template_world_data.csv

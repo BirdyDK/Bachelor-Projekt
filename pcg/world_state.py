@@ -1,0 +1,150 @@
+from typing import Dict, Any, List, Optional, Tuple
+
+class WorldState:
+    def __init__(self, data: Dict[str, Any]):
+        self.enums = data.get("enums", {})
+        self.npcs = data.get("npcs", {})
+        self.factions = data.get("factions", {})
+        self.enemies = data.get("enemies", {})
+        self.locations = data.get("locations", {})
+        self.items = data.get("items", {})
+        self.player = data.get("player", {})
+        player_list = self.enums.get("Lists", {}).get("Player", [])
+        self.player_name = player_list[0] if player_list else "Kaelen"
+
+    def get_relation(self, giver_type: str, giver_name: str, target: str = None) -> int:
+        if target is None:
+            target = self.player_name
+
+        if giver_type == "npc":
+            npc = self.npcs.get(giver_name)
+            if not npc:
+                return 0
+            personal = 0
+            for rel in npc.get("Relations", []):
+                if rel.get("Target") == target:
+                    personal = rel.get("Favorability", 0)
+                    break
+            faction_name = npc.get("Faction")
+            if faction_name:
+                faction_rel = self.get_relation("faction", faction_name, target)
+                return (personal + faction_rel) // 2
+            else:
+                return personal
+        elif giver_type == "faction":
+            faction = self.factions.get(giver_name)
+            if not faction:
+                return 0
+            for rel in faction.get("Relations", []):
+                if rel.get("Target") == target:
+                    return rel.get("Favorability", 0)
+            return 0
+        return 0
+
+    def get_npc_location(self, npc_name: str) -> str:
+        return self.npcs.get(npc_name, {}).get("CurrentLocation", "Unknown")
+
+    def get_faction_members(self, faction_name: str) -> List[str]:
+        return self.factions.get(faction_name, {}).get("Members", [])
+
+    def get_friendly_factions(self, faction_name: str) -> List[str]:
+        faction = self.factions.get(faction_name)
+        if not faction:
+            return []
+        friends = []
+        for rel in faction.get("Relations", []):
+            if rel.get("Favorability", 0) > 0 and rel["Target"] in self.factions:
+                friends.append(rel["Target"])
+        return friends
+
+    def get_enemies_in_region(self, location: str) -> List[str]:
+        return self.locations.get(location, {}).get("Enemies", [])
+
+    def get_all_locations_with_enemies(self) -> List[Tuple[str, List[str]]]:
+        return [(loc, data.get("Enemies", [])) for loc, data in self.locations.items() if data.get("Enemies")]
+
+    def get_npcs_with_negative_relation(self, giver_type: str, giver_name: str) -> List[str]:
+        result = []
+        if giver_type == "npc":
+            npc = self.npcs.get(giver_name)
+            if not npc:
+                return []
+            for rel in npc.get("Relations", []):
+                if rel.get("Favorability", 0) < 0 and rel["Target"] in self.npcs:
+                    result.append(rel["Target"])
+        elif giver_type == "faction":
+            faction = self.factions.get(giver_name)
+            if not faction:
+                return []
+            for rel in faction.get("Relations", []):
+                if rel.get("Favorability", 0) < 0 and rel["Target"] in self.npcs:
+                    result.append(rel["Target"])
+        return result
+
+    def get_npcs_with_high_negative_relation(self, giver_type: str, giver_name: str, threshold: int = -3) -> List[str]:
+        result = []
+        if giver_type == "npc":
+            npc = self.npcs.get(giver_name)
+            if not npc:
+                return []
+            for rel in npc.get("Relations", []):
+                if rel.get("Favorability", 0) <= threshold and rel["Target"] in self.npcs:
+                    result.append(rel["Target"])
+        elif giver_type == "faction":
+            faction = self.factions.get(giver_name)
+            if not faction:
+                return []
+            for rel in faction.get("Relations", []):
+                if rel.get("Favorability", 0) <= threshold and rel["Target"] in self.npcs:
+                    result.append(rel["Target"])
+        return result
+
+    def get_giver_items(self, giver_type: str, giver_name: str) -> List[str]:
+        if giver_type == "npc":
+            return list(self.npcs.get(giver_name, {}).get("OwnedItems", {}).keys())
+        elif giver_type == "faction":
+            return list(self.factions.get(giver_name, {}).get("Treasury", {}).keys())
+        return []
+
+    def get_potential_thief(self, giver_type: str, giver_name: str, item: str) -> Optional[str]:
+        disliked = self.get_npcs_with_negative_relation(giver_type, giver_name)
+        if disliked:
+            return disliked[0]
+        return None
+    
+    def get_factions_with_negative_relation(self, giver_type: str, giver_name: str) -> List[str]:
+        """Return factions that giver dislikes (negative relation)."""
+        result = []
+        if giver_type == "npc":
+            npc = self.npcs.get(giver_name)
+            if not npc:
+                return []
+            for rel in npc.get("Relations", []):
+                if rel.get("Favorability", 0) < 0 and rel["Target"] in self.factions:
+                    result.append(rel["Target"])
+        elif giver_type == "faction":
+            faction = self.factions.get(giver_name)
+            if not faction:
+                return []
+            for rel in faction.get("Relations", []):
+                if rel.get("Favorability", 0) < 0 and rel["Target"] in self.factions:
+                    result.append(rel["Target"])
+        return result
+
+    def get_faction_location(self, faction_name: str) -> str:
+        """Return a plausible location for a faction (first member's location, or 'unknown')."""
+        members = self.get_faction_members(faction_name)
+        if members:
+            return self.get_npc_location(members[0])
+        return "unknown"
+
+    def get_non_friendly_entities(self, giver_type: str, giver_name: str) -> List[Tuple[str, str]]:
+        """Return all entities (NPC or Faction) that giver dislikes (relation < 0)."""
+        result = []
+        # NPC enemies
+        for npc in self.get_npcs_with_negative_relation(giver_type, giver_name):
+            result.append(("npc", npc))
+        # Faction enemies
+        for faction in self.get_factions_with_negative_relation(giver_type, giver_name):
+            result.append(("faction", faction))
+        return result

@@ -1,0 +1,146 @@
+{
+  "generic": {
+    "greetings": [
+      "Hey there, {giver_name}.",
+      "Psst! Over here.",
+      "Greetings, traveller.",
+      "I have a task for you, {player_name}.",
+      "Ah, just the person I was looking for."
+    ],
+    "relation_positive": [
+      "I know I can count on you.",
+      "You've proven yourself trustworthy.",
+      "I wouldn't ask just anyone."
+    ],
+    "relation_negative": [
+      "I suppose you'll do.",
+      "This is your chance to prove yourself.",
+      "Don't mess this up."
+    ],
+    "closings": [
+      "What do you say?",
+      "Will you help me?",
+      "I await your return.",
+      "Don't keep me waiting."
+    ]
+  },
+  "AttackThreateningEntities": {
+    "openers": [
+      "There are {enemies} lurking in {location}.",
+      "{enemies} have been spotted near {location}.",
+      "The {enemies} are getting too bold around {location}.",
+      "We need someone to clear out the {enemies} from {location}."
+    ],
+    "reason": [
+      "They're a danger to everyone.",
+      "They've been attacking travellers.",
+      "They've stolen supplies.",
+      "They're disturbing the peace."
+    ],
+    "ask": [
+      "Go to {location} and deal with them.",
+      "Hunt down the {enemies} at {location}.",
+      "Make sure those {enemies} won't bother us again."
+    ]
+  },
+  "RecoverStolenItem": {
+    "openers": [
+      "My {item} has been stolen!",
+      "Someone took my {item}.",
+      "I had a {item} that's now gone.",
+      "A thief made off with my {item}."
+    ],
+    "thief_info": [
+      "I suspect {thief_name} is behind it.",
+      "{thief_name} has been seen acting suspiciously.",
+      "It must be {thief_name} – they've always wanted it.",
+      "The culprit is likely {thief_name}."
+    ],
+    "ask": [
+      "Find them and bring back my {item}.",
+      "I need you to recover it.",
+      "Get my {item} back, by any means.",
+      "Track down the thief and return what's mine."
+    ]
+  },
+  "GuardEntity": {
+    "openers": [
+      "I need someone to protect {target_name}.",
+      "{target_name} is in danger.",
+      "There are threats against {target_name}.",
+      "{target_name} requires an escort."
+    ],
+    "reason": [
+      "They're an important member of our faction.",
+      "They carry vital information.",
+      "Their safety is paramount right now.",
+      "Enemies are plotting against them."
+    ],
+    "ask": [
+      "Stay by their side and keep them safe.",
+      "Guard {target_name} until further notice.",
+      "Do not let any harm come to {target_name}.",
+      "Escort them and defend them if needed."
+    ]
+  },
+  "AttackEnemy": {
+    "openers": [
+      "I want you to teach {target_name} a lesson.",
+      "{target_name} has crossed the line.",
+      "It's time to strike at {target_name}.",
+      "I need you to attack {target_name}."
+    ],
+    "reason": [
+      "They've been sabotaging our efforts.",
+      "They insulted our faction.",
+      "They stole from us.",
+      "They're a constant nuisance."
+    ],
+    "ask": [
+      "Go to {location} and make them regret it.",
+      "Show them they can't push us around.",
+      "Raid their camp and send a message.",
+      "Put {target_name} in their place."
+    ]
+  },
+  "StealStuff": {
+    "openers": [
+      "I have my eye on something.",
+      "There's an item I'd like you to acquire.",
+      "I need a certain object that's not easily bought.",
+      "A little acquisition job has come up."
+    ],
+    "target_info": [
+      "{victim_name} has a {item} that I want.",
+      "The {item} is in the possession of {victim_name}.",
+      "{victim_name} is hoarding a {item}.",
+      "I've heard {victim_name} keeps a {item} locked away."
+    ],
+    "ask": [
+      "Sneak in and take it.",
+      "Relieve them of that {item}.",
+      "Bring me the {item}, no questions asked.",
+      "I don't care how – just get me that {item}."
+    ]
+  },
+  "KillEnemies": {
+    "openers": [
+      "This is a serious matter.",
+      "I need someone eliminated.",
+      "There's a target that must be removed.",
+      "An enemy of ours has become too powerful."
+    ],
+    "target_info": [
+      "{target_name} is a high‑value target.",
+      "{target_name} has been causing immense trouble.",
+      "Getting rid of {target_name} would cripple our enemies.",
+      "{target_name} must die."
+    ],
+    "ask": [
+      "Find {target_name} and end them.",
+      "Make sure {target_name} never returns.",
+      "I want proof of {target_name}'s death.",
+      "This is a kill order. Do not fail."
+    ]
+  }
+}
