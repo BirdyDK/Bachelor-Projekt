@@ -85,3 +85,36 @@ If you need to deactivate it, you can just run the command `deactivate`.
 ### Setting up the Model
 To set up the model you need a `.env` file in root.
 In it, make sure to define the following env_var: `HF_TOKEN = "YOUR_HUGGING_FACE_LLAMA_TOKEN_HERE"
+
+
+## Quest Generator
+Run the quest generator with
+
+```sh
+python ./quest_generator/main.py
+```
+
+and then run
+
+```sh
+python ./quest_generator/generate_displays.py
+```
+
+to get the output in a human readable format.
+
+## PCG
+To use the pcg system, run the following command from the root of the project:
+
+```sh
+python ./pcg/__main__.py
+```
+
+This will output a set of files with generated quests named `generated_quests.json`and `generated_quests_with_hooks.json` in the `pcg/output` folder. The first one contains the generated quests without any hooks, while the second one contains the quests with hooks that can be used to interface with a game.
+
+New world data can be added to the `pcg/world_data` folder in the form of a `.csv` file. The format of this file should be the same as the one provided in `template_world_data.csv`. The generated quests will then reflect a random set of world data in the folder.
+
+To specify a specific set of world data, you simply add the name of the file to the command like this:
+
+```sh
+python ./pcg/__main__.py --world_data_file template_world_data.csv
+```
