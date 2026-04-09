@@ -1,80 +1,165 @@
 import json
 import os
 import random
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
+from world_state import WorldState
 
 class QuestHookGenerator:
-    def __init__(self, templates_file: str = None):
+    def __init__(self, world_state: WorldState, templates_file: str = None):
+        self.ws = world_state
         if templates_file is None:
             templates_file = os.path.join(os.path.dirname(__file__), "hook_templates.json")
         with open(templates_file, 'r', encoding='utf-8') as f:
             self.templates = json.load(f)
-        # Load player name from generated quests or default
-        self.player_name = "adventurer"  # will be updated from first quest's giver? Actually we need from world state.
-        # We'll read it from the quest data if available, but for now keep placeholder.
+        self.player_name = self.ws.player_name
 
-    def set_player_name(self, name: str):
-        self.player_name = name
+    def _get_entity_properties(self, entity_type: str, entity_name: str) -> Dict[str, str]:
+        """Retrieve grammatical properties for an entity (NPC, faction, location, item, enemy)."""
+        props = {}
+        if entity_type == "npc":
+            data = self.ws.npcs.get(entity_name, {})
+            props["name"] = entity_name
+            props["name_possessive"] = data.get("NamePossessive", f"{entity_name}'s")
+            props["species"] = data.get("Species", "person")
+            props["role"] = data.get("Role", "person")
+        elif entity_type == "faction":
+            data = self.ws.factions.get(entity_name, {})
+            props["name"] = entity_name
+            props["name_definitive"] = data.get("NameDefinitive", entity_name)
+            props["name_possessive"] = data.get("NamePossessive", f"{entity_name}'s")
+            props["name_definitive_possessive"] = data.get("NameDefinitivePossessive", f"the {entity_name}'s")
+        elif entity_type == "location":
+            data = self.ws.locations.get(entity_name, {})
+            props["name"] = entity_name
+            props["name_possessive"] = data.get("NamePossessive", f"{entity_name}'s")
+        elif entity_type == "item":
+            data = self.ws.items.get(entity_name, {})
+            props["name"] = entity_name
+            props["name_singular"] = data.get("NameSingular", entity_name)
+            props["name_plural"] = data.get("NamePlural", f"{entity_name}s")
+            props["name_possessive_singular"] = data.get("NamePossessiveSingular", f"{entity_name}'s")
+            props["name_possessive_plural"] = data.get("NamePossessivePlural", f"{entity_name}s'")
+            props["indefinite_article"] = data.get("IndefiniteArticle", "a")
+            props["indefinite_article_caps"] = data.get("IndefiniteArticleCaps", "A")
+        elif entity_type == "enemy":
+            data = self.ws.enemies.get(entity_name, {})
+            props["name"] = entity_name
+            props["name_singular"] = data.get("NameSingular", entity_name)
+            props["name_plural"] = data.get("NamePlural", f"{entity_name}s")
+            props["name_possessive_singular"] = data.get("NamePossessiveSingular", f"{entity_name}'s")
+            props["name_possessive_plural"] = data.get("NamePossessivePlural", f"{entity_name}s'")
+            props["indefinite_article"] = data.get("IndefiniteArticle", "a")
+            props["indefinite_article_caps"] = data.get("IndefiniteArticleCaps", "A")
+        else:
+            props["name"] = entity_name
+            props["name_possessive"] = f"{entity_name}'s"
+        return props
 
     def generate_hook(self, quest: Dict[str, Any]) -> str:
-        """Create a natural language quest hook from the quest data."""
         qtype = quest["type"]
         giver = quest["giver"]
-        giver_name = giver["name"]
         giver_type = giver["type"]
+        giver_name = giver["name"]
         target = quest.get("target", {})
-        steps = quest.get("steps", [])
 
-        # Try to get giver's role and species from the original world data?
-        # Since we don't have world state here, we'll rely on data embedded in quest or use defaults.
-        # For better hooks, we could pass world state, but we keep minimal.
-        giver_role = "person"
-        giver_species = ""
-        # If we had extra fields in quest, we could use them. We'll add simple defaults.
+        # Get properties for giver
+        giver_props = self._get_entity_properties(giver_type, giver_name)
+        # Target properties
+        target_type = target.get("type", "")
+        target_name = target.get("name", "")
+        target_props = self._get_entity_properties(target_type, target_name) if target_name else {}
 
-        # Determine relation tone (positive/negative) from giver type? Not stored, so we skip.
+        # Thief / victim
+        thief = target.get("thief", {})
+        thief_props = self._get_entity_properties(thief.get("type", ""), thief.get("name", "")) if thief else {}
+        victim = target.get("victim", {})
+        victim_props = self._get_entity_properties(victim.get("type", ""), victim.get("name", "")) if victim else {}
 
-        # Prepare placeholders
+        # Location
+        location_name = target.get("location", "unknown")
+        location_props = self._get_entity_properties("location", location_name) if location_name != "unknown" else {"name": location_name, "name_possessive": f"{location_name}'s"}
+
+        # Build placeholders dictionary
         placeholders = {
-            "giver_name": giver_name,
-            "giver_role": giver_role,
-            "giver_species": giver_species,
             "player_name": self.player_name,
-            "location": target.get("location", "unknown"),
-            "item": target.get("name", "something"),
-            "target_name": target.get("name", "someone"),
-            "target_type": target.get("type", "entity"),
-            "enemies": target.get("name", "enemies"),
-            "thief_name": target.get("thief", {}).get("name", "a thief") if isinstance(target.get("thief"), dict) else target.get("thief", "a thief"),
-            "victim_name": target.get("victim", {}).get("name", "someone") if isinstance(target.get("victim"), dict) else target.get("victim", "someone"),
+            "player_name_possessive": f"{self.player_name}'s",
+            "giver_name": giver_props.get("name", giver_name),
+            "giver_name_possessive": giver_props.get("name_possessive", f"{giver_name}'s"),
+            "giver_species": giver_props.get("species", "person"),
+            "giver_role": giver_props.get("role", "person"),
+            "giver_faction": self.ws.npcs.get(giver_name, {}).get("Faction", "unknown") if giver_type == "npc" else "",
+            "target_name": target_props.get("name", target_name),
+            "target_name_possessive": target_props.get("name_possessive", f"{target_name}'s"),
+            "target_type": target_type,
+            "enemy_name_singular": target_props.get("name_singular", target_name),
+            "enemy_name_plural": target_props.get("name_plural", f"{target_name}s"),
+            "enemy_indefinite_article": target_props.get("indefinite_article", "a"),
+            "enemy_indefinite_article_caps": target_props.get("indefinite_article_caps", "A"),
+            "item_name": target_props.get("name", target_name),
+            "item_name_singular": target_props.get("name_singular", target_name),
+            "item_name_plural": target_props.get("name_plural", f"{target_name}s"),
+            "item_indefinite_article": target_props.get("indefinite_article", "a"),
+            "item_indefinite_article_caps": target_props.get("indefinite_article_caps", "A"),
+            "item_name_possessive_singular": target_props.get("name_possessive_singular", f"{target_name}'s"),
+            "item_name_possessive_plural": target_props.get("name_possessive_plural", f"{target_name}s'"),
+            "location_name": location_props.get("name", location_name),
+            "location_name_possessive": location_props.get("name_possessive", f"{location_name}'s"),
+            "thief_name": thief_props.get("name", "a thief"),
+            "thief_name_possessive": thief_props.get("name_possessive", "the thief's"),
+            "thief_type": thief.get("type", ""),
+            "victim_name": victim_props.get("name", "someone"),
+            "victim_name_possessive": victim_props.get("name_possessive", "someone's"),
         }
 
-        # Get template group for this quest type
+        # Get quest type template data
         q_templates = self.templates.get(qtype, {})
-        # Fallback to generic
         generic = self.templates.get("generic", {})
+        categories = q_templates.get("categories", {})
+        sequences = q_templates.get("sequences", [])
+        optional = q_templates.get("optional_categories", [])
 
+        # If no sequences defined, fall back to simple concatenation
+        if not sequences:
+            return self._fallback_hook(quest, placeholders)
+
+        # Choose a random sequence
+        sequence = random.choice(sequences)
         # Build hook sentence by sentence
+        sentences = []
+        for cat in sequence:
+            # Skip optional categories with 30% chance
+            if cat in optional and random.random() < 0.3:
+                continue
+            # Get templates for this category (first try quest-specific, then generic)
+            templates = categories.get(cat, generic.get(cat, []))
+            if not templates:
+                continue
+            template = random.choice(templates)
+            sentences.append(template.format(**placeholders))
+
+        # Join with spaces, but ensure no double spaces
+        hook = " ".join(sentences)
+        # Capitalize first letter of each sentence? Already done in templates.
+        return hook
+
+    def _fallback_hook(self, quest: Dict[str, Any], placeholders: Dict[str, str]) -> str:
+        """Fallback to old method if no sequences defined."""
+        qtype = quest["type"]
+        q_templates = self.templates.get(qtype, {})
+        generic = self.templates.get("generic", {})
         parts = []
-
         # Greeting
-        greeting = random.choice(generic.get("greetings", ["Listen up."]))
-        parts.append(greeting.format(**placeholders))
-
-        # Relation‑specific line (if we had relation, we could choose)
-        # We'll skip for now, but can be added later.
-
-        # Opener specific to quest type
+        if "greeting" in generic:
+            parts.append(random.choice(generic["greeting"]).format(**placeholders))
+        # Opener
         openers = q_templates.get("openers", [])
         if openers:
             parts.append(random.choice(openers).format(**placeholders))
-
-        # Reason (optional)
+        # Reason
         reasons = q_templates.get("reason", [])
-        if reasons and random.random() < 0.7:  # 70% chance to include a reason
+        if reasons and random.random() < 0.7:
             parts.append(random.choice(reasons).format(**placeholders))
-
-        # Additional info (e.g., thief for recover, victim for steal)
+        # Specific info
         if qtype == "RecoverStolenItem":
             thief_info = q_templates.get("thief_info", [])
             if thief_info:
@@ -83,25 +168,19 @@ class QuestHookGenerator:
             target_info = q_templates.get("target_info", [])
             if target_info:
                 parts.append(random.choice(target_info).format(**placeholders))
-        elif qtype == "AttackEnemy" or qtype == "KillEnemies":
+        elif qtype in ("AttackEnemy", "KillEnemies"):
             target_info = q_templates.get("target_info", [])
             if target_info:
                 parts.append(random.choice(target_info).format(**placeholders))
-
-        # The ask (what the player must do)
+        # Ask
         ask = q_templates.get("ask", ["Get it done."])
         parts.append(random.choice(ask).format(**placeholders))
-
         # Closing
-        closing = random.choice(generic.get("closings", ["What do you say?"]))
-        parts.append(closing.format(**placeholders))
-
-        # Join into a paragraph
-        hook = " ".join(parts)
-        return hook
+        closing = generic.get("closing", ["What do you say?"])
+        parts.append(random.choice(closing).format(**placeholders))
+        return " ".join(parts)
 
     def add_hooks_to_quests(self, quests_by_type: Dict[str, List[Dict[str, Any]]]) -> Dict[str, List[Dict[str, Any]]]:
-        """Return a copy of the quest dictionary with a 'hook' field added to each quest."""
         result = {}
         for qtype, quest_list in quests_by_type.items():
             result[qtype] = []
@@ -110,28 +189,3 @@ class QuestHookGenerator:
                 new_quest["hook"] = self.generate_hook(quest)
                 result[qtype].append(new_quest)
         return result
-
-    def process_file(self, input_file: str, output_file: str):
-        """Read quests from input JSON, add hooks, write to output JSON."""
-        with open(input_file, 'r', encoding='utf-8') as f:
-            quests_by_type = json.load(f)
-        # Try to extract player name from any quest's giver? Not stored. Use default or read from world state.
-        # We'll just use a default.
-        self.player_name = "Kaelen"  # could be read from world_data.csv, but to keep separate, hardcode or pass.
-        hooked = self.add_hooks_to_quests(quests_by_type)
-        with open(output_file, 'w', encoding='utf-8') as f:
-            json.dump(hooked, f, indent=2, ensure_ascii=False)
-        print(f"Hooks added. Saved to {output_file}")
-
-if __name__ == "__main__":
-    # Standalone execution: read generated_quests.json, write generated_quests_with_hooks.json
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    input_path = os.path.join(script_dir, "generated_quests.json")
-    output_path = os.path.join(script_dir, "generated_quests_with_hooks.json")
-    if not os.path.exists(input_path):
-        print(f"Error: {input_path} not found. Run pcg/__main__.py first.")
-    else:
-        generator = QuestHookGenerator()
-        # Optionally read player name from world_data.csv (we'll skip to keep minimal)
-        generator.player_name = "Kaelen"  # from original data
-        generator.process_file(input_path, output_path)

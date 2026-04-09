@@ -13,33 +13,40 @@ class QuestGenerator:
             print(f"[DEBUG] {msg}")
 
     def compute_eligible_quests(self):
+        """Compute eligible quests based on new relationship thresholds."""
         self.eligible_quests = []
         for npc_name in self.ws.npcs:
             relation = self.ws.get_relation("npc", npc_name)
-            if relation >= -2:
+            # AttackThreateningEntities: relation >= -15 (was -2)
+            if relation >= -15:
                 self.eligible_quests.append(("npc", npc_name, "AttackThreateningEntities"))
-            if relation >= 3:
+            # RecoverStolenItem: relation >= 30 (was 3)
+            if relation >= 30:
                 self.eligible_quests.append(("npc", npc_name, "RecoverStolenItem"))
-            if relation >= 1:
+            # AttackEnemy: relation >= 5 (was 1)
+            if relation >= 5:
                 self.eligible_quests.append(("npc", npc_name, "AttackEnemy"))
-            if relation >= 2:
+            # StealStuff: relation >= 15 (was 2)
+            if relation >= 15:
                 self.eligible_quests.append(("npc", npc_name, "StealStuff"))
-            if relation >= 4 or relation <= -4:
+            # KillEnemies: relation >= 30 or <= -30 (was >=4 or <=-4)
+            if relation >= 30 or relation <= -30:
                 self.eligible_quests.append(("npc", npc_name, "KillEnemies"))
 
         for faction_name in self.ws.factions:
             relation = self.ws.get_relation("faction", faction_name)
-            if relation >= -2:
+            if relation >= -15:
                 self.eligible_quests.append(("faction", faction_name, "AttackThreateningEntities"))
-            if relation >= 3:
+            if relation >= 30:
                 self.eligible_quests.append(("faction", faction_name, "RecoverStolenItem"))
-            if relation >= 2:
+            # GuardEntity: only factions, relation >= 15 (was 2)
+            if relation >= 15:
                 self.eligible_quests.append(("faction", faction_name, "GuardEntity"))
-            if relation >= 1:
+            if relation >= 5:
                 self.eligible_quests.append(("faction", faction_name, "AttackEnemy"))
-            if relation >= 2:
+            if relation >= 15:
                 self.eligible_quests.append(("faction", faction_name, "StealStuff"))
-            if relation >= 4 or relation <= -4:
+            if relation >= 30 or relation <= -30:
                 self.eligible_quests.append(("faction", faction_name, "KillEnemies"))
 
     def generate_quest(self, giver_type: str, giver_name: str, quest_type: str) -> Optional[Dict[str, Any]]:
@@ -70,8 +77,6 @@ class QuestGenerator:
         received = {}
         favorability = {}
 
-        # Base favorability change from giver (positive if relation was good, but always positive for completing)
-        # In a real system, this would depend on quest difficulty, but we'll use simple values.
         base_favor = 1
         if quest_type == "KillEnemies":
             base_favor = 2
@@ -86,10 +91,8 @@ class QuestGenerator:
         elif quest_type == "AttackThreateningEntities":
             base_favor = 1
 
-        # Giver gains favor
         favorability[giver_name] = favorability.get(giver_name, 0) + base_favor
 
-        # Target (if NPC or faction) loses favor (negative effect)
         target_name = target_info.get("name")
         target_type = target_info.get("type")
         if target_type in ("npc", "faction") and target_name:
@@ -97,7 +100,6 @@ class QuestGenerator:
 
         # Determine rewards based on quest type
         if quest_type == "AttackThreateningEntities":
-            # Reward: loot from the enemy (random item)
             enemy_name = target_info.get("name")
             enemy_data = self.ws.enemies.get(enemy_name, {})
             loot_table = enemy_data.get("Loot", [])
@@ -108,9 +110,7 @@ class QuestGenerator:
                 received["Gold Coin"] = random.randint(10, 50)
 
         elif quest_type == "RecoverStolenItem":
-            # Reward: some gold or a small item from the giver's treasury
             if giver_type == "npc":
-                # NPCs might give a small item
                 items = self.ws.get_giver_items(giver_type, giver_name)
                 if items:
                     item = random.choice(items)
@@ -118,7 +118,6 @@ class QuestGenerator:
                 else:
                     received["Gold Coin"] = random.randint(20, 60)
             else:
-                # Faction gives gold from treasury
                 received["Gold Coin"] = random.randint(50, 150)
 
         elif quest_type == "GuardEntity":
@@ -128,7 +127,6 @@ class QuestGenerator:
             received["Gold Coin"] = random.randint(40, 120)
 
         elif quest_type == "StealStuff":
-            # Reward: part of the stolen item or gold
             stolen_item = target_info.get("name")
             if stolen_item:
                 received[stolen_item] = 1
@@ -137,13 +135,12 @@ class QuestGenerator:
 
         elif quest_type == "KillEnemies":
             received["Gold Coin"] = random.randint(100, 300)
-            # chance of rare item
             if random.random() < 0.3:
                 received["Ancient Artifact"] = 1
 
         return received, favorability
 
-    # ---------- Quest generation methods ----------
+    # ---------- Quest generation methods (unchanged except location handling) ----------
     def _generate_AttackThreateningEntities(self, giver_type: str, giver_name: str) -> Optional[Dict[str, Any]]:
         locs = self.ws.get_all_locations_with_enemies()
         if not locs:
@@ -312,7 +309,7 @@ class QuestGenerator:
         }
 
     def _generate_KillEnemies(self, giver_type: str, giver_name: str) -> Optional[Dict[str, Any]]:
-        npc_targets = self.ws.get_npcs_with_high_negative_relation(giver_type, giver_name, threshold=-3)
+        npc_targets = self.ws.get_npcs_with_high_negative_relation(giver_type, giver_name, threshold=-30)
         if npc_targets:
             target = random.choice(npc_targets)
             target_type = "npc"
@@ -322,7 +319,7 @@ class QuestGenerator:
             strong_factions = []
             for ft in faction_targets:
                 rel = self.ws.get_relation(giver_type, giver_name, ft)
-                if rel <= -3:
+                if rel <= -30:
                     strong_factions.append(ft)
             if not strong_factions:
                 return None

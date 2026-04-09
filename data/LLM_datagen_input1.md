@@ -39,7 +39,7 @@ There are two categories of enums used. The first is the "Types" category, which
 - ItemTypes 
 - QuestTypes (AttackThreateningEntities, RecoverStolenItem, GuardEntity, AttackEnemy, StealStuff, KillEnemies) 
 - EventTypes 
-- RelationshipLevels (Each level needs a name with Sworn Enemy at -5 and Sworn Ally at +5) 
+- RelationshipLevels (Each level needs a name with Sworn Enemy at -50 and Sworn Ally at +50) 
 
 ### Lists 
 - Species 
@@ -65,6 +65,7 @@ Skills : list[Skill]
 
 ## NPC 
 Name : string 
+NamePossessive : string 
 Species : Species 
 HomeLocation : Locations 
 CurrentLocation : Locations 
@@ -76,6 +77,7 @@ NPCLog : list[Log]
 
 ## Location 
 Name : string 
+NamePossessive : string
 Enemies : list[Enemies] 
 Resources : list[Items] 
 
@@ -85,6 +87,9 @@ Favorability : RelationshipLevels
 
 ## Faction 
 Name : string 
+NameDefinitive : string
+NamePossessive : string
+NameDefinitivePossessive : string
 Default_Location : Locations
 Relations : list[Relation] 
 Members : list[NPCs] 
@@ -97,7 +102,23 @@ Level : int
 
 ## Enemy 
 Name : string 
+NameSingular : string
+NamePlural : string 
+NamePossessiveSingular : string
+NamePossessivePlural : string
+IndefiniteArticle : string
+IndefiniteArticleCaps : string
 Loot : list[Items] 
+
+## Item
+Type : ItemTypes
+Name : string
+NameSingular : string
+NamePlural : string
+NamePossessiveSingular : string
+NamePossessivePlural : string
+IndefiniteArticle : string
+IndefiniteArticleCaps : string
 
 ## Log 
 Originator : Player | NPCs | Factions | Enemies 
@@ -116,7 +137,7 @@ It should follow this template
     "ItemTypes": ["Weapon", "Armor", "Potion", "Ingredient", "Key", "Artifact", "Currency"],
     "QuestTypes": ["AttackThreateningEntities", "RecoverStolenItem", "GuardEntity", "AttackEnemy", "StealStuff", "KillEnemies"],
     "EventTypes": ["Ambush", "Discovery", "Betrayal", "Alliance", "TradeRouteOpened", "ResourceDepleted"],
-    "RelationshipLevels": ["Sworn Enemy", "Enemy", "Hated", "Disliked", "Neutral", "Friendly", "Ally", "Friend", "Sworn Ally"] // It goes from -5 to 5, and all relationship VALUES should be the int.
+    "RelationshipLevels": {"Sworn Enemy" : -50, "Enemy" : -30, "Hated" : -15, "Disliked" : -5, "Neutral" : 0, "Friendly" : 5, "Friend" : 15, "Ally" : 30, "Sworn Ally" : 50} // For the negative levels, the value has to be at or lower than the value to count for that level. For the positive values it have to be at or above to count for that level. e.g both -4 and 4 are Neutral, -49 is Enemy, both -50 and -70 are sworn enemy, and both 30 and 35 are Friend.
   },
   "Lists": {
     "Species": ["Human", "Elf", "Dwarf", "Orc", "Halfling", "Lizardfolk"],
@@ -130,10 +151,27 @@ It should follow this template
   }
 }
 ;
+### ITEM DATA
+ITEM NAME: { 
+  "Type":  , 
+  "Name": , 
+  "NameSingular": , 
+  "NamePlural": ,
+  "NamePossessiveSingular": ,
+  "NamePossessivePlural": ,
+  "IndefiniteArticle": ,// a/an
+  "IndefiniteArticleCaps": // A/An
+
+}
+ITEM NAME: ...
+;
 ## GAME STATE DATA
 ### FACTION DATA
 FACTION NAME: {
-  "Name": ,
+  "Name": , 
+  "NameDefinitive": ,
+  "NamePossessive": ,
+  "NameDefinitivePossessive": ,
   "Relations": [
     {"Target": PLAYER, "Favorability": VALUE}, // Replace PLAYER with whatever the player is named.
     {"Target": FACTION, "Favorability": VALUE}, // Every Faction should have a relation to all other factions.
@@ -149,6 +187,7 @@ FACTION NAME: ...
 ### NPC DATA
 NPC NAME: {
   "Name": ,
+  "NamePossessive": ,
   "Species": ,
   "HomeLocation": ,
   "CurrentLocation": ,
@@ -168,22 +207,25 @@ NPC NAME: ...
 ;
 ### ENEMY DATA
 ENEMY NAME: {
-  "Name": 
-  "Loot": 
+  "Name": ,
+  "Loot": , 
+  "NameSingular": , 
+  "NamePlural": ,
+  "NamePossessiveSingular": ,
+  "NamePossessivePlural": ,
+  "IndefiniteArticle": , // a/an
+  "IndefiniteArticleCaps": / /A/An
 }
 ENEMY NAME: ...
 ;
 ### LOCATION DATA
 LOCATION NAME: {
   "Name": ,
+  "NamePossessive": ,
   "Enemies": ,
   "Resources": 
 }
 LOCATION NAME: ...
-;
-### ITEM DATA
-ITEM NAME: { "Type":  }
-ITEM NAME: ...
 ;
 ## PLAYER DATA
 {
@@ -192,7 +234,7 @@ ITEM NAME: ...
     {"Target": "FACTION", "Favorability": VALUE}, // There should be a relation to all Factions, and it should reflect their relation to the player.
   ],
   "NPCRelations": [
-    {"Target": "NPC", "Favorability": VALUE} // There should be a relation to all NPCs, and it should reflect their relation to the player.
+    {"Target": "NPC", "Favorability": VALUE} // There should be a relation to all NPCs, and it should reflect their relation to the player. The relations should span at least the full spectrum of -50 to 50, though they can go both above and below.
   ],
   "PartyMembers": , // Party members needs a positive relation to the player.
   "Inventory": {

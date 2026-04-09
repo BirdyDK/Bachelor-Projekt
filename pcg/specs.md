@@ -8,19 +8,19 @@ The world state data will be given in files formatted like `world_data.csv`.
 The quest structure should follow the rules laid out in `reduced_grammar.md`.
 
 ## Attack threatening entities
-This quest structure should mainly target monsters that can be found in the region. It can be given to the player so long as their relation level to the quest giver of -2 or higher.
+This quest structure should mainly target monsters that can be found in the region. It can be given to the player so long as their relation level to the quest giver of -15 or higher.
 
 ## Recover stolen item
-This quest structure can be given by NPCs or Factions with a relation of 3 or higher. The target can be any NPC or Faction they dislike.
+This quest structure can be given by NPCs or Factions with a relation of 30 or higher. The target can be any NPC or Faction they dislike.
 
 ## Guard entity
-This quest structure can be given by Factions with a relation of 2 or higher. The target can be any NPC in the Faction or a friendly Faction.
+This quest structure can be given by Factions with a relation of 15 or higher. The target can be any NPC in the Faction or a friendly Faction.
 
 ## Attack enemy
-This quest structure can be given by NPCs or Factions with a relation of 1 or higher. The target can be any Faction or NPC they dislike.
+This quest structure can be given by NPCs or Factions with a relation of 5 or higher. The target can be any Faction or NPC they dislike.
 
 ## Steal stuff
-This quest structure can be given by NPCs or Factions with a relation of 2 or higher. The target can be any Item they desire.
+This quest structure can be given by NPCs or Factions with a relation of 15 or higher. The target can be any Item they desire.
 
 ## Kill enemies
-This quest structure can only be given by a Faction or NPC with a relation level of 4 or higher, or -4 or lower. This structure is used to kill high-profile targets of oposing Factions or NPCs the quest giver hates, so it's only given to players that the Faction trusts (4 or higher) or to make the player prove that they're willing to go the mile to join them (-4 or lower).
+This quest structure can only be given by a Faction or NPC with a relation level of 30 or higher, or -30 or lower. This structure is used to kill high-profile targets of oposing Factions or NPCs the quest giver hates, so it's only given to players that the Faction trusts (30 or higher) or to make the player prove that they're willing to go the mile to join them (-30 or lower).

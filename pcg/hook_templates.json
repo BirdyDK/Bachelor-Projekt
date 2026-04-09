@@ -1,146 +1,199 @@
 {
   "generic": {
-    "greetings": [
+    "greeting": [
       "Hey there, {player_name}.",
       "Psst! Over here.",
-      "Greetings, traveller.",
+      "Greetings, {player_name}.",
+      "Ah, just the person I was looking for.",
       "I have a task for you, {player_name}.",
-      "Ah, just the person I was looking for."
+      "Listen well, {player_name}.",
+      "{giver_name} beckons you."
     ],
-    "relation_positive": [
-      "I know I can count on you.",
-      "You've proven yourself trustworthy.",
-      "I wouldn't ask just anyone."
-    ],
-    "relation_negative": [
-      "I suppose you'll do.",
-      "This is your chance to prove yourself.",
-      "Don't mess this up."
-    ],
-    "closings": [
+    "closing": [
       "What do you say?",
       "Will you help me?",
       "I await your return.",
-      "Don't keep me waiting."
+      "Don't keep me waiting.",
+      "Make haste!",
+      "Your reward awaits."
+    ],
+    "reward": [
+      "I'll reward you handsomely.",
+      "There's gold in it for you.",
+      "You'll be compensated well.",
+      "I can offer a generous payment.",
+      "Name your price – within reason."
     ]
   },
   "AttackThreateningEntities": {
-    "openers": [
-      "There are {enemies} lurking in {location}.",
-      "{enemies} have been spotted near {location}.",
-      "The {enemies} are getting too bold around {location}.",
-      "We need someone to clear out the {enemies} from {location}."
+    "categories": {
+      "problem": [
+        "There are {enemy_name_plural} lurking in {location_name}.",
+        "{enemy_indefinite_article_caps} {enemy_name_singular} has been spotted near {location_name}.",
+        "The {enemy_name_plural} are getting too bold around {location_name_possessive} borders.",
+        "{enemy_indefinite_article_caps} {enemy_name_singular} has made {location_name} its hunting ground."
+      ],
+      "reason": [
+        "They're a danger to everyone.",
+        "They've been attacking travellers.",
+        "They've stolen supplies.",
+        "They're disturbing the peace.",
+        "The local folk are terrified."
+      ],
+      "task": [
+        "Go to {location_name} and deal with them.",
+        "Hunt down the {enemy_name_plural} at {location_name}.",
+        "Make sure those {enemy_name_plural} won't bother us again.",
+        "Slay {enemy_indefinite_article} {enemy_name_singular} and return to me.",
+        "Clear {location_name} of this menace."
+      ]
+    },
+    "sequences": [
+      ["greeting", "problem", "reason", "task", "reward", "closing"],
+      ["greeting", "problem", "task", "reason", "reward", "closing"],
+      ["greeting", "reason", "problem", "task", "reward", "closing"],
+      ["greeting", "task", "problem", "reason", "reward", "closing"]
     ],
-    "reason": [
-      "They're a danger to everyone.",
-      "They've been attacking travellers.",
-      "They've stolen supplies.",
-      "They're disturbing the peace."
-    ],
-    "ask": [
-      "Go to {location} and deal with them.",
-      "Hunt down the {enemies} at {location}.",
-      "Make sure those {enemies} won't bother us again."
-    ]
+    "optional_categories": ["reward"]
   },
   "RecoverStolenItem": {
-    "openers": [
-      "My {item} has been stolen!",
-      "Someone took my {item}.",
-      "I had a {item} that's now gone.",
-      "A thief made off with my {item}."
+    "categories": {
+      "problem": [
+        "My {item_name_singular} has been stolen!",
+        "Someone took {item_indefinite_article} {item_name_singular} from me.",
+        "I had {item_indefinite_article} {item_name_singular} that's now gone.",
+        "{item_indefinite_article_caps} {item_name_singular} was taken from {giver_name_possessive} possession."
+      ],
+      "suspect": [
+        "I suspect {thief_name} is behind it.",
+        "{thief_name_possessive} agents have been seen acting suspiciously.",
+        "It must be {thief_name} – they've always wanted {item_indefinite_article} {item_name_singular}.",
+        "The culprit is likely {thief_name}."
+      ],
+      "task": [
+        "Find them and bring back my {item_name_singular}.",
+        "I need you to recover it.",
+        "Get my {item_name_singular} back, by any means.",
+        "Track down the thief and return what's mine."
+      ]
+    },
+    "sequences": [
+      ["greeting", "problem", "suspect", "task", "reward", "closing"],
+      ["greeting", "suspect", "problem", "task", "reward", "closing"],
+      ["greeting", "problem", "task", "suspect", "reward", "closing"]
     ],
-    "thief_info": [
-      "I suspect {thief_name} is behind it.",
-      "{thief_name} has been seen acting suspiciously.",
-      "It must be {thief_name} – they've always wanted it.",
-      "The culprit is likely {thief_name}."
-    ],
-    "ask": [
-      "Find them and bring back my {item}.",
-      "I need you to recover it.",
-      "Get my {item} back, by any means.",
-      "Track down the thief and return what's mine."
-    ]
+    "optional_categories": ["reward"]
   },
   "GuardEntity": {
-    "openers": [
-      "I need someone to protect {target_name}.",
-      "{target_name} is in danger.",
-      "There are threats against {target_name}.",
-      "{target_name} requires an escort."
+    "categories": {
+      "problem": [
+        "I need someone to protect {target_name}.",
+        "{target_name} is in danger.",
+        "There are threats against {target_name_possessive} life.",
+        "{target_name} requires an escort."
+      ],
+      "reason": [
+        "They're an important member of our faction.",
+        "They carry vital information.",
+        "Their safety is paramount right now.",
+        "Enemies are plotting against them."
+      ],
+      "task": [
+        "Stay by {target_name_possessive} side and keep them safe.",
+        "Guard {target_name} until further notice.",
+        "Do not let any harm come to {target_name}.",
+        "Escort them and defend them if needed."
+      ]
+    },
+    "sequences": [
+      ["greeting", "problem", "reason", "task", "reward", "closing"],
+      ["greeting", "reason", "problem", "task", "reward", "closing"],
+      ["greeting", "problem", "task", "reason", "reward", "closing"]
     ],
-    "reason": [
-      "They're an important member of our faction.",
-      "They carry vital information.",
-      "Their safety is paramount right now.",
-      "Enemies are plotting against them."
-    ],
-    "ask": [
-      "Stay by their side and keep them safe.",
-      "Guard {target_name} until further notice.",
-      "Do not let any harm come to {target_name}.",
-      "Escort them and defend them if needed."
-    ]
+    "optional_categories": ["reward"]
   },
   "AttackEnemy": {
-    "openers": [
-      "I want you to teach {target_name} a lesson.",
-      "{target_name} has crossed the line.",
-      "It's time to strike at {target_name}.",
-      "I need you to attack {target_name}."
+    "categories": {
+      "problem": [
+        "I want you to teach {target_name} a lesson.",
+        "{target_name} has crossed the line.",
+        "It's time to strike at {target_name}.",
+        "I need you to attack {target_name_possessive} forces."
+      ],
+      "reason": [
+        "They've been sabotaging our efforts.",
+        "They insulted our faction.",
+        "They stole from us.",
+        "They're a constant nuisance."
+      ],
+      "task": [
+        "Go to {location_name} and make them regret it.",
+        "Show them they can't push us around.",
+        "Raid their camp and send a message.",
+        "Put {target_name} in their place."
+      ]
+    },
+    "sequences": [
+      ["greeting", "problem", "reason", "task", "reward", "closing"],
+      ["greeting", "reason", "problem", "task", "reward", "closing"],
+      ["greeting", "problem", "task", "reason", "reward", "closing"]
     ],
-    "reason": [
-      "They've been sabotaging our efforts.",
-      "They insulted our faction.",
-      "They stole from us.",
-      "They're a constant nuisance."
-    ],
-    "ask": [
-      "Go to {location} and make them regret it.",
-      "Show them they can't push us around.",
-      "Raid their camp and send a message.",
-      "Put {target_name} in their place."
-    ]
+    "optional_categories": ["reward"]
   },
   "StealStuff": {
-    "openers": [
-      "I have my eye on something.",
-      "There's an item I'd like you to acquire.",
-      "I need a certain object that's not easily bought.",
-      "A little acquisition job has come up."
+    "categories": {
+      "problem": [
+        "I have my eye on something.",
+        "There's an item I'd like you to acquire.",
+        "I need a certain object that's not easily bought.",
+        "A little acquisition job has come up."
+      ],
+      "target_info": [
+        "{victim_name} has {item_indefinite_article} {item_name_singular} that I want.",
+        "The {item_name_singular} is in the possession of {victim_name}.",
+        "{victim_name_possessive} treasury contains {item_indefinite_article} {item_name_singular}.",
+        "I've heard {victim_name} keeps {item_indefinite_article} {item_name_singular} locked away."
+      ],
+      "task": [
+        "Sneak in and take it.",
+        "Relieve them of that {item_name_singular}.",
+        "Bring me the {item_name_singular}, no questions asked.",
+        "I don't care how – just get me that {item_name_singular}."
+      ]
+    },
+    "sequences": [
+      ["greeting", "problem", "target_info", "task", "reward", "closing"],
+      ["greeting", "target_info", "problem", "task", "reward", "closing"],
+      ["greeting", "problem", "task", "target_info", "reward", "closing"]
     ],
-    "target_info": [
-      "{victim_name} has a {item} that I want.",
-      "The {item} is in the possession of {victim_name}.",
-      "{victim_name} is hoarding a {item}.",
-      "I've heard {victim_name} keeps a {item} locked away."
-    ],
-    "ask": [
-      "Sneak in and take it.",
-      "Relieve them of that {item}.",
-      "Bring me the {item}, no questions asked.",
-      "I don't care how – just get me that {item}."
-    ]
+    "optional_categories": ["reward"]
   },
   "KillEnemies": {
-    "openers": [
-      "This is a serious matter.",
-      "I need someone eliminated.",
-      "There's a target that must be removed.",
-      "An enemy of ours has become too powerful."
+    "categories": {
+      "problem": [
+        "This is a serious matter.",
+        "I need someone eliminated.",
+        "There's a target that must be removed.",
+        "An enemy of ours has become too powerful."
+      ],
+      "target_info": [
+        "{target_name} is a high‑value target.",
+        "{target_name} has been causing immense trouble.",
+        "Getting rid of {target_name} would cripple our enemies.",
+        "{target_name} must die."
+      ],
+      "task": [
+        "Find {target_name} and end them.",
+        "Make sure {target_name} never returns.",
+        "I want proof of {target_name_possessive} death.",
+        "This is a kill order. Do not fail."
+      ]
+    },
+    "sequences": [
+      ["greeting", "problem", "target_info", "task", "reward", "closing"],
+      ["greeting", "target_info", "problem", "task", "reward", "closing"],
+      ["greeting", "problem", "task", "target_info", "reward", "closing"]
     ],
-    "target_info": [
-      "{target_name} is a high‑value target.",
-      "{target_name} has been causing immense trouble.",
-      "Getting rid of {target_name} would cripple our enemies.",
-      "{target_name} must die."
-    ],
-    "ask": [
-      "Find {target_name} and end them.",
-      "Make sure {target_name} never returns.",
-      "I want proof of {target_name}'s death.",
-      "This is a kill order. Do not fail."
-    ]
+    "optional_categories": ["reward"]
   }
 }
