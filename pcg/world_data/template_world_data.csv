@@ -3,343 +3,1451 @@
   "Types": {
     "ItemTypes": ["Weapon", "Armor", "Potion", "Ingredient", "Key", "Artifact", "Currency"],
     "QuestTypes": ["AttackThreateningEntities", "RecoverStolenItem", "GuardEntity", "AttackEnemy", "StealStuff", "KillEnemies"],
-    "EventTypes": ["Ambush", "Discovery", "Betrayal", "Alliance", "TradeRouteOpened", "ResourceDepleted"]
+    "EventTypes": ["Ambush", "Discovery", "Betrayal", "Alliance", "TradeRouteOpened", "ResourceDepleted"],
+    "RelationshipLevels": ["Sworn Enemy", "Enemy", "Hated", "Disliked", "Neutral", "Friendly", "Ally", "Friend", "Sworn Ally"]
   },
   "Lists": {
-    "Species": ["Human", "Elf", "Dwarf", "Orc", "Halfling", "Lizardfolk"],
-    "Roles": ["Innkeeper", "Blacksmith", "Merchant", "GuardCaptain", "Apothecary", "Thief", "Wizard", "Ranger", "Bard", "Priest"],
-    "Locations": ["Whispering Pines Inn", "The Rusty Anvil", "Murkwood Forest", "Shadowfen Marsh", "Sunstone Keep", "Glimmerdale", "Northwatch Tower", "Crimson Creek"],
-    "Factions": ["The Iron Covenant", "The Verdant Circle", "The Ashen Claw", "Sunspear Militia"],
-    "Enemies": ["Forest Goblin", "Marsh Troll", "Cultist Fanatic", "Iron Covenant Raider", "Shadow Viper", "Corrupted Treant"],
-    "Items": ["Iron Sword", "Leather Vest", "Health Potion", "Mana Potion", "Iron Shield", "Silver Key", "Mysterious Herb", "Dwarven Ale", "Healing Poultice", "Lockpick Set", "Obsidian Arrowhead", "Scroll of Fireball", "Steel Gauntlets", "Elven Bread"],
-    "NPCs": ["Elara Nightshade", "Borin Ironfoot", "Lyra Swiftarrow", "Grimgar the Old", "Mira Thornwood", "Aldric the Wise", "Sera Goldleaf", "Torvin Stonehand", "Faelan Moonshadow", "Greta Honeywell", "Marcus Vane"],
-    "Player": ["Kaelen"]
+    "Species": ["Human", "Elf", "Dwarf", "Orc", "Halfling", "Lizardfolk", "Gnome", "Tiefling"],
+    "Roles": ["Innkeeper", "Blacksmith", "Merchant", "GuardCaptain", "Apothecary", "Thief", "Wizard", "Ranger", "Bard", "Priest", "Farmer", "Alchemist", "Soldier", "Noble", "Scout"],
+    "Locations": ["Everwood", "Ironhold", "Shadowfen", "Dawnspire", "Crimson Market", "Wildclaw Camp", "Misty Vale", "Stonehollow", "Glimmerdale", "Ashen Wastes", "Silverpine Forest", "Blackreach Mine"],
+    "Factions": ["IronFist", "SilentLeaf", "CrimsonCoin", "ShadowNetwork", "OrderOfDawn", "WildclawTribe"],
+    "Enemies": ["Goblin", "Orc Brute", "Shadow Assassin", "Forest Wolf", "Fire Elemental", "Ice Wraith", "Dark Cultist", "Giant Spider", "Troll", "Harpy", "Skeleton Warrior", "Zombie", "Bandit Leader", "Cave Bear", "Dire Rat", "Lizardfolk Raider", "Dwarven Golem", "Vampire Spawn", "Wyrmling", "Ghost", "Ogre", "Manticore"],
+    "Items": ["Iron Sword", "Steel Shield", "Healing Potion", "Mana Potion", "Elixir of Strength", "Leather Armor", "Chainmail", "Dagger", "Longbow", "Arrows", "Lockpick", "Herb Bundle", "Silver Necklace", "Ancient Tome", "Dragon Scale", "Mystic Gem", "Rope", "Torch", "Rations", "Water Skin", "Lockbox", "Key of Shadows", "Amulet of Dawn", "Crimson Coin", "Iron Ore", "Wooden Staff", "Enchanted Ring", "Poison Vial", "Trap Kit", "Map Fragment"],
+    "NPCs": ["Captain Aldric", "Sergeant Bruna", "Knight Caelan", "Squire Dara", "Mage Egon", "Scout Finn", "Healer Greta", "Archer Hugo", "Pikeman Iris", "Guardian Jorik", "Ranger Kaelen", "Druid Liana", "Warden Merek", "Tracker Nessa", "Hunter Orin", "Shaman Pella", "Beastmaster Quill", "Woodsman Roric", "Tender Sera", "Bowyer Tobin", "Merchant Ulric", "Banker Vara", "Trader Wex", "Smuggler Xara", "Guildmaster Yann", "Appraiser Zara", "Accountant Arvid", "Broker Brynja", "Collector Cade", "Fixer Dagna", "Thief Eris", "Spymaster Fenn", "Infiltrator Giselle", "Locksmith Harkon", "Poisoner Ilya", "Saboteur Jax", "Informant Kira", "Ghost Lir", "Cutpurse Mira", "Cleric Aldus", "Paladin Brigid", "Acolyte Cedric", "Exorcist Daria", "Monk Elara", "Templar Faust", "Healer Gemma", "Missionary Hilda", "Zealot Ingram", "Chanter Juno", "Warlord Krog", "Shaman Lorth", "Hunter Morna", "Tracker Nok", "Beast Tamer Oona", "Scout Palk", "Berserker Qara", "Fletcher Rusk", "Totem Carrier Sarn"]
   }
 }
 ;
 ## GAME STATE DATA
-### NPC DATA
-Elara Nightshade: {
-  "Name": "Elara Nightshade",
-  "Species": "Elf",
-  "HomeLocation": "Whispering Pines Inn",
-  "CurrentLocation": "Whispering Pines Inn",
-  "Faction": "The Verdant Circle",
-  "OwnedItems": {
-    "Mysterious Herb": 3,
-    "Healing Poultice": 2
-  },
-  "Role": "Apothecary",
+### FACTION DATA
+IronFist: {
+  "Name": "IronFist",
   "Relations": [
     {"Target": "Kaelen", "Favorability": 2},
-    {"Target": "The Iron Covenant", "Favorability": -2}
+    {"Target": "SilentLeaf", "Favorability": 1},
+    {"Target": "CrimsonCoin", "Favorability": 3},
+    {"Target": "ShadowNetwork", "Favorability": -4},
+    {"Target": "OrderOfDawn", "Favorability": 2},
+    {"Target": "WildclawTribe", "Favorability": -3}
   ],
-  "NPCLog": []
-}
-
-Borin Ironfoot: {
-  "Name": "Borin Ironfoot",
-  "Species": "Dwarf",
-  "HomeLocation": "The Rusty Anvil",
-  "CurrentLocation": "The Rusty Anvil",
-  "Faction": "The Iron Covenant",
-  "OwnedItems": {
-    "Iron Sword": 1,
-    "Steel Gauntlets": 1
+  "Members": ["Captain Aldric", "Sergeant Bruna", "Knight Caelan", "Squire Dara", "Mage Egon", "Scout Finn", "Healer Greta", "Archer Hugo", "Pikeman Iris", "Guardian Jorik"],
+  "Treasury": {
+    "Iron Sword": 15,
+    "Steel Shield": 10,
+    "Chainmail": 8,
+    "Rations": 50,
+    "Crimson Coin": 500
   },
-  "Role": "Blacksmith",
+  "FactionLog": []
+}
+SilentLeaf: {
+  "Name": "SilentLeaf",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 4},
+    {"Target": "IronFist", "Favorability": 1},
+    {"Target": "CrimsonCoin", "Favorability": 2},
+    {"Target": "ShadowNetwork", "Favorability": -2},
+    {"Target": "OrderOfDawn", "Favorability": 3},
+    {"Target": "WildclawTribe", "Favorability": -1}
+  ],
+  "Members": ["Ranger Kaelen", "Druid Liana", "Warden Merek", "Tracker Nessa", "Hunter Orin", "Shaman Pella", "Beastmaster Quill", "Woodsman Roric", "Tender Sera", "Bowyer Tobin"],
+  "Treasury": {
+    "Herb Bundle": 30,
+    "Healing Potion": 12,
+    "Leather Armor": 9,
+    "Longbow": 6,
+    "Arrows": 100
+  },
+  "FactionLog": []
+}
+CrimsonCoin: {
+  "Name": "CrimsonCoin",
   "Relations": [
     {"Target": "Kaelen", "Favorability": 1},
-    {"Target": "The Verdant Circle", "Favorability": -1}
+    {"Target": "IronFist", "Favorability": 3},
+    {"Target": "SilentLeaf", "Favorability": 2},
+    {"Target": "ShadowNetwork", "Favorability": -3},
+    {"Target": "OrderOfDawn", "Favorability": 1},
+    {"Target": "WildclawTribe", "Favorability": -2}
   ],
-  "NPCLog": []
-}
-
-Lyra Swiftarrow: {
-  "Name": "Lyra Swiftarrow",
-  "Species": "Elf",
-  "HomeLocation": "Glimmerdale",
-  "CurrentLocation": "Murkwood Forest",
-  "Faction": "The Verdant Circle",
-  "OwnedItems": {},
-  "Role": "Ranger",
-  "Relations": [
-    {"Target": "Kaelen", "Favorability": 3}
-  ],
-  "NPCLog": []
-}
-
-Grimgar the Old: {
-  "Name": "Grimgar the Old",
-  "Species": "Human",
-  "HomeLocation": "Northwatch Tower",
-  "CurrentLocation": "Northwatch Tower",
-  "Faction": "Sunspear Militia",
-  "OwnedItems": {
-    "Scroll of Fireball": 1
+  "Members": ["Merchant Ulric", "Banker Vara", "Trader Wex", "Smuggler Xara", "Guildmaster Yann", "Appraiser Zara", "Accountant Arvid", "Broker Brynja", "Collector Cade"],
+  "Treasury": {
+    "Crimson Coin": 2000,
+    "Silver Necklace": 5,
+    "Enchanted Ring": 3,
+    "Lockbox": 2,
+    "Map Fragment": 1
   },
+  "FactionLog": []
+}
+ShadowNetwork: {
+  "Name": "ShadowNetwork",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": -2},
+    {"Target": "IronFist", "Favorability": -4},
+    {"Target": "SilentLeaf", "Favorability": -2},
+    {"Target": "CrimsonCoin", "Favorability": -3},
+    {"Target": "OrderOfDawn", "Favorability": -5},
+    {"Target": "WildclawTribe", "Favorability": 1}
+  ],
+  "Members": ["Thief Eris", "Spymaster Fenn", "Infiltrator Giselle", "Locksmith Harkon", "Poisoner Ilya", "Saboteur Jax", "Informant Kira", "Ghost Lir", "Cutpurse Mira"],
+  "Treasury": {
+    "Dagger": 20,
+    "Lockpick": 15,
+    "Poison Vial": 8,
+    "Trap Kit": 6,
+    "Key of Shadows": 1
+  },
+  "FactionLog": []
+}
+OrderOfDawn: {
+  "Name": "OrderOfDawn",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 3},
+    {"Target": "IronFist", "Favorability": 2},
+    {"Target": "SilentLeaf", "Favorability": 3},
+    {"Target": "CrimsonCoin", "Favorability": 1},
+    {"Target": "ShadowNetwork", "Favorability": -5},
+    {"Target": "WildclawTribe", "Favorability": -1}
+  ],
+  "Members": ["Cleric Aldus", "Paladin Brigid", "Acolyte Cedric", "Exorcist Daria", "Monk Elara", "Templar Faust", "Healer Gemma", "Missionary Hilda", "Zealot Ingram", "Chanter Juno"],
+  "Treasury": {
+    "Amulet of Dawn": 4,
+    "Ancient Tome": 2,
+    "Healing Potion": 25,
+    "Mana Potion": 15,
+    "Wooden Staff": 7
+  },
+  "FactionLog": []
+}
+WildclawTribe: {
+  "Name": "WildclawTribe",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 0},
+    {"Target": "IronFist", "Favorability": -3},
+    {"Target": "SilentLeaf", "Favorability": -1},
+    {"Target": "CrimsonCoin", "Favorability": -2},
+    {"Target": "ShadowNetwork", "Favorability": 1},
+    {"Target": "OrderOfDawn", "Favorability": -1}
+  ],
+  "Members": ["Warlord Krog", "Shaman Lorth", "Hunter Morna", "Tracker Nok", "Beast Tamer Oona", "Scout Palk", "Berserker Qara", "Fletcher Rusk", "Totem Carrier Sarn"],
+  "Treasury": {
+    "Dragon Scale": 3,
+    "Iron Ore": 40,
+    "Mystic Gem": 5,
+    "Leather Armor": 12,
+    "Rations": 30
+  },
+  "FactionLog": []
+}
+;
+### NPC DATA
+Captain Aldric: {
+  "Name": "Captain Aldric",
+  "Species": "Human",
+  "HomeLocation": "Ironhold",
+  "CurrentLocation": "Ironhold",
+  "Faction": "IronFist",
+  "OwnedItems": {"Iron Sword": 1, "Steel Shield": 1},
+  "Role": "GuardCaptain",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 2},
+    {"Target": "IronFist", "Favorability": 4},
+    {"Target": "ShadowNetwork", "Favorability": -4},
+    {"Target": "Sergeant Bruna", "Favorability": 4},
+    {"Target": "Knight Caelan", "Favorability": 3},
+    {"Target": "Thief Eris", "Favorability": -3}
+  ],
+  "NPCLog": []
+}
+Sergeant Bruna: {
+  "Name": "Sergeant Bruna",
+  "Species": "Dwarf",
+  "HomeLocation": "Ironhold",
+  "CurrentLocation": "Stonehollow",
+  "Faction": "IronFist",
+  "OwnedItems": {"Chainmail": 1, "Healing Potion": 2},
+  "Role": "Soldier",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 3},
+    {"Target": "IronFist", "Favorability": 3},
+    {"Target": "WildclawTribe", "Favorability": -3},
+    {"Target": "Captain Aldric", "Favorability": 4},
+    {"Target": "Squire Dara", "Favorability": 3},
+    {"Target": "Warlord Krog", "Favorability": -4}
+  ],
+  "NPCLog": []
+}
+Knight Caelan: {
+  "Name": "Knight Caelan",
+  "Species": "Human",
+  "HomeLocation": "Ironhold",
+  "CurrentLocation": "Dawnspire",
+  "Faction": "IronFist",
+  "OwnedItems": {"Longbow": 1, "Arrows": 20},
+  "Role": "Soldier",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 1},
+    {"Target": "IronFist", "Favorability": 3},
+    {"Target": "ShadowNetwork", "Favorability": -2},
+    {"Target": "Captain Aldric", "Favorability": 3},
+    {"Target": "Paladin Brigid", "Favorability": 3},
+    {"Target": "Spymaster Fenn", "Favorability": -3}
+  ],
+  "NPCLog": []
+}
+Squire Dara: {
+  "Name": "Squire Dara",
+  "Species": "Halfling",
+  "HomeLocation": "Ironhold",
+  "CurrentLocation": "Ironhold",
+  "Faction": "IronFist",
+  "OwnedItems": {"Dagger": 1, "Rations": 5},
+  "Role": "Soldier",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 4},
+    {"Target": "IronFist", "Favorability": 2},
+    {"Target": "CrimsonCoin", "Favorability": 1},
+    {"Target": "Sergeant Bruna", "Favorability": 3},
+    {"Target": "Merchant Ulric", "Favorability": 3},
+    {"Target": "Thief Eris", "Favorability": -1}
+  ],
+  "NPCLog": []
+}
+Mage Egon: {
+  "Name": "Mage Egon",
+  "Species": "Elf",
+  "HomeLocation": "Silverpine Forest",
+  "CurrentLocation": "Ironhold",
+  "Faction": "IronFist",
+  "OwnedItems": {"Mana Potion": 3, "Wooden Staff": 1},
   "Role": "Wizard",
   "Relations": [
     {"Target": "Kaelen", "Favorability": 2},
-    {"Target": "The Ashen Claw", "Favorability": -3}
+    {"Target": "IronFist", "Favorability": 2},
+    {"Target": "OrderOfDawn", "Favorability": 3},
+    {"Target": "Druid Liana", "Favorability": 4},
+    {"Target": "Cleric Aldus", "Favorability": 3},
+    {"Target": "Shaman Lorth", "Favorability": -2}
   ],
   "NPCLog": []
 }
-
-Mira Thornwood: {
-  "Name": "Mira Thornwood",
+Scout Finn: {
+  "Name": "Scout Finn",
   "Species": "Human",
-  "HomeLocation": "Whispering Pines Inn",
-  "CurrentLocation": "Whispering Pines Inn",
-  "Faction": null,
-  "OwnedItems": {
-    "Dwarven Ale": 5,
-    "Elven Bread": 3
-  },
-  "Role": "Innkeeper",
-  "Relations": [
-    {"Target": "Kaelen", "Favorability": 4}
-  ],
-  "NPCLog": []
-}
-
-Aldric the Wise: {
-  "Name": "Aldric the Wise",
-  "Species": "Human",
-  "HomeLocation": "Sunstone Keep",
-  "CurrentLocation": "Sunstone Keep",
-  "Faction": "Sunspear Militia",
-  "OwnedItems": {},
-  "Role": "GuardCaptain",
+  "HomeLocation": "Misty Vale",
+  "CurrentLocation": "Ashen Wastes",
+  "Faction": "IronFist",
+  "OwnedItems": {"Leather Armor": 1, "Trap Kit": 1},
+  "Role": "Scout",
   "Relations": [
     {"Target": "Kaelen", "Favorability": 1},
-    {"Target": "The Ashen Claw", "Favorability": -4}
+    {"Target": "IronFist", "Favorability": 2},
+    {"Target": "SilentLeaf", "Favorability": 3},
+    {"Target": "Tracker Nessa", "Favorability": 4},
+    {"Target": "Ranger Kaelen", "Favorability": 3},
+    {"Target": "Orc Brute", "Favorability": -3}
   ],
   "NPCLog": []
 }
-
-Sera Goldleaf: {
-  "Name": "Sera Goldleaf",
-  "Species": "Halfling",
+Healer Greta: {
+  "Name": "Healer Greta",
+  "Species": "Gnome",
   "HomeLocation": "Glimmerdale",
-  "CurrentLocation": "Glimmerdale",
-  "Faction": null,
-  "OwnedItems": {
-    "Lockpick Set": 1,
-    "Silver Key": 1
-  },
-  "Role": "Merchant",
+  "CurrentLocation": "Ironhold",
+  "Faction": "IronFist",
+  "OwnedItems": {"Healing Potion": 5, "Herb Bundle": 4},
+  "Role": "Apothecary",
   "Relations": [
-    {"Target": "Kaelen", "Favorability": 0}
+    {"Target": "Kaelen", "Favorability": 5},
+    {"Target": "IronFist", "Favorability": 3},
+    {"Target": "OrderOfDawn", "Favorability": 2},
+    {"Target": "Healer Gemma", "Favorability": 4},
+    {"Target": "Squire Dara", "Favorability": 3},
+    {"Target": "Poisoner Ilya", "Favorability": -4}
   ],
   "NPCLog": []
 }
-
-Torvin Stonehand: {
-  "Name": "Torvin Stonehand",
+Archer Hugo: {
+  "Name": "Archer Hugo",
+  "Species": "Human",
+  "HomeLocation": "Everwood",
+  "CurrentLocation": "Ironhold",
+  "Faction": "IronFist",
+  "OwnedItems": {"Longbow": 1, "Arrows": 30},
+  "Role": "Soldier",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 0},
+    {"Target": "IronFist", "Favorability": 2},
+    {"Target": "WildclawTribe", "Favorability": -2},
+    {"Target": "Bowyer Tobin", "Favorability": 3},
+    {"Target": "Hunter Orin", "Favorability": 2},
+    {"Target": "Goblin", "Favorability": -3}
+  ],
+  "NPCLog": []
+}
+Pikeman Iris: {
+  "Name": "Pikeman Iris",
+  "Species": "Human",
+  "HomeLocation": "Stonehollow",
+  "CurrentLocation": "Ironhold",
+  "Faction": "IronFist",
+  "OwnedItems": {"Iron Sword": 1, "Rations": 3},
+  "Role": "Soldier",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": -1},
+    {"Target": "IronFist", "Favorability": 3},
+    {"Target": "ShadowNetwork", "Favorability": -3},
+    {"Target": "Sergeant Bruna", "Favorability": 3},
+    {"Target": "Cutpurse Mira", "Favorability": -4},
+    {"Target": "Guardian Jorik", "Favorability": 2}
+  ],
+  "NPCLog": []
+}
+Guardian Jorik: {
+  "Name": "Guardian Jorik",
   "Species": "Dwarf",
-  "HomeLocation": "The Rusty Anvil",
-  "CurrentLocation": "The Rusty Anvil",
-  "Faction": "The Iron Covenant",
-  "OwnedItems": {
-    "Iron Shield": 2
-  },
-  "Role": "Blacksmith",
+  "HomeLocation": "Blackreach Mine",
+  "CurrentLocation": "Ironhold",
+  "Faction": "IronFist",
+  "OwnedItems": {"Steel Shield": 1, "Iron Ore": 10},
+  "Role": "GuardCaptain",
   "Relations": [
-    {"Target": "Kaelen", "Favorability": 0}
+    {"Target": "Kaelen", "Favorability": 2},
+    {"Target": "IronFist", "Favorability": 4},
+    {"Target": "CrimsonCoin", "Favorability": 1},
+    {"Target": "Captain Aldric", "Favorability": 3},
+    {"Target": "Merchant Ulric", "Favorability": 3},
+    {"Target": "Dark Cultist", "Favorability": -3}
   ],
   "NPCLog": []
 }
-
-Faelan Moonshadow: {
-  "Name": "Faelan Moonshadow",
+Ranger Kaelen: {
+  "Name": "Ranger Kaelen",
   "Species": "Elf",
-  "HomeLocation": "Glimmerdale",
-  "CurrentLocation": "Shadowfen Marsh",
-  "Faction": "The Verdant Circle",
-  "OwnedItems": {
-    "Obsidian Arrowhead": 4
-  },
+  "HomeLocation": "Silverpine Forest",
+  "CurrentLocation": "Misty Vale",
+  "Faction": "SilentLeaf",
+  "OwnedItems": {"Longbow": 1, "Herb Bundle": 3},
+  "Role": "Ranger",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 4},
+    {"Target": "SilentLeaf", "Favorability": 4},
+    {"Target": "IronFist", "Favorability": 2},
+    {"Target": "Druid Liana", "Favorability": 4},
+    {"Target": "Scout Finn", "Favorability": 3},
+    {"Target": "Warlord Krog", "Favorability": -3}
+  ],
+  "NPCLog": []
+}
+Druid Liana: {
+  "Name": "Druid Liana",
+  "Species": "Elf",
+  "HomeLocation": "Everwood",
+  "CurrentLocation": "Everwood",
+  "Faction": "SilentLeaf",
+  "OwnedItems": {"Healing Potion": 2, "Herb Bundle": 5},
+  "Role": "Priest",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 5},
+    {"Target": "SilentLeaf", "Favorability": 5},
+    {"Target": "OrderOfDawn", "Favorability": 3},
+    {"Target": "Ranger Kaelen", "Favorability": 4},
+    {"Target": "Mage Egon", "Favorability": 4},
+    {"Target": "Shaman Lorth", "Favorability": -2}
+  ],
+  "NPCLog": []
+}
+Warden Merek: {
+  "Name": "Warden Merek",
+  "Species": "Human",
+  "HomeLocation": "Stonehollow",
+  "CurrentLocation": "Blackreach Mine",
+  "Faction": "SilentLeaf",
+  "OwnedItems": {"Leather Armor": 1, "Trap Kit": 2},
   "Role": "Ranger",
   "Relations": [
     {"Target": "Kaelen", "Favorability": 2},
-    {"Target": "The Ashen Claw", "Favorability": -1}
+    {"Target": "SilentLeaf", "Favorability": 3},
+    {"Target": "CrimsonCoin", "Favorability": 1},
+    {"Target": "Tracker Nessa", "Favorability": 3},
+    {"Target": "Beastmaster Quill", "Favorability": 3},
+    {"Target": "Smuggler Xara", "Favorability": -3}
   ],
   "NPCLog": []
 }
-
-Greta Honeywell: {
-  "Name": "Greta Honeywell",
+Tracker Nessa: {
+  "Name": "Tracker Nessa",
+  "Species": "Halfling",
+  "HomeLocation": "Misty Vale",
+  "CurrentLocation": "Silverpine Forest",
+  "Faction": "SilentLeaf",
+  "OwnedItems": {"Dagger": 1, "Rations": 4},
+  "Role": "Scout",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 3},
+    {"Target": "SilentLeaf", "Favorability": 3},
+    {"Target": "ShadowNetwork", "Favorability": -2},
+    {"Target": "Scout Finn", "Favorability": 4},
+    {"Target": "Hunter Orin", "Favorability": 3},
+    {"Target": "Thief Eris", "Favorability": -3}
+  ],
+  "NPCLog": []
+}
+Hunter Orin: {
+  "Name": "Hunter Orin",
   "Species": "Human",
-  "HomeLocation": "Whispering Pines Inn",
-  "CurrentLocation": "Whispering Pines Inn",
-  "Faction": null,
-  "OwnedItems": {},
+  "HomeLocation": "Everwood",
+  "CurrentLocation": "Ashen Wastes",
+  "Faction": "SilentLeaf",
+  "OwnedItems": {"Longbow": 1, "Arrows": 25},
+  "Role": "Ranger",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 1},
+    {"Target": "SilentLeaf", "Favorability": 2},
+    {"Target": "WildclawTribe", "Favorability": -1},
+    {"Target": "Tracker Nessa", "Favorability": 3},
+    {"Target": "Archer Hugo", "Favorability": 2},
+    {"Target": "Forest Wolf", "Favorability": -3}
+  ],
+  "NPCLog": []
+}
+Shaman Pella: {
+  "Name": "Shaman Pella",
+  "Species": "Gnome",
+  "HomeLocation": "Glimmerdale",
+  "CurrentLocation": "Everwood",
+  "Faction": "SilentLeaf",
+  "OwnedItems": {"Mystic Gem": 1, "Herb Bundle": 6},
+  "Role": "Alchemist",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 3},
+    {"Target": "SilentLeaf", "Favorability": 4},
+    {"Target": "OrderOfDawn", "Favorability": 2},
+    {"Target": "Druid Liana", "Favorability": 4},
+    {"Target": "Healer Greta", "Favorability": 3},
+    {"Target": "Dark Cultist", "Favorability": -4}
+  ],
+  "NPCLog": []
+}
+Beastmaster Quill: {
+  "Name": "Beastmaster Quill",
+  "Species": "Human",
+  "HomeLocation": "Silverpine Forest",
+  "CurrentLocation": "Misty Vale",
+  "Faction": "SilentLeaf",
+  "OwnedItems": {"Leather Armor": 1, "Rope": 2},
+  "Role": "Ranger",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 2},
+    {"Target": "SilentLeaf", "Favorability": 3},
+    {"Target": "IronFist", "Favorability": 1},
+    {"Target": "Warden Merek", "Favorability": 3},
+    {"Target": "Tender Sera", "Favorability": 3},
+    {"Target": "Cave Bear", "Favorability": -2}
+  ],
+  "NPCLog": []
+}
+Woodsman Roric: {
+  "Name": "Woodsman Roric",
+  "Species": "Human",
+  "HomeLocation": "Everwood",
+  "CurrentLocation": "Everwood",
+  "Faction": "SilentLeaf",
+  "OwnedItems": {"Wooden Staff": 1, "Torch": 3},
+  "Role": "Farmer",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 0},
+    {"Target": "SilentLeaf", "Favorability": 2},
+    {"Target": "CrimsonCoin", "Favorability": -1},
+    {"Target": "Bowyer Tobin", "Favorability": 3},
+    {"Target": "Merchant Ulric", "Favorability": -3},
+    {"Target": "Goblin", "Favorability": -3}
+  ],
+  "NPCLog": []
+}
+Tender Sera: {
+  "Name": "Tender Sera",
+  "Species": "Halfling",
+  "HomeLocation": "Glimmerdale",
+  "CurrentLocation": "Ironhold",
+  "Faction": "SilentLeaf",
+  "OwnedItems": {"Healing Potion": 1, "Rations": 5},
+  "Role": "Apothecary",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 4},
+    {"Target": "SilentLeaf", "Favorability": 3},
+    {"Target": "OrderOfDawn", "Favorability": 2},
+    {"Target": "Beastmaster Quill", "Favorability": 3},
+    {"Target": "Squire Dara", "Favorability": 2},
+    {"Target": "Poisoner Ilya", "Favorability": -3}
+  ],
+  "NPCLog": []
+}
+Bowyer Tobin: {
+  "Name": "Bowyer Tobin",
+  "Species": "Dwarf",
+  "HomeLocation": "Stonehollow",
+  "CurrentLocation": "Ironhold",
+  "Faction": "SilentLeaf",
+  "OwnedItems": {"Longbow": 2, "Arrows": 50},
+  "Role": "Blacksmith",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 1},
+    {"Target": "SilentLeaf", "Favorability": 2},
+    {"Target": "IronFist", "Favorability": 3},
+    {"Target": "Archer Hugo", "Favorability": 3},
+    {"Target": "Woodsman Roric", "Favorability": 3},
+    {"Target": "Orc Brute", "Favorability": -2}
+  ],
+  "NPCLog": []
+}
+Merchant Ulric: {
+  "Name": "Merchant Ulric",
+  "Species": "Human",
+  "HomeLocation": "Crimson Market",
+  "CurrentLocation": "Crimson Market",
+  "Faction": "CrimsonCoin",
+  "OwnedItems": {"Crimson Coin": 100, "Silver Necklace": 1},
+  "Role": "Merchant",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 1},
+    {"Target": "CrimsonCoin", "Favorability": 4},
+    {"Target": "IronFist", "Favorability": 3},
+    {"Target": "Banker Vara", "Favorability": 4},
+    {"Target": "Guardian Jorik", "Favorability": 3},
+    {"Target": "Smuggler Xara", "Favorability": -3}
+  ],
+  "NPCLog": []
+}
+Banker Vara: {
+  "Name": "Banker Vara",
+  "Species": "Dwarf",
+  "HomeLocation": "Crimson Market",
+  "CurrentLocation": "Ironhold",
+  "Faction": "CrimsonCoin",
+  "OwnedItems": {"Lockbox": 1, "Crimson Coin": 200},
+  "Role": "Merchant",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 0},
+    {"Target": "CrimsonCoin", "Favorability": 5},
+    {"Target": "ShadowNetwork", "Favorability": -4},
+    {"Target": "Merchant Ulric", "Favorability": 4},
+    {"Target": "Accountant Arvid", "Favorability": 3},
+    {"Target": "Thief Eris", "Favorability": -4}
+  ],
+  "NPCLog": []
+}
+Trader Wex: {
+  "Name": "Trader Wex",
+  "Species": "Halfling",
+  "HomeLocation": "Crimson Market",
+  "CurrentLocation": "Glimmerdale",
+  "Faction": "CrimsonCoin",
+  "OwnedItems": {"Map Fragment": 1, "Rations": 10},
+  "Role": "Merchant",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 2},
+    {"Target": "CrimsonCoin", "Favorability": 3},
+    {"Target": "SilentLeaf", "Favorability": 2},
+    {"Target": "Collector Cade", "Favorability": 3},
+    {"Target": "Appraiser Zara", "Favorability": 3},
+    {"Target": "Bandit Leader", "Favorability": -3}
+  ],
+  "NPCLog": []
+}
+Smuggler Xara: {
+  "Name": "Smuggler Xara",
+  "Species": "Tiefling",
+  "HomeLocation": "Shadowfen",
+  "CurrentLocation": "Crimson Market",
+  "Faction": "CrimsonCoin",
+  "OwnedItems": {"Lockpick": 3, "Poison Vial": 2},
+  "Role": "Thief",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": -1},
+    {"Target": "CrimsonCoin", "Favorability": 2},
+    {"Target": "ShadowNetwork", "Favorability": 3},
+    {"Target": "Fixer Dagna", "Favorability": 4},
+    {"Target": "Warden Merek", "Favorability": -3},
+    {"Target": "Spymaster Fenn", "Favorability": 3}
+  ],
+  "NPCLog": []
+}
+Guildmaster Yann: {
+  "Name": "Guildmaster Yann",
+  "Species": "Human",
+  "HomeLocation": "Crimson Market",
+  "CurrentLocation": "Dawnspire",
+  "Faction": "CrimsonCoin",
+  "OwnedItems": {"Enchanted Ring": 1, "Ancient Tome": 1},
+  "Role": "Noble",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 3},
+    {"Target": "CrimsonCoin", "Favorability": 5},
+    {"Target": "OrderOfDawn", "Favorability": 2},
+    {"Target": "Banker Vara", "Favorability": 4},
+    {"Target": "Paladin Brigid", "Favorability": 3},
+    {"Target": "Spymaster Fenn", "Favorability": -3}
+  ],
+  "NPCLog": []
+}
+Appraiser Zara: {
+  "Name": "Appraiser Zara",
+  "Species": "Elf",
+  "HomeLocation": "Crimson Market",
+  "CurrentLocation": "Everwood",
+  "Faction": "CrimsonCoin",
+  "OwnedItems": {"Mystic Gem": 1, "Silver Necklace": 2},
+  "Role": "Merchant",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 2},
+    {"Target": "CrimsonCoin", "Favorability": 3},
+    {"Target": "SilentLeaf", "Favorability": 1},
+    {"Target": "Trader Wex", "Favorability": 3},
+    {"Target": "Druid Liana", "Favorability": 2},
+    {"Target": "Ghost Lir", "Favorability": -2}
+  ],
+  "NPCLog": []
+}
+Accountant Arvid: {
+  "Name": "Accountant Arvid",
+  "Species": "Gnome",
+  "HomeLocation": "Stonehollow",
+  "CurrentLocation": "Crimson Market",
+  "Faction": "CrimsonCoin",
+  "OwnedItems": {"Crimson Coin": 50, "Lockbox": 1},
+  "Role": "Merchant",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 0},
+    {"Target": "CrimsonCoin", "Favorability": 4},
+    {"Target": "IronFist", "Favorability": 1},
+    {"Target": "Banker Vara", "Favorability": 3},
+    {"Target": "Broker Brynja", "Favorability": 3},
+    {"Target": "Cutpurse Mira", "Favorability": -3}
+  ],
+  "NPCLog": []
+}
+Broker Brynja: {
+  "Name": "Broker Brynja",
+  "Species": "Human",
+  "HomeLocation": "Crimson Market",
+  "CurrentLocation": "Ironhold",
+  "Faction": "CrimsonCoin",
+  "OwnedItems": {"Map Fragment": 2, "Rope": 1},
+  "Role": "Merchant",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 1},
+    {"Target": "CrimsonCoin", "Favorability": 3},
+    {"Target": "ShadowNetwork", "Favorability": -1},
+    {"Target": "Accountant Arvid", "Favorability": 3},
+    {"Target": "Collector Cade", "Favorability": 3},
+    {"Target": "Informant Kira", "Favorability": -3}
+  ],
+  "NPCLog": []
+}
+Collector Cade: {
+  "Name": "Collector Cade",
+  "Species": "Human",
+  "HomeLocation": "Glimmerdale",
+  "CurrentLocation": "Crimson Market",
+  "Faction": "CrimsonCoin",
+  "OwnedItems": {"Dragon Scale": 1, "Ancient Tome": 1},
+  "Role": "Noble",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 4},
+    {"Target": "CrimsonCoin", "Favorability": 4},
+    {"Target": "OrderOfDawn", "Favorability": 2},
+    {"Target": "Guildmaster Yann", "Favorability": 3},
+    {"Target": "Trader Wex", "Favorability": 3},
+    {"Target": "Saboteur Jax", "Favorability": -3}
+  ],
+  "NPCLog": []
+}
+Thief Eris: {
+  "Name": "Thief Eris",
+  "Species": "Halfling",
+  "HomeLocation": "Shadowfen",
+  "CurrentLocation": "Shadowfen",
+  "Faction": "ShadowNetwork",
+  "OwnedItems": {"Lockpick": 5, "Dagger": 1},
+  "Role": "Thief",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": -2},
+    {"Target": "ShadowNetwork", "Favorability": 4},
+    {"Target": "CrimsonCoin", "Favorability": -3},
+    {"Target": "Spymaster Fenn", "Favorability": 4},
+    {"Target": "Cutpurse Mira", "Favorability": 3},
+    {"Target": "Captain Aldric", "Favorability": -4}
+  ],
+  "NPCLog": []
+}
+Spymaster Fenn: {
+  "Name": "Spymaster Fenn",
+  "Species": "Elf",
+  "HomeLocation": "Shadowfen",
+  "CurrentLocation": "Crimson Market",
+  "Faction": "ShadowNetwork",
+  "OwnedItems": {"Poison Vial": 3, "Key of Shadows": 1},
+  "Role": "Thief",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": -3},
+    {"Target": "ShadowNetwork", "Favorability": 5},
+    {"Target": "OrderOfDawn", "Favorability": -5},
+    {"Target": "Thief Eris", "Favorability": 4},
+    {"Target": "Infiltrator Giselle", "Favorability": 4},
+    {"Target": "Paladin Brigid", "Favorability": -5}
+  ],
+  "NPCLog": []
+}
+Infiltrator Giselle: {
+  "Name": "Infiltrator Giselle",
+  "Species": "Human",
+  "HomeLocation": "Shadowfen",
+  "CurrentLocation": "Dawnspire",
+  "Faction": "ShadowNetwork",
+  "OwnedItems": {"Leather Armor": 1, "Trap Kit": 2},
+  "Role": "Thief",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": -1},
+    {"Target": "ShadowNetwork", "Favorability": 4},
+    {"Target": "IronFist", "Favorability": -3},
+    {"Target": "Spymaster Fenn", "Favorability": 4},
+    {"Target": "Locksmith Harkon", "Favorability": 3},
+    {"Target": "Knight Caelan", "Favorability": -3}
+  ],
+  "NPCLog": []
+}
+Locksmith Harkon: {
+  "Name": "Locksmith Harkon",
+  "Species": "Dwarf",
+  "HomeLocation": "Stonehollow",
+  "CurrentLocation": "Shadowfen",
+  "Faction": "ShadowNetwork",
+  "OwnedItems": {"Lockpick": 10, "Trap Kit": 1},
+  "Role": "Thief",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 0},
+    {"Target": "ShadowNetwork", "Favorability": 3},
+    {"Target": "CrimsonCoin", "Favorability": -2},
+    {"Target": "Infiltrator Giselle", "Favorability": 3},
+    {"Target": "Saboteur Jax", "Favorability": 3},
+    {"Target": "Banker Vara", "Favorability": -4}
+  ],
+  "NPCLog": []
+}
+Poisoner Ilya: {
+  "Name": "Poisoner Ilya",
+  "Species": "Gnome",
+  "HomeLocation": "Shadowfen",
+  "CurrentLocation": "Ashen Wastes",
+  "Faction": "ShadowNetwork",
+  "OwnedItems": {"Poison Vial": 5, "Dagger": 1},
+  "Role": "Alchemist",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": -2},
+    {"Target": "ShadowNetwork", "Favorability": 4},
+    {"Target": "SilentLeaf", "Favorability": -3},
+    {"Target": "Saboteur Jax", "Favorability": 3},
+    {"Target": "Healer Greta", "Favorability": -4},
+    {"Target": "Tender Sera", "Favorability": -3}
+  ],
+  "NPCLog": []
+}
+Saboteur Jax: {
+  "Name": "Saboteur Jax",
+  "Species": "Human",
+  "HomeLocation": "Shadowfen",
+  "CurrentLocation": "Ironhold",
+  "Faction": "ShadowNetwork",
+  "OwnedItems": {"Trap Kit": 3, "Torch": 2},
+  "Role": "Thief",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": -3},
+    {"Target": "ShadowNetwork", "Favorability": 3},
+    {"Target": "IronFist", "Favorability": -4},
+    {"Target": "Poisoner Ilya", "Favorability": 3},
+    {"Target": "Locksmith Harkon", "Favorability": 3},
+    {"Target": "Sergeant Bruna", "Favorability": -3}
+  ],
+  "NPCLog": []
+}
+Informant Kira: {
+  "Name": "Informant Kira",
+  "Species": "Halfling",
+  "HomeLocation": "Crimson Market",
+  "CurrentLocation": "Shadowfen",
+  "Faction": "ShadowNetwork",
+  "OwnedItems": {"Crimson Coin": 30, "Map Fragment": 1},
+  "Role": "Merchant",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 1},
+    {"Target": "ShadowNetwork", "Favorability": 3},
+    {"Target": "CrimsonCoin", "Favorability": -1},
+    {"Target": "Ghost Lir", "Favorability": 3},
+    {"Target": "Broker Brynja", "Favorability": -3},
+    {"Target": "Merchant Ulric", "Favorability": -2}
+  ],
+  "NPCLog": []
+}
+Ghost Lir: {
+  "Name": "Ghost Lir",
+  "Species": "Elf",
+  "HomeLocation": "Shadowfen",
+  "CurrentLocation": "Dawnspire",
+  "Faction": "ShadowNetwork",
+  "OwnedItems": {"Key of Shadows": 1, "Lockpick": 2},
+  "Role": "Thief",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": -1},
+    {"Target": "ShadowNetwork", "Favorability": 4},
+    {"Target": "OrderOfDawn", "Favorability": -4},
+    {"Target": "Informant Kira", "Favorability": 3},
+    {"Target": "Cutpurse Mira", "Favorability": 3},
+    {"Target": "Cleric Aldus", "Favorability": -4}
+  ],
+  "NPCLog": []
+}
+Cutpurse Mira: {
+  "Name": "Cutpurse Mira",
+  "Species": "Human",
+  "HomeLocation": "Shadowfen",
+  "CurrentLocation": "Crimson Market",
+  "Faction": "ShadowNetwork",
+  "OwnedItems": {"Dagger": 1, "Crimson Coin": 15},
+  "Role": "Thief",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": -2},
+    {"Target": "ShadowNetwork", "Favorability": 3},
+    {"Target": "CrimsonCoin", "Favorability": -3},
+    {"Target": "Thief Eris", "Favorability": 3},
+    {"Target": "Ghost Lir", "Favorability": 3},
+    {"Target": "Accountant Arvid", "Favorability": -3}
+  ],
+  "NPCLog": []
+}
+Cleric Aldus: {
+  "Name": "Cleric Aldus",
+  "Species": "Human",
+  "HomeLocation": "Dawnspire",
+  "CurrentLocation": "Dawnspire",
+  "Faction": "OrderOfDawn",
+  "OwnedItems": {"Healing Potion": 4, "Amulet of Dawn": 1},
+  "Role": "Priest",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 3},
+    {"Target": "OrderOfDawn", "Favorability": 5},
+    {"Target": "ShadowNetwork", "Favorability": -5},
+    {"Target": "Paladin Brigid", "Favorability": 4},
+    {"Target": "Mage Egon", "Favorability": 3},
+    {"Target": "Spymaster Fenn", "Favorability": -5}
+  ],
+  "NPCLog": []
+}
+Paladin Brigid: {
+  "Name": "Paladin Brigid",
+  "Species": "Human",
+  "HomeLocation": "Dawnspire",
+  "CurrentLocation": "Ironhold",
+  "Faction": "OrderOfDawn",
+  "OwnedItems": {"Steel Shield": 1, "Iron Sword": 1},
+  "Role": "GuardCaptain",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 4},
+    {"Target": "OrderOfDawn", "Favorability": 5},
+    {"Target": "IronFist", "Favorability": 3},
+    {"Target": "Cleric Aldus", "Favorability": 4},
+    {"Target": "Knight Caelan", "Favorability": 3},
+    {"Target": "Spymaster Fenn", "Favorability": -5}
+  ],
+  "NPCLog": []
+}
+Acolyte Cedric: {
+  "Name": "Acolyte Cedric",
+  "Species": "Halfling",
+  "HomeLocation": "Dawnspire",
+  "CurrentLocation": "Glimmerdale",
+  "Faction": "OrderOfDawn",
+  "OwnedItems": {"Mana Potion": 2, "Wooden Staff": 1},
+  "Role": "Priest",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 2},
+    {"Target": "OrderOfDawn", "Favorability": 4},
+    {"Target": "CrimsonCoin", "Favorability": 1},
+    {"Target": "Exorcist Daria", "Favorability": 3},
+    {"Target": "Healer Gemma", "Favorability": 3},
+    {"Target": "Dark Cultist", "Favorability": -4}
+  ],
+  "NPCLog": []
+}
+Exorcist Daria: {
+  "Name": "Exorcist Daria",
+  "Species": "Human",
+  "HomeLocation": "Dawnspire",
+  "CurrentLocation": "Ashen Wastes",
+  "Faction": "OrderOfDawn",
+  "OwnedItems": {"Holy Water": 3, "Amulet of Dawn": 1},
+  "Role": "Priest",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 1},
+    {"Target": "OrderOfDawn", "Favorability": 4},
+    {"Target": "ShadowNetwork", "Favorability": -4},
+    {"Target": "Acolyte Cedric", "Favorability": 3},
+    {"Target": "Monk Elara", "Favorability": 3},
+    {"Target": "Ghost", "Favorability": -3}
+  ],
+  "NPCLog": []
+}
+Monk Elara: {
+  "Name": "Monk Elara",
+  "Species": "Elf",
+  "HomeLocation": "Dawnspire",
+  "CurrentLocation": "Silverpine Forest",
+  "Faction": "OrderOfDawn",
+  "OwnedItems": {"Herb Bundle": 5, "Rations": 3},
+  "Role": "Priest",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 3},
+    {"Target": "OrderOfDawn", "Favorability": 4},
+    {"Target": "SilentLeaf", "Favorability": 3},
+    {"Target": "Exorcist Daria", "Favorability": 3},
+    {"Target": "Templar Faust", "Favorability": 3},
+    {"Target": "Vampire Spawn", "Favorability": -4}
+  ],
+  "NPCLog": []
+}
+Templar Faust: {
+  "Name": "Templar Faust",
+  "Species": "Human",
+  "HomeLocation": "Dawnspire",
+  "CurrentLocation": "Ironhold",
+  "Faction": "OrderOfDawn",
+  "OwnedItems": {"Iron Sword": 1, "Chainmail": 1},
+  "Role": "Soldier",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 2},
+    {"Target": "OrderOfDawn", "Favorability": 5},
+    {"Target": "WildclawTribe", "Favorability": -2},
+    {"Target": "Monk Elara", "Favorability": 3},
+    {"Target": "Paladin Brigid", "Favorability": 3},
+    {"Target": "Warlord Krog", "Favorability": -3}
+  ],
+  "NPCLog": []
+}
+Healer Gemma: {
+  "Name": "Healer Gemma",
+  "Species": "Gnome",
+  "HomeLocation": "Glimmerdale",
+  "CurrentLocation": "Dawnspire",
+  "Faction": "OrderOfDawn",
+  "OwnedItems": {"Healing Potion": 6, "Herb Bundle": 4},
+  "Role": "Apothecary",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 5},
+    {"Target": "OrderOfDawn", "Favorability": 4},
+    {"Target": "IronFist", "Favorability": 2},
+    {"Target": "Healer Greta", "Favorability": 4},
+    {"Target": "Acolyte Cedric", "Favorability": 3},
+    {"Target": "Poisoner Ilya", "Favorability": -4}
+  ],
+  "NPCLog": []
+}
+Missionary Hilda: {
+  "Name": "Missionary Hilda",
+  "Species": "Human",
+  "HomeLocation": "Dawnspire",
+  "CurrentLocation": "Wildclaw Camp",
+  "Faction": "OrderOfDawn",
+  "OwnedItems": {"Ancient Tome": 1, "Rations": 5},
+  "Role": "Priest",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 0},
+    {"Target": "OrderOfDawn", "Favorability": 3},
+    {"Target": "WildclawTribe", "Favorability": -1},
+    {"Target": "Zealot Ingram", "Favorability": 3},
+    {"Target": "Chanter Juno", "Favorability": 3},
+    {"Target": "Shaman Lorth", "Favorability": -3}
+  ],
+  "NPCLog": []
+}
+Zealot Ingram: {
+  "Name": "Zealot Ingram",
+  "Species": "Human",
+  "HomeLocation": "Dawnspire",
+  "CurrentLocation": "Ashen Wastes",
+  "Faction": "OrderOfDawn",
+  "OwnedItems": {"Amulet of Dawn": 1, "Iron Sword": 1},
+  "Role": "Soldier",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": -1},
+    {"Target": "OrderOfDawn", "Favorability": 5},
+    {"Target": "ShadowNetwork", "Favorability": -5},
+    {"Target": "Missionary Hilda", "Favorability": 3},
+    {"Target": "Templar Faust", "Favorability": 3},
+    {"Target": "Spymaster Fenn", "Favorability": -5}
+  ],
+  "NPCLog": []
+}
+Chanter Juno: {
+  "Name": "Chanter Juno",
+  "Species": "Elf",
+  "HomeLocation": "Dawnspire",
+  "CurrentLocation": "Everwood",
+  "Faction": "OrderOfDawn",
+  "OwnedItems": {"Mana Potion": 2, "Wooden Staff": 1},
   "Role": "Bard",
   "Relations": [
-    {"Target": "Kaelen", "Favorability": 1}
+    {"Target": "Kaelen", "Favorability": 3},
+    {"Target": "OrderOfDawn", "Favorability": 3},
+    {"Target": "SilentLeaf", "Favorability": 2},
+    {"Target": "Missionary Hilda", "Favorability": 3},
+    {"Target": "Druid Liana", "Favorability": 3},
+    {"Target": "Harpy", "Favorability": -2}
   ],
   "NPCLog": []
 }
-;
-### FACTION DATA
-The Iron Covenant: {
-  "Name": "The Iron Covenant",
+Warlord Krog: {
+  "Name": "Warlord Krog",
+  "Species": "Orc",
+  "HomeLocation": "Wildclaw Camp",
+  "CurrentLocation": "Wildclaw Camp",
+  "Faction": "WildclawTribe",
+  "OwnedItems": {"Iron Sword": 1, "Dragon Scale": 1},
+  "Role": "Soldier",
   "Relations": [
-    {"Target": "The Verdant Circle", "Favorability": -3},
-    {"Target": "Sunspear Militia", "Favorability": -2},
-    {"Target": "Kaelen", "Favorability": -1}
+    {"Target": "Kaelen", "Favorability": 0},
+    {"Target": "WildclawTribe", "Favorability": 5},
+    {"Target": "IronFist", "Favorability": -4},
+    {"Target": "Shaman Lorth", "Favorability": 4},
+    {"Target": "Berserker Qara", "Favorability": 3},
+    {"Target": "Captain Aldric", "Favorability": -4}
   ],
-  "Members": ["Borin Ironfoot", "Torvin Stonehand"],
-  "Treasury": {
-    "Iron Sword": 5,
-    "Iron Shield": 4
-  },
-  "FactionLog": []
+  "NPCLog": []
 }
-
-The Verdant Circle: {
-  "Name": "The Verdant Circle",
+Shaman Lorth: {
+  "Name": "Shaman Lorth",
+  "Species": "Orc",
+  "HomeLocation": "Wildclaw Camp",
+  "CurrentLocation": "Ashen Wastes",
+  "Faction": "WildclawTribe",
+  "OwnedItems": {"Mystic Gem": 1, "Herb Bundle": 5},
+  "Role": "Priest",
   "Relations": [
-    {"Target": "The Iron Covenant", "Favorability": -4},
-    {"Target": "The Ashen Claw", "Favorability": -2},
-    {"Target": "Kaelen", "Favorability": 3}
+    {"Target": "Kaelen", "Favorability": -1},
+    {"Target": "WildclawTribe", "Favorability": 5},
+    {"Target": "OrderOfDawn", "Favorability": -2},
+    {"Target": "Warlord Krog", "Favorability": 4},
+    {"Target": "Totem Carrier Sarn", "Favorability": 3},
+    {"Target": "Druid Liana", "Favorability": -3}
   ],
-  "Members": ["Elara Nightshade", "Lyra Swiftarrow", "Faelan Moonshadow"],
-  "Treasury": {
-    "Mysterious Herb": 10,
-    "Healing Poultice": 5
-  },
-  "FactionLog": []
+  "NPCLog": []
 }
-
-The Ashen Claw: {
-  "Name": "The Ashen Claw",
+Hunter Morna: {
+  "Name": "Hunter Morna",
+  "Species": "Lizardfolk",
+  "HomeLocation": "Wildclaw Camp",
+  "CurrentLocation": "Silverpine Forest",
+  "Faction": "WildclawTribe",
+  "OwnedItems": {"Longbow": 1, "Arrows": 20},
+  "Role": "Ranger",
   "Relations": [
-    {"Target": "The Verdant Circle", "Favorability": -3},
-    {"Target": "Sunspear Militia", "Favorability": -5},
-    {"Target": "Kaelen", "Favorability": -2}
+    {"Target": "Kaelen", "Favorability": 1},
+    {"Target": "WildclawTribe", "Favorability": 3},
+    {"Target": "SilentLeaf", "Favorability": -1},
+    {"Target": "Tracker Nok", "Favorability": 3},
+    {"Target": "Beast Tamer Oona", "Favorability": 3},
+    {"Target": "Ranger Kaelen", "Favorability": -3}
   ],
-  "Members": [],
-  "Treasury": {},
-  "FactionLog": []
+  "NPCLog": []
+}
+Tracker Nok: {
+  "Name": "Tracker Nok",
+  "Species": "Lizardfolk",
+  "HomeLocation": "Wildclaw Camp",
+  "CurrentLocation": "Misty Vale",
+  "Faction": "WildclawTribe",
+  "OwnedItems": {"Dagger": 1, "Trap Kit": 1},
+  "Role": "Scout",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 0},
+    {"Target": "WildclawTribe", "Favorability": 3},
+    {"Target": "ShadowNetwork", "Favorability": 2},
+    {"Target": "Hunter Morna", "Favorability": 3},
+    {"Target": "Scout Palk", "Favorability": 3},
+    {"Target": "Tracker Nessa", "Favorability": -2}
+  ],
+  "NPCLog": []
+}
+Beast Tamer Oona: {
+  "Name": "Beast Tamer Oona",
+  "Species": "Halfling",
+  "HomeLocation": "Wildclaw Camp",
+  "CurrentLocation": "Everwood",
+  "Faction": "WildclawTribe",
+  "OwnedItems": {"Leather Armor": 1, "Rope": 2},
+  "Role": "Ranger",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 2},
+    {"Target": "WildclawTribe", "Favorability": 4},
+    {"Target": "CrimsonCoin", "Favorability": -2},
+    {"Target": "Hunter Morna", "Favorability": 3},
+    {"Target": "Fletcher Rusk", "Favorability": 3},
+    {"Target": "Merchant Ulric", "Favorability": -3}
+  ],
+  "NPCLog": []
+}
+Scout Palk: {
+  "Name": "Scout Palk",
+  "Species": "Orc",
+  "HomeLocation": "Wildclaw Camp",
+  "CurrentLocation": "Stonehollow",
+  "Faction": "WildclawTribe",
+  "OwnedItems": {"Iron Sword": 1, "Rations": 4},
+  "Role": "Scout",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": -2},
+    {"Target": "WildclawTribe", "Favorability": 3},
+    {"Target": "IronFist", "Favorability": -3},
+    {"Target": "Tracker Nok", "Favorability": 3},
+    {"Target": "Berserker Qara", "Favorability": 3},
+    {"Target": "Sergeant Bruna", "Favorability": -3}
+  ],
+  "NPCLog": []
+}
+Berserker Qara: {
+  "Name": "Berserker Qara",
+  "Species": "Orc",
+  "HomeLocation": "Wildclaw Camp",
+  "CurrentLocation": "Ironhold",
+  "Faction": "WildclawTribe",
+  "OwnedItems": {"Iron Sword": 1, "Healing Potion": 1},
+  "Role": "Soldier",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": -1},
+    {"Target": "WildclawTribe", "Favorability": 4},
+    {"Target": "ShadowNetwork", "Favorability": 1},
+    {"Target": "Warlord Krog", "Favorability": 3},
+    {"Target": "Scout Palk", "Favorability": 3},
+    {"Target": "Pikeman Iris", "Favorability": -3}
+  ],
+  "NPCLog": []
+}
+Fletcher Rusk: {
+  "Name": "Fletcher Rusk",
+  "Species": "Lizardfolk",
+  "HomeLocation": "Wildclaw Camp",
+  "CurrentLocation": "Crimson Market",
+  "Faction": "WildclawTribe",
+  "OwnedItems": {"Arrows": 40, "Longbow": 1},
+  "Role": "Blacksmith",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 1},
+    {"Target": "WildclawTribe", "Favorability": 3},
+    {"Target": "CrimsonCoin", "Favorability": 1},
+    {"Target": "Beast Tamer Oona", "Favorability": 3},
+    {"Target": "Bowyer Tobin", "Favorability": 2},
+    {"Target": "Orc Brute", "Favorability": -2}
+  ],
+  "NPCLog": []
+}
+Totem Carrier Sarn: {
+  "Name": "Totem Carrier Sarn",
+  "Species": "Orc",
+  "HomeLocation": "Wildclaw Camp",
+  "CurrentLocation": "Wildclaw Camp",
+  "Faction": "WildclawTribe",
+  "OwnedItems": {"Mystic Gem": 1, "Wooden Staff": 1},
+  "Role": "Priest",
+  "Relations": [
+    {"Target": "Kaelen", "Favorability": 0},
+    {"Target": "WildclawTribe", "Favorability": 4},
+    {"Target": "OrderOfDawn", "Favorability": -1},
+    {"Target": "Shaman Lorth", "Favorability": 3},
+    {"Target": "Warlord Krog", "Favorability": 3},
+    {"Target": "Cleric Aldus", "Favorability": -2}
+  ],
+  "NPCLog": []
 }
 ;
 ### ENEMY DATA
-Forest Goblin: {
-  "Name": "Forest Goblin",
-  "Loot": ["Iron Sword", "Health Potion"]
+Goblin: {
+  "Name": "Goblin",
+  "Loot": ["Dagger", "Rations"]
 }
-
-Marsh Troll: {
-  "Name": "Marsh Troll",
-  "Loot": ["Mysterious Herb", "Healing Poultice"]
+Orc Brute: {
+  "Name": "Orc Brute",
+  "Loot": ["Iron Sword", "Healing Potion"]
 }
-
-Cultist Fanatic: {
-  "Name": "Cultist Fanatic",
-  "Loot": ["Scroll of Fireball", "Silver Key"]
+Shadow Assassin: {
+  "Name": "Shadow Assassin",
+  "Loot": ["Poison Vial", "Lockpick"]
 }
-
-Iron Covenant Raider: {
-  "Name": "Iron Covenant Raider",
-  "Loot": ["Iron Sword", "Iron Shield"]
+Forest Wolf: {
+  "Name": "Forest Wolf",
+  "Loot": ["Leather Armor", "Herb Bundle"]
 }
-
-Shadow Viper: {
-  "Name": "Shadow Viper",
-  "Loot": ["Obsidian Arrowhead"]
+Fire Elemental: {
+  "Name": "Fire Elemental",
+  "Loot": ["Dragon Scale", "Torch"]
 }
-
-Corrupted Treant: {
-  "Name": "Corrupted Treant",
-  "Loot": ["Elven Bread", "Mysterious Herb"]
+Ice Wraith: {
+  "Name": "Ice Wraith",
+  "Loot": ["Mystic Gem", "Mana Potion"]
+}
+Dark Cultist: {
+  "Name": "Dark Cultist",
+  "Loot": ["Ancient Tome", "Poison Vial"]
+}
+Giant Spider: {
+  "Name": "Giant Spider",
+  "Loot": ["Herb Bundle", "Rope"]
+}
+Troll: {
+  "Name": "Troll",
+  "Loot": ["Iron Ore", "Healing Potion"]
+}
+Harpy: {
+  "Name": "Harpy",
+  "Loot": ["Arrows", "Feather"]
+}
+Skeleton Warrior: {
+  "Name": "Skeleton Warrior",
+  "Loot": ["Iron Sword", "Steel Shield"]
+}
+Zombie: {
+  "Name": "Zombie",
+  "Loot": ["Rations", "Cloth"]
+}
+Bandit Leader: {
+  "Name": "Bandit Leader",
+  "Loot": ["Crimson Coin", "Lockbox"]
+}
+Cave Bear: {
+  "Name": "Cave Bear",
+  "Loot": ["Leather Armor", "Rations"]
+}
+Dire Rat: {
+  "Name": "Dire Rat",
+  "Loot": ["Herb Bundle", "Poison Vial"]
+}
+Lizardfolk Raider: {
+  "Name": "Lizardfolk Raider",
+  "Loot": ["Dagger", "Leather Armor"]
+}
+Dwarven Golem: {
+  "Name": "Dwarven Golem",
+  "Loot": ["Iron Ore", "Mystic Gem"]
+}
+Vampire Spawn: {
+  "Name": "Vampire Spawn",
+  "Loot": ["Amulet of Dawn", "Healing Potion"]
+}
+Wyrmling: {
+  "Name": "Wyrmling",
+  "Loot": ["Dragon Scale", "Crimson Coin"]
+}
+Ghost: {
+  "Name": "Ghost",
+  "Loot": ["Ancient Tome", "Mana Potion"]
+}
+Ogre: {
+  "Name": "Ogre",
+  "Loot": ["Iron Sword", "Rations"]
+}
+Manticore: {
+  "Name": "Manticore",
+  "Loot": ["Dragon Scale", "Enchanted Ring"]
 }
 ;
 ### LOCATION DATA
-Whispering Pines Inn: {
-  "Name": "Whispering Pines Inn",
-  "Enemies": [],
-  "Resources": ["Dwarven Ale", "Elven Bread"]
+Everwood: {
+  "Name": "Everwood",
+  "Enemies": ["Forest Wolf", "Goblin", "Giant Spider"],
+  "Resources": ["Herb Bundle", "Wooden Staff", "Rations"]
 }
-
-The Rusty Anvil: {
-  "Name": "The Rusty Anvil",
-  "Enemies": [],
-  "Resources": ["Iron Sword", "Iron Shield", "Steel Gauntlets"]
+Ironhold: {
+  "Name": "Ironhold",
+  "Enemies": ["Orc Brute", "Skeleton Warrior", "Dark Cultist"],
+  "Resources": ["Iron Ore", "Steel Shield", "Chainmail"]
 }
-
-Murkwood Forest: {
-  "Name": "Murkwood Forest",
-  "Enemies": ["Forest Goblin", "Corrupted Treant"],
-  "Resources": ["Mysterious Herb", "Elven Bread"]
+Shadowfen: {
+  "Name": "Shadowfen",
+  "Enemies": ["Shadow Assassin", "Giant Spider", "Zombie"],
+  "Resources": ["Poison Vial", "Lockpick", "Herb Bundle"]
 }
-
-Shadowfen Marsh: {
-  "Name": "Shadowfen Marsh",
-  "Enemies": ["Marsh Troll", "Shadow Viper"],
-  "Resources": ["Healing Poultice"]
+Dawnspire: {
+  "Name": "Dawnspire",
+  "Enemies": ["Dark Cultist", "Ghost", "Vampire Spawn"],
+  "Resources": ["Amulet of Dawn", "Healing Potion", "Ancient Tome"]
 }
-
-Sunstone Keep: {
-  "Name": "Sunstone Keep",
-  "Enemies": [],
-  "Resources": ["Lockpick Set"]
+Crimson Market: {
+  "Name": "Crimson Market",
+  "Enemies": ["Bandit Leader", "Thief", "Cutpurse"],
+  "Resources": ["Crimson Coin", "Silver Necklace", "Lockbox"]
+}
+Wildclaw Camp: {
+  "Name": "Wildclaw Camp",
+  "Enemies": ["Orc Brute", "Lizardfolk Raider", "Dire Rat"],
+  "Resources": ["Leather Armor", "Iron Sword", "Rations"]
+}
+Misty Vale: {
+  "Name": "Misty Vale",
+  "Enemies": ["Forest Wolf", "Harpy", "Troll"],
+  "Resources": ["Herb Bundle", "Rope", "Torch"]
+}
+Stonehollow: {
+  "Name": "Stonehollow",
+  "Enemies": ["Dwarven Golem", "Cave Bear", "Ogre"],
+  "Resources": ["Iron Ore", "Mystic Gem", "Steel Shield"]
+}
+Glimmerdale: {
+  "Name": "Glimmerdale",
+  "Enemies": ["Goblin", "Dire Rat", "Fire Elemental"],
+  "Resources": ["Healing Potion", "Mana Potion", "Enchanted Ring"]
+}
+Ashen Wastes: {
+  "Name": "Ashen Wastes",
+  "Enemies": ["Fire Elemental", "Ice Wraith", "Wyrmling"],
+  "Resources": ["Dragon Scale", "Torch", "Rations"]
+}
+Silverpine Forest: {
+  "Name": "Silverpine Forest",
+  "Enemies": ["Forest Wolf", "Giant Spider", "Manticore"],
+  "Resources": ["Longbow", "Arrows", "Herb Bundle"]
+}
+Blackreach Mine: {
+  "Name": "Blackreach Mine",
+  "Enemies": ["Orc Brute", "Dwarven Golem", "Troll"],
+  "Resources": ["Iron Ore", "Mystic Gem", "Lockpick"]
 }
 ;
 ### ITEM DATA
 Iron Sword: { "Type": "Weapon" }
-Leather Vest: { "Type": "Armor" }
-Health Potion: { "Type": "Potion" }
+Steel Shield: { "Type": "Armor" }
+Healing Potion: { "Type": "Potion" }
 Mana Potion: { "Type": "Potion" }
-Iron Shield: { "Type": "Armor" }
-Silver Key: { "Type": "Key" }
-Mysterious Herb: { "Type": "Ingredient" }
-Dwarven Ale: { "Type": "Item" }
-Healing Poultice: { "Type": "Potion" }
-Lockpick Set: { "Type": "Tool" }
-Obsidian Arrowhead: { "Type": "Item" }
-Scroll of Fireball: { "Type": "Item" }
-Steel Gauntlets: { "Type": "Armor" }
-Elven Bread: { "Type": "Item" }
+Elixir of Strength: { "Type": "Potion" }
+Leather Armor: { "Type": "Armor" }
+Chainmail: { "Type": "Armor" }
+Dagger: { "Type": "Weapon" }
+Longbow: { "Type": "Weapon" }
+Arrows: { "Type": "Weapon" }
+Lockpick: { "Type": "Key" }
+Herb Bundle: { "Type": "Ingredient" }
+Silver Necklace: { "Type": "Artifact" }
+Ancient Tome: { "Type": "Artifact" }
+Dragon Scale: { "Type": "Ingredient" }
+Mystic Gem: { "Type": "Artifact" }
+Rope: { "Type": "Ingredient" }
+Torch: { "Type": "Ingredient" }
+Rations: { "Type": "Ingredient" }
+Water Skin: { "Type": "Ingredient" }
+Lockbox: { "Type": "Key" }
+Key of Shadows: { "Type": "Key" }
+Amulet of Dawn: { "Type": "Artifact" }
+Crimson Coin: { "Type": "Currency" }
+Iron Ore: { "Type": "Ingredient" }
+Wooden Staff: { "Type": "Weapon" }
+Enchanted Ring: { "Type": "Artifact" }
+Poison Vial: { "Type": "Potion" }
+Trap Kit: { "Type": "Ingredient" }
+Map Fragment: { "Type": "Key" }
 ;
 ## PLAYER DATA
 {
   "Species": "Human",
   "FactionRelations": [
-    {"Target": "The Iron Covenant", "Favorability": -1},
-    {"Target": "The Verdant Circle", "Favorability": 3},
-    {"Target": "The Ashen Claw", "Favorability": -2}
+    {"Target": "IronFist", "Favorability": 2},
+    {"Target": "SilentLeaf", "Favorability": 4},
+    {"Target": "CrimsonCoin", "Favorability": 1},
+    {"Target": "ShadowNetwork", "Favorability": -2},
+    {"Target": "OrderOfDawn", "Favorability": 3},
+    {"Target": "WildclawTribe", "Favorability": 0}
   ],
   "NPCRelations": [
-    {"Target": "Elara Nightshade", "Favorability": 2},
-    {"Target": "Mira Thornwood", "Favorability": 4},
-    {"Target": "Lyra Swiftarrow", "Favorability": 3},
-    {"Target": "Grimgar the Old", "Favorability": 2}
+    {"Target": "Captain Aldric", "Favorability": 2},
+    {"Target": "Sergeant Bruna", "Favorability": 3},
+    {"Target": "Knight Caelan", "Favorability": 1},
+    {"Target": "Squire Dara", "Favorability": 4},
+    {"Target": "Mage Egon", "Favorability": 2},
+    {"Target": "Scout Finn", "Favorability": 1},
+    {"Target": "Healer Greta", "Favorability": 5},
+    {"Target": "Archer Hugo", "Favorability": 0},
+    {"Target": "Pikeman Iris", "Favorability": -1},
+    {"Target": "Guardian Jorik", "Favorability": 2},
+    {"Target": "Ranger Kaelen", "Favorability": 4},
+    {"Target": "Druid Liana", "Favorability": 5},
+    {"Target": "Warden Merek", "Favorability": 2},
+    {"Target": "Tracker Nessa", "Favorability": 3},
+    {"Target": "Hunter Orin", "Favorability": 1},
+    {"Target": "Shaman Pella", "Favorability": 3},
+    {"Target": "Beastmaster Quill", "Favorability": 2},
+    {"Target": "Woodsman Roric", "Favorability": 0},
+    {"Target": "Tender Sera", "Favorability": 4},
+    {"Target": "Bowyer Tobin", "Favorability": 1},
+    {"Target": "Merchant Ulric", "Favorability": 1},
+    {"Target": "Banker Vara", "Favorability": 0},
+    {"Target": "Trader Wex", "Favorability": 2},
+    {"Target": "Smuggler Xara", "Favorability": -1},
+    {"Target": "Guildmaster Yann", "Favorability": 3},
+    {"Target": "Appraiser Zara", "Favorability": 2},
+    {"Target": "Accountant Arvid", "Favorability": 0},
+    {"Target": "Broker Brynja", "Favorability": 1},
+    {"Target": "Collector Cade", "Favorability": 4},
+    {"Target": "Thief Eris", "Favorability": -2},
+    {"Target": "Spymaster Fenn", "Favorability": -3},
+    {"Target": "Infiltrator Giselle", "Favorability": -1},
+    {"Target": "Locksmith Harkon", "Favorability": 0},
+    {"Target": "Poisoner Ilya", "Favorability": -2},
+    {"Target": "Saboteur Jax", "Favorability": -3},
+    {"Target": "Informant Kira", "Favorability": 1},
+    {"Target": "Ghost Lir", "Favorability": -1},
+    {"Target": "Cutpurse Mira", "Favorability": -2},
+    {"Target": "Cleric Aldus", "Favorability": 3},
+    {"Target": "Paladin Brigid", "Favorability": 4},
+    {"Target": "Acolyte Cedric", "Favorability": 2},
+    {"Target": "Exorcist Daria", "Favorability": 1},
+    {"Target": "Monk Elara", "Favorability": 3},
+    {"Target": "Templar Faust", "Favorability": 2},
+    {"Target": "Healer Gemma", "Favorability": 5},
+    {"Target": "Missionary Hilda", "Favorability": 0},
+    {"Target": "Zealot Ingram", "Favorability": -1},
+    {"Target": "Chanter Juno", "Favorability": 3},
+    {"Target": "Warlord Krog", "Favorability": 0},
+    {"Target": "Shaman Lorth", "Favorability": -1},
+    {"Target": "Hunter Morna", "Favorability": 1},
+    {"Target": "Tracker Nok", "Favorability": 0},
+    {"Target": "Beast Tamer Oona", "Favorability": 2},
+    {"Target": "Scout Palk", "Favorability": -2},
+    {"Target": "Berserker Qara", "Favorability": -1},
+    {"Target": "Fletcher Rusk", "Favorability": 1},
+    {"Target": "Totem Carrier Sarn", "Favorability": 0}
   ],
-  "PartyMembers": ["Lyra Swiftarrow"],
+  "PartyMembers": ["Ranger Kaelen", "Druid Liana", "Healer Gemma"],
   "Inventory": {
-    "Health Potion": 3,
     "Iron Sword": 1,
-    "Leather Vest": 1,
-    "Silver Key": 1
+    "Healing Potion": 5,
+    "Leather Armor": 1,
+    "Lockpick": 2,
+    "Crimson Coin": 150,
+    "Map Fragment": 1
   },
   "PlayerLog": [
-    {"Originator": "Kaelen", "Type": "KillEnemies", "Target": ["Forest Goblin"], "For": "Kaelen", "Received": {"Iron Sword": 1, "Health Potion": 1}, "Favorability": 1},
-    {"Originator": "Mira Thornwood", "Type": "RecoverStolenItem", "Target": ["Dwarven Ale"], "For": "Kaelen", "Received": {"Dwarven Ale": 2, "Elven Bread": 1}, "Favorability": 1},
-    {"Originator": "Grimgar the Old", "Type": "AttackThreateningEntities", "Target": ["Cultist Fanatic"], "For": "Kaelen", "Received": {"Scroll of Fireball": 1}, "Favorability": 2},
-    {"Originator": "Kaelen", "Type": "GuardEntity", "Target": ["Lyra Swiftarrow"], "For": "Lyra Swiftarrow", "Received": {"Mysterious Herb": 2}, "Favorability": 1},
-    {"Originator": "Aldric the Wise", "Type": "KillEnemies", "Target": ["Iron Covenant Raider"], "For": "Kaelen", "Received": null, "Favorability": 1},
-    {"Originator": "Kaelen", "Type": "StealStuff", "Target": ["Silver Key"], "For": "Kaelen", "Received": {"Silver Key": 1}, "Favorability": -1},
-    {"Originator": "Kaelen", "Type": "AttackEnemy", "Target": ["Marsh Troll"], "For": "Kaelen", "Received": {"Healing Poultice": 1}, "Favorability": 0},
-    {"Originator": "Lyra Swiftarrow", "Type": "EventTypes", "Target": ["Kaelen", "The Verdant Circle"], "For": "Kaelen", "Received": null, "Favorability": 2},
-    {"Originator": "Kaelen", "Type": "RecoverStolenItem", "Target": ["Obsidian Arrowhead"], "For": "Faelan Moonshadow", "Received": {"Obsidian Arrowhead": 3}, "Favorability": 1},
-    {"Originator": "Kaelen", "Type": "KillEnemies", "Target": ["Shadow Viper"], "For": "Kaelen", "Received": null, "Favorability": 0}
+    {"Originator": "Kaelen", "Type": "KillEnemies", "Target": ["Goblin", "Forest Wolf"], "For": "Kaelen", "Received": {"Crimson Coin": 50}, "Favorability": {"IronFist": 1, "SilentLeaf": 1}},
+    {"Originator": "Kaelen", "Type": "RecoverStolenItem", "Target": ["Silver Necklace"], "For": "Kaelen", "Received": {"Silver Necklace": 1, "Crimson Coin": 30}, "Favorability": {"CrimsonCoin": 2, "Merchant Ulric": 3}},
+    {"Originator": "Kaelen", "Type": "GuardEntity", "Target": ["Dawnspire"], "For": "OrderOfDawn", "Received": {"Amulet of Dawn": 1}, "Favorability": {"OrderOfDawn": 2, "Cleric Aldus": 2}},
+    {"Originator": "ShadowNetwork", "Type": "Ambush", "Target": ["Kaelen"], "For": "ShadowNetwork", "Received": null, "Favorability": {"Kaelen": -1}},
+    {"Originator": "Kaelen", "Type": "AttackEnemy", "Target": ["Shadow Assassin"], "For": "Kaelen", "Received": {"Poison Vial": 1}, "Favorability": {"ShadowNetwork": -1, "Spymaster Fenn": -1}},
+    {"Originator": "SilentLeaf", "Type": "Alliance", "Target": ["Kaelen"], "For": "SilentLeaf", "Received": null, "Favorability": {"SilentLeaf": 1, "Ranger Kaelen": 2}},
+    {"Originator": "Kaelen", "Type": "StealStuff", "Target": ["Lockbox"], "For": "Kaelen", "Received": {"Lockbox": 1, "Crimson Coin": 100}, "Favorability": {"CrimsonCoin": -2, "Banker Vara": -2}},
+    {"Originator": "IronFist", "Type": "Betrayal", "Target": ["ShadowNetwork"], "For": "IronFist", "Received": null, "Favorability": {"ShadowNetwork": -3, "IronFist": 1}},
+    {"Originator": "Kaelen", "Type": "AttackThreateningEntities", "Target": ["Dark Cultist"], "For": "OrderOfDawn", "Received": {"Healing Potion": 2}, "Favorability": {"OrderOfDawn": 1, "Paladin Brigid": 1}},
+    {"Originator": "WildclawTribe", "Type": "ResourceDepleted", "Target": ["Iron Ore"], "For": "WildclawTribe", "Received": null, "Favorability": {"IronFist": -1, "Warlord Krog": -1}}
   ],
-  "Location": "Whispering Pines Inn",
+  "Location": "Ironhold",
   "Skills": [
-    {"Name": "Swordsmanship", "Level": 3},
-    {"Name": "Stealth", "Level": 2},
+    {"Name": "Swordsmanship", "Level": 4},
+    {"Name": "Stealth", "Level": 3},
+    {"Name": "Persuasion", "Level": 2},
     {"Name": "Alchemy", "Level": 1}
   ]
 }

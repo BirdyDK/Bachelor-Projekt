@@ -9,8 +9,15 @@ class WorldState:
         self.locations = data.get("locations", {})
         self.items = data.get("items", {})
         self.player = data.get("player", {})
-        player_list = self.enums.get("Lists", {}).get("Player", [])
-        self.player_name = player_list[0] if player_list else "Kaelen"
+        
+        # Handle Player field – can be list or string
+        player_data = self.enums.get("Lists", {}).get("Player", [])
+        if isinstance(player_data, list) and player_data:
+            self.player_name = player_data[0]
+        elif isinstance(player_data, str):
+            self.player_name = player_data
+        else:
+            self.player_name = "Kaelen"  # fallback
 
     def get_relation(self, giver_type: str, giver_name: str, target: str = None) -> int:
         if target is None:
@@ -132,10 +139,17 @@ class WorldState:
         return result
 
     def get_faction_location(self, faction_name: str) -> str:
-        """Return a plausible location for a faction (first member's location, or 'unknown')."""
-        members = self.get_faction_members(faction_name)
-        if members:
-            return self.get_npc_location(members[0])
+        """Return the default location of a faction (from its data), or fallback."""
+        faction = self.factions.get(faction_name)
+        if faction:
+            loc = faction.get("Default_Location")
+            if loc:
+                return loc
+            # Fallback to first member's location
+            members = faction.get("Members", [])
+            if members:
+                return self.get_npc_location(members[0])
+        # Final fallback
         return "unknown"
 
     def get_non_friendly_entities(self, giver_type: str, giver_name: str) -> List[Tuple[str, str]]:

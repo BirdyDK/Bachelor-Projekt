@@ -1,7 +1,7 @@
 {
   "generic": {
     "greetings": [
-      "Hey there, {giver_name}.",
+      "Hey there, {player_name}.",
       "Psst! Over here.",
       "Greetings, traveller.",
       "I have a task for you, {player_name}.",
