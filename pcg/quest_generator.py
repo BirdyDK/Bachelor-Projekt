@@ -143,6 +143,7 @@ class QuestGenerator:
     # ---------- Quest generation methods (unchanged except location handling) ----------
     def _generate_AttackThreateningEntities(self, giver_type: str, giver_name: str) -> Optional[Dict[str, Any]]:
         locs = self.ws.get_all_locations_with_enemies()
+        #print(f"DEBUG: locations with enemies = {self.ws.locations.keys()}")
         if not locs:
             return None
         location, enemies = random.choice(locs)

@@ -1,4 +1,4 @@
-Now for each of the 20 quests take relavent data for the quest from the game state dataset that could generate that quest and it should be set up like it is in the game state dataset. mutiple quest may have the same data
+Now for each of the 20 quests take relavent data for the quest from the game state dataset that could generate that quest and it should be set up like it is in the game state dataset. mutiple quest may use the same data. Note that you are allowed to exclude unrelated relationships on NPCs, Factions, and the Player.
 
 example:
 ```

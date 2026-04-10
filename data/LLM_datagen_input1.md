@@ -77,7 +77,11 @@ NPCLog : list[Log]
 
 ## Location 
 Name : string 
+NameDefinitive : string
+NameDefinitiveCaps : string
 NamePossessive : string
+NameDefinitivePossessive : string
+NameDefinitivePossessiveCaps : string
 Enemies : list[Enemies] 
 Resources : list[Items] 
 
@@ -88,9 +92,11 @@ Favorability : RelationshipLevels
 ## Faction 
 Name : string 
 NameDefinitive : string
+NameDefinitiveCaps : string
 NamePossessive : string
 NameDefinitivePossessive : string
-Default_Location : Locations
+NameDefinitivePossessiveCaps : string
+DefaultLocation : Locations
 Relations : list[Relation] 
 Members : list[NPCs] 
 Treasury : dict[Items, int] (the items and amount of them) 
@@ -170,8 +176,11 @@ ITEM NAME: ...
 FACTION NAME: {
   "Name": , 
   "NameDefinitive": ,
+  "NameDefinitiveCaps": ,
   "NamePossessive": ,
   "NameDefinitivePossessive": ,
+  "NameDefinitivePossessiveCaps": ,
+  "DefaultLocation": ,
   "Relations": [
     {"Target": PLAYER, "Favorability": VALUE}, // Replace PLAYER with whatever the player is named.
     {"Target": FACTION, "Favorability": VALUE}, // Every Faction should have a relation to all other factions.
@@ -221,7 +230,11 @@ ENEMY NAME: ...
 ### LOCATION DATA
 LOCATION NAME: {
   "Name": ,
+  "NameDefinitive": ,
+  "NameDefinitiveCaps": ,
   "NamePossessive": ,
+  "NameDefinitivePossessive": ,
+  "NameDefinitivePossessiveCaps": ,
   "Enemies": ,
   "Resources": 
 }

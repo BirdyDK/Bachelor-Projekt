@@ -1,4 +1,4 @@
-now put the data generated in a csv file format with the headers input, output, description, hook, Structure. relevant data under input, the quest under output, description under description and Structure under Structure seperated by ;
+now put the data generated in a csv file format with the headers input, output, description, hook, Structure. relevant data under input, the quest under output, description under description, the hook under hook, and Structure under Structure seperated by ;
 
 example:
 ```

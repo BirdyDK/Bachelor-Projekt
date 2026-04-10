@@ -1,4 +1,4 @@
-Based on this data, can you please generate 20 different quests that would be relevant for the player following these rules. 
+Based on this data, can you please generate 50 different quests that would be relevant for the player following these rules. 
 
 # Explanation 
 Pick a quest from "Quest Structures" and fill the rules until only atomic actions are left. Rules are defined as <RULE> (e.g. <goto> or <kill>) and their use can be found in Rules. Atomic actions are the ones defined in Atomic Actions and are what a quest has to end up as. 
