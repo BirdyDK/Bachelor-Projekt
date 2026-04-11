@@ -103,18 +103,49 @@ python ./quest_generator/generate_displays.py
 to get the output in a human readable format.
 
 ## PCG
-To use the pcg system, run the following command from the root of the project:
+
+The Procedural Quest Generator can be used in two modes: **interactive** (default) and **non‑interactive** (for automation).
+
+### Interactive Mode
+
+Run the generator without any flags:
 
 ```sh
 python ./pcg/__main__.py
 ```
 
-This will output a set of files with generated quests named `generated_quests.json`and `generated_quests_with_hooks.json` in the `pcg/output` folder. The first one contains the generated quests without any hooks, while the second one contains the quests with hooks that can be used to interface with a game.
+This starts an interactive command prompt. Available commands (case‑insensitive):
 
-New world data can be added to the `pcg/world_data` folder in the form of a `.csv` file. The format of this file should be the same as the one provided in `template_world_data.csv`. The generated quests will then reflect a random set of world data in the folder.
+`LD <filename>` – Load a different world data file (from `pcg/world_data/` or a full path).
+Example: `LD large_world_data.csv`
 
-To specify a specific set of world data, you simply add the name of the file to the command like this:
+`GQ PCG` – Generate all eligible quests using the currently loaded world data and save them to `pcg/output/`.
+
+`EXIT` or `QUIT` – Close the program.
+
+By default, `template_world_data.csv` is loaded. The world data stays in memory, so you can run `GQ PCG` multiple times after switching data files without restarting.
+
+Non‑Interactive Mode (One‑Shot Generation)
+Use the `--gq_pcg` flag to generate quests and exit immediately:
 
 ```sh
-python ./pcg/__main__.py --world_data_file template_world_data.csv
+python ./pcg/__main__.py --gq_pcg
 ```
+
+You can also specify a particular world data file:
+
+```sh
+python ./pcg/__main__.py --gq_pcg --world_data_file large_world_data.csv
+```
+
+If no `--world_data_file` is given, the generator loads `template_world_data.csv`.
+
+Output Files
+Both modes produce two JSON files in `pcg/output/`:
+
+`generated_quests.json` – Raw quest data (targets, steps, rewards, favorability).
+
+`generated_quests_with_hooks.json` – Same quests plus a natural‑language hook field, ready for in‑game dialogue.
+
+Adding Custom World Data
+Place your .csv files (following the format of `template_world_data.csv`) into the `pcg/world_data/` folder. You can then load them interactively with `LD` or via the `--world_data_file` flag.
