@@ -87,8 +87,7 @@ def main():
     
     # 5. Generate hooks and save with source filename to output folder
     print("\nGenerating quest hooks...")
-    hook_gen = quest_hook_generator.QuestHookGenerator()
-    hook_gen.set_player_name(world.player_name)
+    hook_gen = quest_hook_generator.QuestHookGenerator(world)   # pass world object
     hooked_quests = hook_gen.add_hooks_to_quests(all_quests_by_type)
     hooked_output_file = os.path.join(output_dir, "generated_quests_with_hooks.json")
     hooked_output_data = {
