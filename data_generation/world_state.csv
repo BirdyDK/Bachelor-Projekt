@@ -1,0 +1,63 @@
+## ENUM DATA
+ItemTypes: ["Weapon","Armor","Consumable","Resource","QuestItem","Tool","Misc"];
+QuestTypes: ["AttackThreateningEntities","RecoverStolenItem","GuardEntity","AttackEnemy","StealStuff","KillEnemies"];
+EventTypes: ["Dialogue","Trade","Discovery","Betrayal","Alliance","Exploration","Crafting"];
+RelationshipLevels: {"-5":"Sworn Enemy","-4":"Hostile","-3":"Unfriendly","-2":"Wary","-1":"Distrust","0":"Neutral","1":"Familiar","2":"Friendly","3":"Trusted","4":"Close Ally","5":"Sworn Ally"};
+
+Species: ["Human","Elf","Dwarf","Orc","Goblin","Beastfolk","Undead"];
+Roles: ["Merchant","Guard","Blacksmith","Mage","Farmer","Bandit","Noble","Scout","Healer","Hunter"];
+Locations: ["Ironhold","Greenvale","Shadowfen","Stormpeak"];
+Factions: ["Ironclad Guild","Verdant Circle","Shadow Syndicate"];
+Enemies: ["Wolf","Bandit","Goblin","Undead","Troll"];
+Items: ["Iron Sword","Steel Armor","Health Potion","Mana Potion","Herbs","Wood","Stolen Relic","Gold Coin","Lockpick","Bow","Arrow"];
+NPCs: ["Arin","Belra","Cordo","Dain","Elra","Fenn","Gor","Hilda","Iris","Jorn","Kara"];
+Player: ["Player"];
+
+;## GAME STATE DATA
+### NPC DATA
+Arin: {"Name":"Arin","Species":"Human","HomeLocation":"Ironhold","CurrentLocation":"Ironhold","Faction":"Ironclad Guild","OwnedItems":{"Iron Sword":1,"Gold Coin":20},"Role":"Guard","Relations":[{"Target":"Player","Favorability":1}],"NPCLog":[]};
+Belra: {"Name":"Belra","Species":"Elf","HomeLocation":"Greenvale","CurrentLocation":"Greenvale","Faction":"Verdant Circle","OwnedItems":{"Herbs":10},"Role":"Healer","Relations":[{"Target":"Player","Favorability":2}],"NPCLog":[]};
+Cordo: {"Name":"Cordo","Species":"Dwarf","HomeLocation":"Ironhold","CurrentLocation":"Ironhold","Faction":"Ironclad Guild","OwnedItems":{"Steel Armor":1},"Role":"Blacksmith","Relations":[{"Target":"Player","Favorability":0}],"NPCLog":[]};
+Dain: {"Name":"Dain","Species":"Human","HomeLocation":"Shadowfen","CurrentLocation":"Shadowfen","Faction":"Shadow Syndicate","OwnedItems":{"Lockpick":5},"Role":"Bandit","Relations":[{"Target":"Player","Favorability":-2}],"NPCLog":[]};
+Elra: {"Name":"Elra","Species":"Elf","HomeLocation":"Greenvale","CurrentLocation":"Stormpeak","Faction":"Verdant Circle","OwnedItems":{"Bow":1,"Arrow":20},"Role":"Scout","Relations":[{"Target":"Player","Favorability":1}],"NPCLog":[]};
+Fenn: {"Name":"Fenn","Species":"Human","HomeLocation":"Greenvale","CurrentLocation":"Greenvale","Faction":"Verdant Circle","OwnedItems":{"Wood":15},"Role":"Farmer","Relations":[{"Target":"Player","Favorability":0}],"NPCLog":[]};
+Gor: {"Name":"Gor","Species":"Orc","HomeLocation":"Shadowfen","CurrentLocation":"Shadowfen","Faction":"Shadow Syndicate","OwnedItems":{"Iron Sword":1},"Role":"Bandit","Relations":[{"Target":"Player","Favorability":-3}],"NPCLog":[]};
+Hilda: {"Name":"Hilda","Species":"Human","HomeLocation":"Ironhold","CurrentLocation":"Stormpeak","Faction":"Ironclad Guild","OwnedItems":{"Health Potion":3},"Role":"Hunter","Relations":[{"Target":"Player","Favorability":1}],"NPCLog":[]};
+Iris: {"Name":"Iris","Species":"Elf","HomeLocation":"Greenvale","CurrentLocation":"Greenvale","Faction":"Verdant Circle","OwnedItems":{"Mana Potion":2},"Role":"Mage","Relations":[{"Target":"Player","Favorability":2}],"NPCLog":[]};
+Jorn: {"Name":"Jorn","Species":"Dwarf","HomeLocation":"Stormpeak","CurrentLocation":"Stormpeak","Faction":"Ironclad Guild","OwnedItems":{"Steel Armor":1},"Role":"Guard","Relations":[{"Target":"Player","Favorability":0}],"NPCLog":[]};
+Kara: {"Name":"Kara","Species":"Human","HomeLocation":"Shadowfen","CurrentLocation":"Ironhold","Faction":"Shadow Syndicate","OwnedItems":{"Stolen Relic":1},"Role":"Bandit","Relations":[{"Target":"Player","Favorability":-4}],"NPCLog":[]};
+
+### FACTION DATA
+Ironclad Guild: {"Name":"Ironclad Guild","Relations":[{"Target":"Verdant Circle","Favorability":2},{"Target":"Shadow Syndicate","Favorability":-3}],"Members":["Arin","Cordo","Hilda","Jorn"],"Treasury":{"Gold Coin":500,"Steel Armor":5},"FactionLog":[]};
+Verdant Circle: {"Name":"Verdant Circle","Relations":[{"Target":"Ironclad Guild","Favorability":2},{"Target":"Shadow Syndicate","Favorability":-2}],"Members":["Belra","Elra","Fenn","Iris"],"Treasury":{"Herbs":200},"FactionLog":[]};
+Shadow Syndicate: {"Name":"Shadow Syndicate","Relations":[{"Target":"Ironclad Guild","Favorability":-3},{"Target":"Verdant Circle","Favorability":-2}],"Members":["Dain","Gor","Kara"],"Treasury":{"Gold Coin":300,"Lockpick":50},"FactionLog":[]};
+
+### ENEMY DATA
+Wolf: {"Name":"Wolf","Loot":["Herbs"]};
+Bandit: {"Name":"Bandit","Loot":["Gold Coin","Lockpick"]};
+Goblin: {"Name":"Goblin","Loot":["Wood"]};
+Undead: {"Name":"Undead","Loot":["Stolen Relic"]};
+Troll: {"Name":"Troll","Loot":["Iron Sword"]};
+
+;## PLAYER DATA
+Player: {
+"Species":"Human",
+"FactionRelations":[{"Target":"Ironclad Guild","Favorability":1},{"Target":"Verdant Circle","Favorability":2},{"Target":"Shadow Syndicate","Favorability":-2}],
+"NPCRelations":[{"Target":"Arin","Favorability":1},{"Target":"Belra","Favorability":2},{"Target":"Dain","Favorability":-2}],
+"PartyMembers":["Arin","Belra"],
+"Inventory":{"Iron Sword":1,"Health Potion":5,"Gold Coin":100},
+"PlayerLog":[
+{"Originator":"Arin","Type":"GuardEntity","Target":["Fenn"],"For":"Player","Received":{"Gold Coin":50},"Favorability":1},
+{"Originator":"Belra","Type":"RecoverStolenItem","Target":["Stolen Relic","Kara"],"For":"Player","Received":{"Herbs":20},"Favorability":2},
+{"Originator":"Player","Type":"KillEnemies","Target":["Wolf"],"For":"Player","Received":{"Gold Coin":10},"Favorability":0},
+{"Originator":"Player","Type":"KillEnemies","Target":["Bandit"],"For":"Player","Received":{"Gold Coin":25},"Favorability":0},
+{"Originator":"Cordo","Type":"Crafting","Target":["Iron Sword"],"For":"Player","Received":null,"Favorability":1},
+{"Originator":"Ironclad Guild","Type":"AttackEnemy","Target":["Goblin"],"For":"Player","Received":{"Gold Coin":40},"Favorability":1},
+{"Originator":"Verdant Circle","Type":"Exploration","Target":["Shadowfen"],"For":"Player","Received":{"Mana Potion":1},"Favorability":1},
+{"Originator":"Player","Type":"KillEnemies","Target":["Undead"],"For":"Player","Received":{"Stolen Relic":1},"Favorability":0},
+{"Originator":"Shadow Syndicate","Type":"StealStuff","Target":["Gold Coin"],"For":"Player","Received":null,"Favorability":-1},
+{"Originator":"Player","Type":"AttackThreateningEntities","Target":["Troll"],"For":"Player","Received":{"Iron Sword":1},"Favorability":1}
+],
+"Location":"Ironhold",
+"Skills":[{"Name":"Swordsmanship","Level":3},{"Name":"Alchemy","Level":2},{"Name":"Stealth","Level":1}]
+}
