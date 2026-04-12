@@ -111,7 +111,7 @@ The Procedural Quest Generator can be used in two modes: **interactive** (defaul
 Run the generator without any flags:
 
 ```sh
-python ./pcg/__main__.py
+python main.py
 ```
 
 This starts an interactive command prompt. Available commands (case‑insensitive):
@@ -129,13 +129,13 @@ Non‑Interactive Mode (One‑Shot Generation)
 Use the `--gq_pcg` flag to generate quests and exit immediately:
 
 ```sh
-python ./pcg/__main__.py --gq_pcg
+python main.py --gq_pcg
 ```
 
 You can also specify a particular world data file:
 
 ```sh
-python ./pcg/__main__.py --gq_pcg --world_data_file large_world_data.csv
+python main.py --gq_pcg --world_data_file large_world_data.csv
 ```
 
 If no `--world_data_file` is given, the generator loads `template_world_data.csv`.

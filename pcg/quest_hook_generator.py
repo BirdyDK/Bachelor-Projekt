@@ -2,7 +2,7 @@ import json
 import os
 import random
 from typing import Dict, Any, List, Optional
-from world_state import WorldState
+from .world_state import WorldState
 
 class QuestHookGenerator:
     def __init__(self, world_state: WorldState, templates_file: str = None):

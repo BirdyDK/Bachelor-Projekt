@@ -1,6 +1,6 @@
 import random
 from typing import Dict, Any, List, Optional, Tuple
-from world_state import WorldState
+from .world_state import WorldState
 
 class QuestGenerator:
     def __init__(self, world_state: WorldState, debug: bool = False):
