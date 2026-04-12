@@ -9,6 +9,7 @@ import os
 import json
 import random
 import argparse
+from pcg.slm_interface import SLMQuestGenerator
 
 # Add current directory to path so pcg package can be found
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -102,14 +103,16 @@ def generate_and_save(world: world_state.WorldState, script_dir: str, data_filen
     print(f"Quests with hooks saved to {hooked_output_file}")
 
 def interactive_mode(initial_world_file: str, script_dir: str):
-    """Run interactive command loop."""
     current_file = initial_world_file
     world = load_world(current_file)
     print("\nInteractive mode active. Commands (case‑insensitive):")
     print("  LD <filename>  – Load a different world data file")
-    print("  GQ PCG         – Generate quests and save to pcg/output/")
+    print("  GQ PCG         – Generate quests using rule‑based PCG and save to pcg/output/")
+    print("  GQ LLM         – Generate a single quest using the fine‑tuned SLM")
     print("  EXIT / QUIT    – Exit the program")
     print()
+
+    slm_gen = None  # lazy init
 
     while True:
         try:
@@ -144,8 +147,28 @@ def interactive_mode(initial_world_file: str, script_dir: str):
         elif cmd == "gq pcg":
             data_filename = os.path.basename(current_file)
             generate_and_save(world, script_dir, data_filename)
+        elif cmd == "gq llm":
+            print("Generating quest using SLM... (this may take a moment)")
+            if slm_gen is None:
+                from pcg.slm_interface import SLMQuestGenerator
+                slm_gen = SLMQuestGenerator()
+            world_dict = {
+                "npcs": world.npcs,
+                "factions": world.factions,
+                "locations": world.locations,
+                "enemies": world.enemies,
+                "items": world.items,
+                "player": world.player
+            }
+            result = slm_gen.generate_quest(world_dict)
+            if result:
+                print("\n=== SLM Generated Quest ===\n")
+                print(result)
+                print("\n===========================\n")
+            else:
+                print("SLM generation failed.")
         else:
-            print("Unknown command. Available: LD <file>, GQ PCG, EXIT")
+            print("Unknown command. Available: LD <file>, GQ PCG, GQ LLM, EXIT")
 
 def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
