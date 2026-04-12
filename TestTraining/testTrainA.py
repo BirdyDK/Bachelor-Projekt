@@ -26,6 +26,7 @@ load_dotenv()
 MODEL_ID = "meta-llama/Llama-3.2-1B-Instruct" # You can change to Gemma-2b, SMOL, QWEN, or others
 ACCESS_TOKEN = os.getenv("HF_TOKEN")
 CSV_FILE = "TestTraining\\tranquilville_mysteries.csv"
+OUT_DIR = "./TestTraining/Results/Llama-3.2-1B-Instruct_ebs32_lr3e-05_r32_epochs3"
 
 # Login to HuggingFace with the token from .env
 if ACCESS_TOKEN:
@@ -75,11 +76,11 @@ trainer = SFTTrainer(
     model=model,
     train_dataset=dataset,
     args=TrainingArguments(
-        output_dir="./mystery_adapter",
-        per_device_train_batch_size=2,
-        gradient_accumulation_steps=4,
+        output_dir=OUT_DIR,
+        per_device_train_batch_size=4,
+        gradient_accumulation_steps=8,
         learning_rate=3e-5,
-        num_train_epochs=1,
+        num_train_epochs=3,
         logging_steps=10,
         bf16=True, # Set to False if using CPU/older GPU
         save_strategy="epoch"
@@ -87,5 +88,5 @@ trainer = SFTTrainer(
 )
 
 trainer.train()
-model.save_pretrained("./TestTraining")
-print("Training Complete! Adapter saved to ./TestTraining")
+model.save_pretrained(OUT_DIR)
+print("Training Complete! Adapter saved to ./TestTraining/Results")
