@@ -106,10 +106,11 @@ def interactive_mode(initial_world_file: str, script_dir: str):
     current_file = initial_world_file
     world = load_world(current_file)
     print("\nInteractive mode active. Commands (case‑insensitive):")
-    print("  LD <filename>  – Load a different world data file")
-    print("  GQ PCG         – Generate quests using rule‑based PCG and save to pcg/output/")
-    print("  GQ LLM         – Generate a single quest using the fine‑tuned SLM")
-    print("  EXIT / QUIT    – Exit the program")
+    print("  LD <filename>        – Load a different world data file")
+    print("  GQ PCG               – Generate quests using rule‑based PCG and save to pcg/output/")
+    print("  GQ SLM               – Generate a single quest using the fine‑tuned SLM (requires local model)")
+    print("  GQ SLM INPUT         – Export the current world state as a JSON file for SLM input (pcg/output/slm_input.json)")
+    print("  EXIT / QUIT          – Exit the program")
     print()
 
     slm_gen = None  # lazy init
@@ -147,18 +148,18 @@ def interactive_mode(initial_world_file: str, script_dir: str):
         elif cmd == "gq pcg":
             data_filename = os.path.basename(current_file)
             generate_and_save(world, script_dir, data_filename)
-        elif cmd == "gq llm":
+        elif cmd == "gq slm":
             print("Generating quest using SLM... (this may take a moment)")
             if slm_gen is None:
                 from pcg.slm_interface import SLMQuestGenerator
                 slm_gen = SLMQuestGenerator()
             world_dict = {
-                "npcs": world.npcs,
-                "factions": world.factions,
-                "locations": world.locations,
-                "enemies": world.enemies,
-                "items": world.items,
-                "player": world.player
+                "NPCs": world.npcs,
+                "Factions": world.factions,
+                "Locations": world.locations,
+                "Enemies": world.enemies,
+                "Items": world.items,
+                "Player": world.player
             }
             result = slm_gen.generate_quest(world_dict)
             if result:
@@ -167,8 +168,24 @@ def interactive_mode(initial_world_file: str, script_dir: str):
                 print("\n===========================\n")
             else:
                 print("SLM generation failed.")
+        elif cmd == "gq slm input":
+            # Build the same structure as used by the SLM (capitalised keys)
+            world_dict = {
+                "NPCs": world.npcs,
+                "Factions": world.factions,
+                "Locations": world.locations,
+                "Enemies": world.enemies,
+                "Items": world.items,
+                "Player": world.player
+            }
+            output_dir = ensure_output_dir(script_dir)
+            slm_input_file = os.path.join(output_dir, "slm_input.json")
+            # Write as one‑liner (compact)
+            with open(slm_input_file, 'w', encoding='utf-8') as f:
+                json.dump(world_dict, f, separators=(',', ':'), ensure_ascii=False)
+            print(f"SLM input saved to {slm_input_file}")
         else:
-            print("Unknown command. Available: LD <file>, GQ PCG, GQ LLM, EXIT")
+            print("Unknown command. Available: LD <file>, GQ PCG, GQ SLM, GQ SLM INPUT, EXIT")
 
 def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
