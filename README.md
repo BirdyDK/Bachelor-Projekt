@@ -85,3 +85,67 @@ If you need to deactivate it, you can just run the command `deactivate`.
 ### Setting up the Model
 To set up the model you need a `.env` file in root.
 In it, make sure to define the following env_var: `HF_TOKEN = "YOUR_HUGGING_FACE_LLAMA_TOKEN_HERE"
+
+
+## Quest Generator
+Run the quest generator with
+
+```sh
+python ./quest_generator/main.py
+```
+
+and then run
+
+```sh
+python ./quest_generator/generate_displays.py
+```
+
+to get the output in a human readable format.
+
+## PCG
+
+The Procedural Quest Generator can be used in two modes: **interactive** (default) and **non‑interactive** (for automation).
+
+### Interactive Mode
+
+Run the generator without any flags:
+
+```sh
+python ./pcg/__main__.py
+```
+
+This starts an interactive command prompt. Available commands (case‑insensitive):
+
+`LD <filename>` – Load a different world data file (from `pcg/world_data/` or a full path).
+Example: `LD large_world_data.csv`
+
+`GQ PCG` – Generate all eligible quests using the currently loaded world data and save them to `pcg/output/`.
+
+`EXIT` or `QUIT` – Close the program.
+
+By default, `template_world_data.csv` is loaded. The world data stays in memory, so you can run `GQ PCG` multiple times after switching data files without restarting.
+
+Non‑Interactive Mode (One‑Shot Generation)
+Use the `--gq_pcg` flag to generate quests and exit immediately:
+
+```sh
+python ./pcg/__main__.py --gq_pcg
+```
+
+You can also specify a particular world data file:
+
+```sh
+python ./pcg/__main__.py --gq_pcg --world_data_file large_world_data.csv
+```
+
+If no `--world_data_file` is given, the generator loads `template_world_data.csv`.
+
+Output Files
+Both modes produce two JSON files in `pcg/output/`:
+
+`generated_quests.json` – Raw quest data (targets, steps, rewards, favorability).
+
+`generated_quests_with_hooks.json` – Same quests plus a natural‑language hook field, ready for in‑game dialogue.
+
+Adding Custom World Data
+Place your .csv files (following the format of `template_world_data.csv`) into the `pcg/world_data/` folder. You can then load them interactively with `LD` or via the `--world_data_file` flag.
