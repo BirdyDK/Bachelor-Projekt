@@ -1,6 +1,7 @@
 import torch
 import os
 import pandas as pd
+import json as json_lib
 from datasets import Dataset
 from transformers import (
     AutoModelForCausalLM, 
@@ -25,8 +26,8 @@ load_dotenv()
 
 # 1. SETUP & DATA
 MODEL_ID = "HuggingFaceTB/SmolLM2-1.7B-Instruct"  # Using instruct version
-CSV_FILE = "TestTraining/tranquilville_mysteries.csv"
-OUTPUT_DIR = "./TestTraining/Results/SmolLM2-1.7B-Instruct_ebs32_lr5e-05_r32_epochs3"
+CSV_FILE = "TestTraining/withdiscription.csv"
+OUTPUT_DIR = "./TestTraining/Results/SmolLM2-1.7B-Instruct_ebs8_lr5e-05_r32_epochs3"
 
 # Clear GPU cache
 torch.cuda.empty_cache()
@@ -45,20 +46,62 @@ def load_and_format_dataset(csv_path):
     def format_with_system_prompt(row):
         # System message to enforce output structure
         system_message = {
-            "role": "system", 
-            "content": "You are a mystery writer. Always respond with a story containing these exact sections: OPENING SCENE:, PLOT SUMMARY:, INVESTIGATION CLUES:, and RED HERRING EXPLANATION:. Each section must start with the heading on its own line."
+            "role": "system",
+            "content": (
+                "You are a quest generator for a fantasy RPG. Your output must strictly follow this two-part format:\n"
+                "1. A JSON object: {\"Quest\": {\"Name\": \"...\", \"Giver\": \"...\", \"Actions\": [...]}}\n"
+                "2. Two newlines, followed by a separate plain-text description.\n\n"
+                "--- QUEST GENERATION LOGIC ---\n"
+                "To generate 'Actions', start with a 'Quest Structure' and expand the <RULES> recursively until only Atomic Actions remain. "
+                "Every final action must be a string in the format: 'action Target'.\n\n"
+                "1. QUEST STRUCTURES (Initial Templates):\n"
+                "- Attack threatening entities: <goto> damage <goto> report\n"
+                "- Recover stolen item: <get> <goto> give\n"
+                "- Guard entity: <goto> defend\n"
+                "- Attack enemy: <goto> damage\n"
+                "- Steal stuff: <goto> <steal> <goto> give\n"
+                "- Kill enemies: <goto> <kill> <goto> report\n\n"
+                "2. EXPANSION RULES (Replace <RULE> with one of its options):\n"
+                "- <goto>  ::= terminal (already there) | explore | <learn> goto\n"
+                "- <learn> ::= terminal (already known) | <goto> <get> read\n"
+                "- <get>   ::= terminal (already have) | <steal> | <goto> gather\n"
+                "- <steal> ::= <goto> stealth take | <goto> <kill> take\n"
+                "- <kill>  ::= <goto> kill\n\n"
+                "3. ATOMIC ACTIONS (Final Output Format):\n"
+                "Each action must be paired with a target from the game state:\n"
+                "- damage [Enemy], defend [NPC/Loc], explore [Loc], gather [Item], give [NPC], "
+                "goto [Loc], kill [Enemy], read [Item], report [NPC], stealth [NPC], take [Item].\n\n"
+                "--- EXAMPLE PROCESS ---\n"
+                "Quest: Kill enemies\n"
+                "Step 1 (Structure): <goto> <kill> <goto> report\n"
+                "Step 2 (Expand <kill>): <goto> <goto> kill <goto> report\n"
+                "Step 3 (Final Atomic): ['goto Shadowfen', 'goto Dark Cave', 'kill Goblin', 'goto Keep', 'report Brom']\n\n"
+                "--- OUTPUT EXAMPLE ---\n"
+                '{"Quest": {"Name": "The Cave Menace", "Giver": "Brom", "Actions": ["goto Dark Cave", "kill Goblin", "goto Keep", "report Brom"]}}\n\n'
+                "Brom is tired of the goblins in the Dark Cave. Go kill their leader and report back."
+            )
         }
         
-        # User message with the structured input
+        # User message: the game state
         user_message = {
-            "role": "user", 
-            "content": f"Create a mystery story from these details:\n{row['input_names_only']}"
+            "role": "user",
+            "content": f"Game state:\n{row['input']}"
         }
         
-        # Assistant message with the full output
+        try:
+            # Load the base quest data from the row
+            quest_data = json_lib.loads(row['output'])
+        except:
+            # Fallback in case of malformed JSON
+            quest_data = {"Quest": {"Name": "Unknown", "Giver": "Unknown", "Actions": []}}
+
+        json_string = json_lib.dumps(quest_data, ensure_ascii=False)
+
+        assistant_content = f"{json_string}\n\n{row['description']}"
+
         assistant_message = {
-            "role": "assistant", 
-            "content": row['output']
+            "role": "assistant",
+            "content": assistant_content
         }
         
         # Apply chat template
@@ -117,7 +160,7 @@ training_args = TrainingArguments(
     num_train_epochs=3, 
     per_device_train_batch_size=4,
     per_device_eval_batch_size=4,
-    gradient_accumulation_steps=8,
+    gradient_accumulation_steps=2,
     learning_rate=5e-5,  # Slightly higher for LoRA
     weight_decay=0.01,
     warmup_ratio=0.03,

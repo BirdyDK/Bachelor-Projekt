@@ -4,23 +4,71 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from peft import PeftModel
 
 RESULTS_ROOT = "./TestTraining/Results"
-OUTPUT_FILE = "trainingResultsEpochsNoChatTemplate.md"
+OUTPUT_FILE = "trainingResults.md"
 
-TEST_INPUT = "Who: Silas the Blacksmith. Where: The Forge. Victim: Mayor Higgins."
+TEST_INPUT = """
+    {"NPCs": {
+        "Seraphina Dawn": {
+            "Name": "Seraphina Dawn", 
+            "Species": "Human", 
+            "HomeLocation": "Sunstone Temple", 
+            "CurrentLocation": "Sunstone Temple", 
+            "Faction": "The Sunstone Order", 
+            "OwnedItems": {
+                "Sunstone Amulet": 1, "Health Potion": 3}, 
+                "Role": "Priest", 
+                "Relations": [{"Target": "Player", "Favorability": 2}, {"Target": "The Shadow Syndicate", "Favorability": -4}]
+        }, 
+        "Thorne Blackwood": {
+            "Name": "Thorne Blackwood", 
+            "Faction": "The Shadow Syndicate", 
+            "CurrentLocation": "Shadowfen"
+            }
+        }, 
+        "Locations": {
+            "Sunstone Temple": {
+                "Name": "Sunstone Temple", 
+                "Enemies": [], 
+                "Resources": ["Sunstone Amulet", "Health Potion"]
+            }, 
+            "Shadowfen": {
+                "Name": "Shadowfen", 
+                "Enemies": ["Shadow Stalker", "Goblin Scavenger"], 
+                "Resources": ["Lockpick Set", "Shadowfang Dagger"]
+                }
+            }, 
+        "Factions": {
+            "The Shadow Syndicate": {
+                "Name": "The Shadow Syndicate", 
+                "Relations": [{"Target": "Player", "Favorability": -1}, {"Target": "The Sunstone Order", "Favorability": -5}], 
+                "Members": ["Thorne Blackwood"]
+            }, 
+            "The Sunstone Order": {
+                "Name": "The Sunstone Order", 
+                "Relations": [{"Target": "The Shadow Syndicate", "Favorability": -5}], 
+                "Members": ["Seraphina Dawn"], 
+                "Treasury": {"Sunstone Amulet": 3, "Health Potion": 10}
+            }
+        }
+    };
+"""
 
 def solve_mystery(model, tokenizer, input_text):
     """messages = [
         {
             "role": "system",
             "content": (
-                "You are a mystery writer. Always respond with a story containing these exact "
-                "sections: OPENING SCENE:, PLOT SUMMARY:, INVESTIGATION CLUES:, and "
-                "RED HERRING EXPLANATION:. Each section must start with the heading on its own line."
+                "You are a quest generator. Your job is to take the structured input data "
+                "(NPCs, Locations, Factions, Items, etc.) and produce a quest in JSON format. "
+                "The quest must be fully derived from the input data and must not introduce "
+                "new characters, locations, factions, or items that are not present in the input. "
+                "Always output only the quest JSON exactly as it should appear in the CSV 'output' column. "
+                "The quest needs to have a Name, Giver, and Actions."
             )
         },
         {
             "role": "user",
-            "content": f"Create a mystery story from these details:\n{input_text}"
+            "content": f"Create a quest from these details:\n{input_text}"
         }
     ]
 
@@ -31,7 +79,7 @@ def solve_mystery(model, tokenizer, input_text):
         tokenize=False,
         add_generation_prompt=True
     )"""
-    prompt = f"### Instruction: Create a mystery story from these details:\n{input_text}\n\n### Response:"
+    prompt = f"### Input: Create a quest from these details:\n{input_text}\n\n### Response:"
     inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
 
     outputs = model.generate(
