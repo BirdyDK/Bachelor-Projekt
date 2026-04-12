@@ -51,7 +51,7 @@ def solve_mystery(input_text):
             "Step 2 (Expand <kill>): <goto> <goto> kill <goto> report\n"
             "Step 3 (Final Atomic): ['goto Shadowfen', 'goto Dark Cave', 'kill Goblin', 'goto Keep', 'report Brom']\n\n"
             "--- OUTPUT EXAMPLE ---\n"
-            '{"Quest": {"Name": "The Cave Menace", "Giver": "Brom", "Actions": ["goto Dark Cave", "kill Goblin", "goto Keep", "report Brom"]}}\n\n'
+            "{\"Quest\": {\"Name\": \"The Cave Menace\", \"Giver\": \"Brom\", \"Actions\": [\"goto Dark Cave\", \"kill Goblin\", \"goto Keep\", \"report Brom\"]}}\n\n"
             "Brom is tired of the goblins in the Dark Cave. Go kill their leader and report back."
         )
     }
