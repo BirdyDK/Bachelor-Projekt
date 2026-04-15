@@ -104,8 +104,7 @@ to get the output in a human readable format.
 
 
 ## Generating Quests with the SLM and Rule-Based PCG
-
-The Procedural Quest Generator can be used in two main modes: **interactive** (default) and **non‑interactive** (for automation). It supports both a **rule‑based** generator (using world state relations) and a **fine‑tuned SLM** (Small Language Model) that produces quests from reduced world data.
+The Procedural Quest Generator can be used in two modes: **interactive** (default) and **non‑interactive** (for automation). It supports a **rule‑based** generator (using world state relations) and a **fine‑tuned SLM** (Small Language Model) that produces quests from **reduced** world data. The full world state is too large for the SLM, so it is always reduced before inference.
 
 ### Interactive Mode
 
@@ -121,15 +120,13 @@ This starts an interactive command prompt. Available commands (case‑insensitiv
 |---------|-------------|
 | `LD <filename>` | Load a different world data file (from `pcg/world_data/` or a full path). Example: `LD large_world_data.csv` |
 | `GQ PCG` | Generate all eligible quests using the **rule‑based** PCG system and save them to `pcg/output/` |
-| `GQ SLM` | Generate a single quest using the SLM with the **full** world state |
-| `GQ SLM RANDOM` | Pick a random NPC or faction, reduce the world state around it, then query the SLM |
-| `GQ SLM FOCUS <name>` | Focus on a specific NPC or faction (case‑insensitive), reduce the world, then query the SLM. Example: `GQ SLM FOCUS Fenella` |
-| `GQ SLM INPUT` | Export the full world state as a compact JSON file (`pcg/output/slm_input_full.json`) for later use with the SLM |
-| `GQ SLM INPUT RANDOM` | Export a reduced world state (random focus) to a JSON file (`slm_input_npc_<name>.json` or `slm_input_faction_<name>.json`) |
-| `GQ SLM INPUT FOCUS <name>` | Export a reduced world state focused on a specific NPC or faction to a JSON file |
+| `GQ SLM` | Pick a random NPC or faction, reduce the world state around it, then query the SLM. The reduced JSON input is printed before the generated quest. |
+| `GQ SLM FOCUS <name>` | Focus on a specific NPC or faction (case‑insensitive), reduce the world, then query the SLM. Example: `GQ SLM FOCUS Fenella`. The reduced JSON input is printed. |
+| `GQ SLM INPUT` | Export a reduced world state (random focus) to a JSON file in `pcg/output/` (no SLM query). |
+| `GQ SLM INPUT FOCUS <name>` | Export a reduced world state focused on a specific NPC or faction to a JSON file. |
 | `EXIT` / `QUIT` | Close the program |
 
-By default, `template_world_data.csv` is loaded. The world data stays in memory, so you can run `GQ PCG` or `GQ SLM` multiple times after switching data files without restarting.
+By default, `template_world_data.csv` is loaded. The world data stays in memory, so you can run commands multiple times after switching data files without restarting.
 
 ### Non‑Interactive Mode (One‑Shot Generation)
 
@@ -149,14 +146,14 @@ If no `--world_data_file` is given, the generator loads `template_world_data.csv
 
 ### SLM‑Based Generation & RAG Reduction
 
-The SLM (fine‑tuned on `HuggingFaceTB/SmolLM2-1.7B-Instruct`) is only capable of handling small contexts. Therefore, before sending world data to the SLM, the system **reduces** the world state to a focused subset:
+The SLM (fine‑tuned on `HuggingFaceTB/SmolLM2-1.7B-Instruct`) cannot handle the full world state. Therefore, before sending data to the SLM, the system **reduces** the world to a focused subset:
 
-- **When focusing on an NPC**: includes the NPC, its faction, one disliked NPC (or an enemy NPC from a disliked faction), and the enemy’s faction.
+- **When focusing on an NPC**: includes the NPC, its faction, one disliked NPC (prioritising a different faction), and the enemy’s faction.
 - **When focusing on a faction**: includes the faction, one enemy faction, one member from the focus faction, and one enemy NPC from the enemy faction.
 
-All relations are filtered to only those between the included entities. Locations and owned items are also limited to the selected NPCs. This “adversarial” reduction provides the SLM with a compact, conflict‑rich scenario.
+All relations are filtered to only those between the included entities. Locations and owned items are limited to the selected NPCs. The player’s event log (`PlayerLog`) is removed to keep the context clean.
 
-The reduced data is then sent to the SLM, which produces a quest in the format:
+The reduced JSON is then sent to the SLM, which produces a quest in the format:
 
 ```json
 {"Quest": {"Name": "...", "Giver": "...", "Actions": [...]}}
@@ -164,16 +161,16 @@ The reduced data is then sent to the SLM, which produces a quest in the format:
 (plain text description)
 ```
 
-You can also export the reduced JSON without running the SLM (using `GQ SLM INPUT FOCUS` or `GQ SLM INPUT RANDOM`) for offline use by a colleague who has the trained model.
+Both `GQ SLM` and `GQ SLM FOCUS` print the exact JSON input given to the SLM – useful for debugging or for offline use by a colleague who has the trained model.
 
 ### Output Files
 
-Both modes produce JSON files in `pcg/output/`:
+All outputs are saved in `pcg/output/`:
 
-- `generated_quests.json` – Raw quest data (targets, steps, rewards, favorability) from the rule‑based PCG.
-- `generated_quests_with_hooks.json` – Same quests plus a natural‑language `hook` field, ready for in‑game dialogue.
-- `slm_input_full.json` – Full world state as compact JSON (exported with `GQ SLM INPUT`).
-- `slm_input_npc_<name>.json` / `slm_input_faction_<name>.json` – Reduced world states (exported with `GQ SLM INPUT FOCUS` or `GQ SLM INPUT RANDOM`).
+- `generated_quests.json` – Raw quest data from the rule‑based PCG (targets, steps, rewards, favorability).
+- `generated_quests_with_hooks.json` – Same quests plus a natural‑language `hook` field.
+- `slm_input_full.json` – Full world state as compact JSON (deprecated – use reduced exports instead).
+- `slm_input_npc_<name>.json` / `slm_input_faction_<name>.json` – Reduced world states exported with `GQ SLM INPUT FOCUS` or `GQ SLM INPUT`.
 
 ### Adding Custom World Data
 
@@ -181,13 +178,13 @@ Place your `.csv` files (following the format of `template_world_data.csv`) into
 
 ### Requirements
 
-Install the necessary packages for the SLM and rule‑based generator:
+Install the necessary packages:
 
 ```sh
 pip install torch transformers peft
 ```
 
-The rule‑based PCG does not require any extra libraries beyond the Python standard library and the packages listed above for the SLM.
+The rule‑based PCG does not require any extra libraries beyond the Python standard library and the packages above for the SLM.
 
 ### Architecture
 
@@ -195,7 +192,7 @@ The rule‑based PCG does not require any extra libraries beyond the Python stan
 - `world_state.py` – Provides access to game state and relation calculations.
 - `quest_generator.py` – Rule‑based quest generation using eligibility thresholds and atomic actions.
 - `quest_hook_generator.py` – Natural‑language hook generation from template files.
-- `world_reducer.py` – Creates reduced world states for the SLM.
+- `world_reducer.py` – Creates reduced world states for the SLM (prioritises cross‑faction enemies).
 - `slm_interface.py` – Loads the fine‑tuned SLM and runs inference.
 - `main.py` – Interactive and command‑line interface.
 
@@ -207,14 +204,12 @@ Loading world data from: template_world_data.csv
 
 Interactive mode active. Commands (case‑insensitive):
   LD <filename>                 – Load a different world data file
-  GQ PCG                        – Generate quests using rule‑based PCG and save to pcg/output/
-  GQ SLM                        – Generate quest using full world state (SLM)
-  GQ SLM RANDOM                 – Pick random NPC/faction, reduce world, query SLM
-  GQ SLM FOCUS <name>           – Focus on specific NPC or faction, reduce world, query SLM
-  GQ SLM INPUT                  – Export full world state as SLM input (compact JSON)
-  GQ SLM INPUT RANDOM           – Export reduced world (random focus) to file
-  GQ SLM INPUT FOCUS <name>     – Export reduced world (specific focus) to file
-  EXIT / QUIT                   – Exit the program
+  GQ PCG                        – Generate quests using rule‑based PCG
+  GQ SLM                        – Random focus + SLM query
+  GQ SLM FOCUS <name>           – Specific focus + SLM query
+  GQ SLM INPUT                  – Export reduced world (random focus)
+  GQ SLM INPUT FOCUS <name>     – Export reduced world (specific focus)
+  EXIT / QUIT                   – Exit
 
 > LD large_world_data.csv
 Loading world data from: large_world_data.csv
@@ -223,16 +218,14 @@ Switched to world data: large_world_data.csv
 > GQ SLM FOCUS Fenella
 Focus: npc 'Fenella'
 Generating quest using SLM with reduced world data...
+
+--- Input to SLM ---
+{"NPCs":{"Fenella":{"Name":"Fenella","Species":"Tiefling","Role":"Thief","CurrentLocation":"Shadowfen","HomeLocation":"Shadowfen","OwnedItems":{"Poison Vial":2,"Throwing Knife":3},"Faction":"The Crimson Covenant","Relations":[{"Target":"The Dusk Syndicate","Favorability":25},{"Target":"Wren","Favorability":18}]},"Wren":{"Name":"Wren","Species":"Elf","Role":"Scout","CurrentLocation":"Mistwood","HomeLocation":"Shadowfen","OwnedItems":{"Elven Bow":1,"Herb Bundle":3},"Faction":"The Dusk Syndicate","Relations":[{"Target":"Fenella","Favorability":18}]}},"Factions":{"The Crimson Covenant":{"Name":"The Crimson Covenant","Relations":[{"Target":"The Dusk Syndicate","Favorability":30}],"Default_Location":"Ironhold"},"The Dusk Syndicate":{"Name":"The Dusk Syndicate","Relations":[{"Target":"The Crimson Covenant","Favorability":30}],"Default_Location":"Shadowfen"}},"Locations":{"Shadowfen":{"Name":"Shadowfen","Enemies":["Cultist","Vampire Spawn"],"Resources":["Poison Vial","Throwing Knife"]},"Mistwood":{"Name":"Mistwood","Enemies":["Shadow Wolf","Giant Spider"],"Resources":["Herb Bundle","Elven Bow"]},"Ironhold":{"Name":"Ironhold","Enemies":["Bandit","Ogre"],"Resources":["Iron Sword","Steel Shield"]}},"Player":{"Species":"Human","FactionRelations":[{"Target":"The Crimson Covenant","Favorability":-25},{"Target":"The Dusk Syndicate","Favorability":-40}],"NPCRelations":[{"Target":"Fenella","Favorability":-40},{"Target":"Wren","Favorability":-25}]}}
+----------------------
+
 === SLM Generated Quest ===
-{"Quest": {"Name": "The Poisoned Blade", "Giver": "Fenella", "Actions": ["goto Stonehollow", "stealth Aldric", "take Poison Vial", "goto Ironhold", "give Poison Vial Fenella"]}}
+{"Quest": {"Name": "A Poisoned Alliance", "Giver": "Fenella", "Actions": ["goto Shadowfen", "stealth Wren", "take Poison Vial", "goto Ironhold", "give Poison Vial Fenella"]}}
 
-Fenella wants you to steal a poison vial from Aldric in Stonehollow and bring it to her in Ironhold.
+Fenella wants you to steal a poison vial from Wren in Shadowfen and bring it to her in Ironhold.
 ===========================
-
-> GQ SLM INPUT FOCUS "The Iron Hand"
-Reduced world data saved to pcg/output/slm_input_faction_The_Iron_Hand.json
-
-> GQ PCG
-Generating all possible quests...
-Generated quests saved to pcg/output/generated_quests.json
 ```
