@@ -9,7 +9,7 @@ import os
 import json
 import random
 import argparse
-from pcg.slm_interface import SLMQuestGenerator
+from typing import Dict, Any
 
 # Add current directory to path so pcg package can be found
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -18,6 +18,8 @@ import pcg.parser as world_parser
 import pcg.world_state as world_state
 import pcg.quest_generator as quest_generator
 import pcg.quest_hook_generator as quest_hook_generator
+from pcg.slm_interface import SLMQuestGenerator
+from pcg.world_reducer import WorldReducer
 
 # Default world data file (inside pcg/world_data folder)
 DEFAULT_WORLD_FILE = "template_world_data.csv"
@@ -102,35 +104,60 @@ def generate_and_save(world: world_state.WorldState, script_dir: str, data_filen
         json.dump(hooked_output_data, f, indent=2, ensure_ascii=False)
     print(f"Quests with hooks saved to {hooked_output_file}")
 
+def export_reduced_world(output_dir: str, focus_type: str, focus_name: str, reduced_data: Dict[str, Any]):
+    """Export reduced world data to a JSON file."""
+    safe_name = focus_name.replace(' ', '_').replace('"', '')
+    filename = f"slm_input_{focus_type}_{safe_name}.json"
+    filepath = os.path.join(output_dir, filename)
+    with open(filepath, 'w', encoding='utf-8') as f:
+        json.dump(reduced_data, f, separators=(',', ':'), ensure_ascii=False)
+    print(f"Reduced world data saved to {filepath}")
+
 def interactive_mode(initial_world_file: str, script_dir: str):
     current_file = initial_world_file
     world = load_world(current_file)
     print("\nInteractive mode active. Commands (case‑insensitive):")
-    print("  LD <filename>        – Load a different world data file")
-    print("  GQ PCG               – Generate quests using rule‑based PCG and save to pcg/output/")
-    print("  GQ SLM               – Generate a single quest using the fine‑tuned SLM (requires local model)")
-    print("  GQ SLM INPUT         – Export the current world state as a JSON file for SLM input (pcg/output/slm_input.json)")
-    print("  EXIT / QUIT          – Exit the program")
+    print("  LD <filename>                 – Load a different world data file")
+    print("  GQ PCG                        – Generate quests using rule‑based PCG and save to pcg/output/")
+    print("  GQ SLM                        – Pick random NPC/faction, reduce world, query SLM")
+    print("  GQ SLM FOCUS <name>           – Focus on specific NPC or faction, reduce world, query SLM")
+    print("  GQ SLM INPUT                  – Export reduced world (random focus) to file (no query)")
+    print("  GQ SLM INPUT FOCUS <name>     – Export reduced world (specific focus) to file (no query)")
+    print("  EXIT / QUIT                   – Exit the program")
     print()
 
-    slm_gen = None  # lazy init
+    slm_gen = None
+    reducer = WorldReducer(world)
+
+    def find_entity(name: str):
+        """Case‑insensitive search for NPC or faction name."""
+        lower = name.lower()
+        for npc in world.npcs:
+            if npc.lower() == lower:
+                return "npc", npc
+        for faction in world.factions:
+            if faction.lower() == lower:
+                return "faction", faction
+        return None, None
 
     while True:
         try:
-            cmd = input("> ").strip().lower()
+            cmd_line = input("> ").strip()
         except (EOFError, KeyboardInterrupt):
             print("\nExiting.")
             break
-        if not cmd:
+        if not cmd_line:
             continue
-        if cmd in ("exit", "quit"):
+        parts = cmd_line.split()
+        cmd_lower = parts[0].lower()
+        if cmd_lower in ("exit", "quit"):
             print("Goodbye!")
             break
-        elif cmd.startswith("ld "):
-            new_file_arg = cmd[3:].strip()
-            if not new_file_arg:
+        elif cmd_lower == "ld":
+            if len(parts) < 2:
                 print("Usage: LD <filename>")
                 continue
+            new_file_arg = parts[1]
             world_data_dir = os.path.join(script_dir, "pcg", "world_data")
             if os.path.isfile(new_file_arg):
                 new_path = new_file_arg
@@ -142,50 +169,101 @@ def interactive_mode(initial_world_file: str, script_dir: str):
             try:
                 world = load_world(new_path)
                 current_file = new_path
+                reducer = WorldReducer(world)
                 print(f"Switched to world data: {os.path.basename(current_file)}")
             except Exception as e:
                 print(f"Failed to load world data: {e}")
-        elif cmd == "gq pcg":
-            data_filename = os.path.basename(current_file)
-            generate_and_save(world, script_dir, data_filename)
-        elif cmd == "gq slm":
-            print("Generating quest using SLM... (this may take a moment)")
-            if slm_gen is None:
-                from pcg.slm_interface import SLMQuestGenerator
-                slm_gen = SLMQuestGenerator()
-            world_dict = {
-                "NPCs": world.npcs,
-                "Factions": world.factions,
-                "Locations": world.locations,
-                "Enemies": world.enemies,
-                "Items": world.items,
-                "Player": world.player
-            }
-            result = slm_gen.generate_quest(world_dict)
-            if result:
-                print("\n=== SLM Generated Quest ===\n")
-                print(result)
-                print("\n===========================\n")
+        elif cmd_lower == "gq" and len(parts) >= 2:
+            subcmd = parts[1].lower()
+            if subcmd == "pcg":
+                data_filename = os.path.basename(current_file)
+                generate_and_save(world, script_dir, data_filename)
+            elif subcmd == "slm":
+                if len(parts) >= 3:
+                    action = parts[2].lower()
+                    if action == "focus":
+                        if len(parts) < 4:
+                            print("Usage: GQ SLM FOCUS <name>")
+                            continue
+                        focus_name = ' '.join(parts[3:]).strip('"')
+                        focus_type, actual_name = find_entity(focus_name)
+                        if not focus_type:
+                            print(f"Could not find '{focus_name}' as NPC or faction.")
+                            continue
+                        if focus_type == "npc":
+                            reduced_data = reducer.reduce_around_npc(actual_name)
+                        else:
+                            reduced_data = reducer.reduce_around_faction(actual_name)
+                        print(f"Focus: {focus_type} '{actual_name}'")
+                        print("Generating quest using SLM with reduced world data...")
+                        if slm_gen is None:
+                            slm_gen = SLMQuestGenerator()
+                        # Print the input JSON
+                        input_json = json.dumps(reduced_data, separators=(',', ':'), ensure_ascii=False)
+                        print("\n--- Input to SLM ---")
+                        print(input_json)
+                        print("----------------------\n")
+                        result = slm_gen.generate_quest(reduced_data)
+                        if result:
+                            print("\n=== SLM Generated Quest ===\n")
+                            print(result)
+                            print("\n===========================\n")
+                        else:
+                            print("SLM generation failed.")
+                    elif action == "input":
+                        if len(parts) >= 4 and parts[3].lower() == "focus":
+                            if len(parts) < 5:
+                                print("Usage: GQ SLM INPUT FOCUS <name>")
+                                continue
+                            focus_name = ' '.join(parts[4:]).strip('"')
+                            focus_type, actual_name = find_entity(focus_name)
+                            if not focus_type:
+                                print(f"Could not find '{focus_name}' as NPC or faction.")
+                                continue
+                            if focus_type == "npc":
+                                reduced_data = reducer.reduce_around_npc(actual_name)
+                            else:
+                                reduced_data = reducer.reduce_around_faction(actual_name)
+                            output_dir = ensure_output_dir(script_dir)
+                            export_reduced_world(output_dir, focus_type, actual_name, reduced_data)
+                        else:
+                            # GQ SLM INPUT (random focus, no query)
+                            focus_type, focus_name, reduced_data = reducer.reduce_random()
+                            if not reduced_data:
+                                print("No NPCs or factions available to focus on.")
+                                continue
+                            output_dir = ensure_output_dir(script_dir)
+                            export_reduced_world(output_dir, focus_type, focus_name, reduced_data)
+                    else:
+                        # Unknown action
+                        print("Unknown command. Type 'EXIT' to quit, 'GQ PCG', or 'GQ SLM ...'")
+                else:
+                    # GQ SLM (random focus + query)
+                    print("Selecting random NPC or faction...")
+                    focus_type, focus_name, reduced_data = reducer.reduce_random()
+                    if not reduced_data:
+                        print("No NPCs or factions available to focus on.")
+                        continue
+                    print(f"Focus: {focus_type} '{focus_name}'")
+                    print("Generating quest using SLM with reduced world data...")
+                    if slm_gen is None:
+                        slm_gen = SLMQuestGenerator()
+                    # Print the input JSON
+                    input_json = json.dumps(reduced_data, separators=(',', ':'), ensure_ascii=False)
+                    print("\n--- Input to SLM ---")
+                    print(input_json)
+                    print("----------------------\n")
+                    result = slm_gen.generate_quest(reduced_data)
+                    if result:
+                        print("\n=== SLM Generated Quest ===\n")
+                        print(result)
+                        print("\n===========================\n")
+                    else:
+                        print("SLM generation failed.")
             else:
-                print("SLM generation failed.")
-        elif cmd == "gq slm input":
-            # Build the same structure as used by the SLM (capitalised keys)
-            world_dict = {
-                "NPCs": world.npcs,
-                "Factions": world.factions,
-                "Locations": world.locations,
-                "Enemies": world.enemies,
-                "Items": world.items,
-                "Player": world.player
-            }
-            output_dir = ensure_output_dir(script_dir)
-            slm_input_file = os.path.join(output_dir, "slm_input.json")
-            # Write as one‑liner (compact)
-            with open(slm_input_file, 'w', encoding='utf-8') as f:
-                json.dump(world_dict, f, separators=(',', ':'), ensure_ascii=False)
-            print(f"SLM input saved to {slm_input_file}")
+                print("Unknown command. Type 'EXIT' to quit, 'GQ PCG', or 'GQ SLM ...'")
         else:
-            print("Unknown command. Available: LD <file>, GQ PCG, GQ SLM, GQ SLM INPUT, EXIT")
+            print("Unknown command. Type 'EXIT' to quit, 'GQ PCG', or 'GQ SLM ...'")
 
 def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
