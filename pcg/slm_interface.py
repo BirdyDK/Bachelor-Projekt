@@ -21,13 +21,19 @@ class SLMQuestGenerator:
     def _load_model(self):
         if self._model is None:
             print("Loading SLM model (this may take a moment)...")
+            # Load base model on CPU first to avoid device_map issues
             self._model = AutoModelForCausalLM.from_pretrained(
                 BASE_MODEL,
                 torch_dtype=torch.float16,
-                device_map="auto"
+                device_map=None,
+                low_cpu_mem_usage=True
             )
             self._tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL)
+            # Load LoRA adapter (will also be on CPU)
             self._model = PeftModel.from_pretrained(self._model, ADAPTER_PATH)
+            # Move to GPU if available
+            if torch.cuda.is_available():
+                self._model = self._model.to("cuda")
             self._model.eval()
             print("Model loaded.")
 
@@ -38,12 +44,12 @@ class SLMQuestGenerator:
         # Convert world state to a compact JSON string (only include relevant sections)
         # We'll extract NPCs, Factions, Locations, Enemies, Items, and Player
         state_subset = {
-            "NPCs": world_state.get("npcs", {}),
-            "Factions": world_state.get("factions", {}),
-            "Locations": world_state.get("locations", {}),
-            "Enemies": world_state.get("enemies", {}),
-            "Items": world_state.get("items", {}),
-            "Player": world_state.get("player", {})
+            "NPCs": world_state.get("NPCs", {}),
+            "Factions": world_state.get("Factions", {}),
+            "Locations": world_state.get("Locations", {}),
+            "Enemies": world_state.get("Enemies", {}),
+            "Items": world_state.get("Items", {}),
+            "Player": world_state.get("Player", {})
         }
         input_json = json.dumps(state_subset, separators=(',', ':'), ensure_ascii=False)
 

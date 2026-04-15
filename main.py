@@ -119,12 +119,10 @@ def interactive_mode(initial_world_file: str, script_dir: str):
     print("\nInteractive mode active. Commands (case‑insensitive):")
     print("  LD <filename>                 – Load a different world data file")
     print("  GQ PCG                        – Generate quests using rule‑based PCG and save to pcg/output/")
-    print("  GQ SLM                        – Generate quest using full world state (SLM)")
-    print("  GQ SLM RANDOM                 – Pick random NPC/faction, reduce world, query SLM")
+    print("  GQ SLM                        – Pick random NPC/faction, reduce world, query SLM")
     print("  GQ SLM FOCUS <name>           – Focus on specific NPC or faction, reduce world, query SLM")
-    print("  GQ SLM INPUT                  – Export full world state as SLM input (compact JSON)")
-    print("  GQ SLM INPUT RANDOM           – Export reduced world (random focus) to file")
-    print("  GQ SLM INPUT FOCUS <name>     – Export reduced world (specific focus) to file")
+    print("  GQ SLM INPUT                  – Export reduced world (random focus) to file (no query)")
+    print("  GQ SLM INPUT FOCUS <name>     – Export reduced world (specific focus) to file (no query)")
     print("  EXIT / QUIT                   – Exit the program")
     print()
 
@@ -183,24 +181,7 @@ def interactive_mode(initial_world_file: str, script_dir: str):
             elif subcmd == "slm":
                 if len(parts) >= 3:
                     action = parts[2].lower()
-                    if action == "random":
-                        print("Selecting random NPC or faction...")
-                        focus_type, focus_name, reduced_data = reducer.reduce_random()
-                        if not reduced_data:
-                            print("No NPCs or factions available to focus on.")
-                            continue
-                        print(f"Focus: {focus_type} '{focus_name}'")
-                        print("Generating quest using SLM with reduced world data...")
-                        if slm_gen is None:
-                            slm_gen = SLMQuestGenerator()
-                        result = slm_gen.generate_quest(reduced_data)
-                        if result:
-                            print("\n=== SLM Generated Quest ===\n")
-                            print(result)
-                            print("\n===========================\n")
-                        else:
-                            print("SLM generation failed.")
-                    elif action == "focus":
+                    if action == "focus":
                         if len(parts) < 4:
                             print("Usage: GQ SLM FOCUS <name>")
                             continue
@@ -217,6 +198,11 @@ def interactive_mode(initial_world_file: str, script_dir: str):
                         print("Generating quest using SLM with reduced world data...")
                         if slm_gen is None:
                             slm_gen = SLMQuestGenerator()
+                        # Print the input JSON
+                        input_json = json.dumps(reduced_data, separators=(',', ':'), ensure_ascii=False)
+                        print("\n--- Input to SLM ---")
+                        print(input_json)
+                        print("----------------------\n")
                         result = slm_gen.generate_quest(reduced_data)
                         if result:
                             print("\n=== SLM Generated Quest ===\n")
@@ -225,14 +211,7 @@ def interactive_mode(initial_world_file: str, script_dir: str):
                         else:
                             print("SLM generation failed.")
                     elif action == "input":
-                        if len(parts) >= 4 and parts[3].lower() == "random":
-                            focus_type, focus_name, reduced_data = reducer.reduce_random()
-                            if not reduced_data:
-                                print("No NPCs or factions available to focus on.")
-                                continue
-                            output_dir = ensure_output_dir(script_dir)
-                            export_reduced_world(output_dir, focus_type, focus_name, reduced_data)
-                        elif len(parts) >= 4 and parts[3].lower() == "focus":
+                        if len(parts) >= 4 and parts[3].lower() == "focus":
                             if len(parts) < 5:
                                 print("Usage: GQ SLM INPUT FOCUS <name>")
                                 continue
@@ -248,34 +227,33 @@ def interactive_mode(initial_world_file: str, script_dir: str):
                             output_dir = ensure_output_dir(script_dir)
                             export_reduced_world(output_dir, focus_type, actual_name, reduced_data)
                         else:
-                            # just "gq slm input"
-                            world_dict = {
-                                "NPCs": world.npcs,
-                                "Factions": world.factions,
-                                "Locations": world.locations,
-                                "Enemies": world.enemies,
-                                "Items": world.items,
-                                "Player": world.player
-                            }
+                            # GQ SLM INPUT (random focus, no query)
+                            focus_type, focus_name, reduced_data = reducer.reduce_random()
+                            if not reduced_data:
+                                print("No NPCs or factions available to focus on.")
+                                continue
                             output_dir = ensure_output_dir(script_dir)
-                            slm_input_file = os.path.join(output_dir, "slm_input_full.json")
-                            with open(slm_input_file, 'w', encoding='utf-8') as f:
-                                json.dump(world_dict, f, separators=(',', ':'), ensure_ascii=False)
-                            print(f"Full SLM input saved to {slm_input_file}")
+                            export_reduced_world(output_dir, focus_type, focus_name, reduced_data)
+                    else:
+                        # Unknown action
+                        print("Unknown command. Type 'EXIT' to quit, 'GQ PCG', or 'GQ SLM ...'")
                 else:
-                    # just "gq slm"
-                    print("Generating quest using SLM with full world state... (this may take a moment)")
+                    # GQ SLM (random focus + query)
+                    print("Selecting random NPC or faction...")
+                    focus_type, focus_name, reduced_data = reducer.reduce_random()
+                    if not reduced_data:
+                        print("No NPCs or factions available to focus on.")
+                        continue
+                    print(f"Focus: {focus_type} '{focus_name}'")
+                    print("Generating quest using SLM with reduced world data...")
                     if slm_gen is None:
                         slm_gen = SLMQuestGenerator()
-                    world_dict = {
-                        "NPCs": world.npcs,
-                        "Factions": world.factions,
-                        "Locations": world.locations,
-                        "Enemies": world.enemies,
-                        "Items": world.items,
-                        "Player": world.player
-                    }
-                    result = slm_gen.generate_quest(world_dict)
+                    # Print the input JSON
+                    input_json = json.dumps(reduced_data, separators=(',', ':'), ensure_ascii=False)
+                    print("\n--- Input to SLM ---")
+                    print(input_json)
+                    print("----------------------\n")
+                    result = slm_gen.generate_quest(reduced_data)
                     if result:
                         print("\n=== SLM Generated Quest ===\n")
                         print(result)
@@ -283,9 +261,9 @@ def interactive_mode(initial_world_file: str, script_dir: str):
                     else:
                         print("SLM generation failed.")
             else:
-                print("Unknown command. Type 'EXIT' to quit, 'GQ PCG' for rule-based generation, or 'GQ SLM ...' for SLM generation.")
+                print("Unknown command. Type 'EXIT' to quit, 'GQ PCG', or 'GQ SLM ...'")
         else:
-            print("Unknown command. Type 'EXIT' to quit, 'GQ PCG' for rule-based generation, or 'GQ SLM ...' for SLM generation.")
+            print("Unknown command. Type 'EXIT' to quit, 'GQ PCG', or 'GQ SLM ...'")
 
 def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))

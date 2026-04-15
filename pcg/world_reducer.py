@@ -60,7 +60,6 @@ class WorldReducer:
         faction = self.ws.factions.get(faction_name, {})
         relations = faction.get("Relations", [])
         filtered_relations = self._filter_relations(relations, allowed_targets)
-        # Accept both "DefaultLocation" (camelCase) and "Default_Location" (snake_case)
         default_loc = faction.get("DefaultLocation") or faction.get("Default_Location", "")
         simplified = {
             "Name": faction.get("Name", faction_name),
@@ -148,11 +147,15 @@ class WorldReducer:
                 if loc_data:
                     result["Locations"][loc] = self._simplify_location(loc)
 
-        # Player relations
+        # Player relations – remove PlayerLog
         player = self.ws.player.copy()
+        if "PlayerLog" in player:
+            del player["PlayerLog"]
+        # Faction relations
         faction_rels = player.get("FactionRelations", [])
         filtered_faction_rels = [r for r in faction_rels if r.get("Target") in allowed_entities]
         player["FactionRelations"] = filtered_faction_rels
+        # NPC relations
         npc_rels = player.get("NPCRelations", [])
         filtered_npc_rels = [r for r in npc_rels if r.get("Target") in allowed_entities]
         player["NPCRelations"] = filtered_npc_rels
@@ -167,8 +170,10 @@ class WorldReducer:
         Output includes:
         - the focus NPC
         - its faction
-        - one disliked NPC (negative relation)
-        - the disliked NPC's faction
+        - one disliked NPC (negative relation) prioritised by:
+            1. different faction from focus NPC
+            2. any other faction (still different)
+            3. same faction (fallback)
         If no disliked NPC, fallback to a disliked faction (or focus's faction's enemy),
         then pick an NPC from that enemy faction.
         """
@@ -178,24 +183,44 @@ class WorldReducer:
 
         focus_faction = npc.get("Faction")
 
+        # Find all disliked NPCs (negative relations)
         disliked = self._get_negative_relations("npc", npc_name)
-        disliked_npcs = [t for t in disliked if t[0] == "npc"]
-        disliked_npc_name = None
-        enemy_faction_name = None
+        disliked_npcs = [t[1] for t in disliked if t[0] == "npc"]
 
-        if disliked_npcs:
-            disliked_npc_name = random.choice(disliked_npcs)[1]
-            enemy_npc_data = self.ws.npcs.get(disliked_npc_name, {})
-            enemy_faction_name = enemy_npc_data.get("Faction")
+        # Categorise disliked NPCs by faction
+        # priority 1: NPCs with a faction different from focus_faction
+        # priority 2: NPCs with no faction (or faction is None) – treat as different? We'll treat as different.
+        # priority 3: NPCs with the same faction as focus_faction
+        different_faction_npcs = []
+        same_faction_npcs = []
+        for dnp in disliked_npcs:
+            dnp_faction = self.ws.npcs.get(dnp, {}).get("Faction")
+            if dnp_faction != focus_faction:
+                different_faction_npcs.append(dnp)
+            else:
+                same_faction_npcs.append(dnp)
+
+        disliked_npc_name = None
+
+        if different_faction_npcs:
+            # Prefer NPCs from a different faction
+            disliked_npc_name = random.choice(different_faction_npcs)
+        elif same_faction_npcs:
+            # If only same-faction enemies exist, use one of them
+            disliked_npc_name = random.choice(same_faction_npcs)
         else:
-            disliked_factions = [t for t in disliked if t[0] == "faction"]
+            # No disliked NPCs – fallback to enemy faction logic
+            # Find a disliked faction (negative relation)
+            disliked_factions = [t[1] for t in disliked if t[0] == "faction"]
+            enemy_faction_name = None
             if disliked_factions:
-                enemy_faction_name = random.choice(disliked_factions)[1]
+                enemy_faction_name = random.choice(disliked_factions)
             elif focus_faction:
+                # Use focus faction's enemy
                 faction_enemies = self._get_negative_relations("faction", focus_faction)
-                faction_enemy_factions = [t for t in faction_enemies if t[0] == "faction"]
+                faction_enemy_factions = [t[1] for t in faction_enemies if t[0] == "faction"]
                 if faction_enemy_factions:
-                    enemy_faction_name = random.choice(faction_enemy_factions)[1]
+                    enemy_faction_name = random.choice(faction_enemy_factions)
             if enemy_faction_name:
                 members = self.ws.factions.get(enemy_faction_name, {}).get("Members", [])
                 if members:
@@ -206,6 +231,10 @@ class WorldReducer:
             else:
                 print(f"Warning: No disliked NPC or faction found for {npc_name}. Cannot generate.")
                 return {}
+
+        # Now we have disliked_npc_name. Get its faction.
+        enemy_npc_data = self.ws.npcs.get(disliked_npc_name, {})
+        enemy_faction_name = enemy_npc_data.get("Faction")
 
         result = {}
 
@@ -252,11 +281,15 @@ class WorldReducer:
                 if loc_data:
                     result["Locations"][loc] = self._simplify_location(loc)
 
-        # Player relations
+        # Player relations – remove PlayerLog
         player = self.ws.player.copy()
+        if "PlayerLog" in player:
+            del player["PlayerLog"]
+        # Faction relations
         faction_rels = player.get("FactionRelations", [])
         filtered_faction_rels = [r for r in faction_rels if r.get("Target") in allowed_entities]
         player["FactionRelations"] = filtered_faction_rels
+        # NPC relations
         npc_rels = player.get("NPCRelations", [])
         filtered_npc_rels = [r for r in npc_rels if r.get("Target") in allowed_entities]
         player["NPCRelations"] = filtered_npc_rels
