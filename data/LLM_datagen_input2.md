@@ -68,11 +68,11 @@ This quest structure can only be given by a Faction or NPC with a relation level
 
 
 example structure:
-```json
+```
 QUEST NAME //Replace with the quest name
 Structure: STRUCTURE //Repalce with the chosen quest structure
 JSON:
-{"Quest": {"Structure":"", "Name": "", "Giver": "NPC (FACTION)", "Reward": {"ITEM": QUANTITY (can be more than one item) }, "Favorability":{"NPC/FACTION":VALUE (can be more than one NPC or Faction, and if someone has been negatively affect it should appear here as well)}, "Actions": [(a list of atomic actions followed by their target, eg. "goto LOCATION")]}}
+{"Quest": {"Structure":"", "Name": "", "Giver": "NPC", "Reward": {"ITEM": QUANTITY (can be more than one item) }, "Favorability":{"NPC/FACTION":VALUE (can be more than one NPC or Faction, and if someone has been negatively affect it should appear here as well)}, "Actions": [(a list of atomic actions followed by their target, eg. "goto LOCATION")]}}
 
 Description:  //A flavorful description for the quest. It is important that the plurality of topics in the description are correct.
 Quest Hook: //A flavorful hook said by the quest giver to the player.
