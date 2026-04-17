@@ -3,56 +3,55 @@ now put the data generated in a csv file format with the headers input, output, 
 example:
 ```
 {"NPCs": {
-    "Seraphina Dawn": {
-        "Name": "Seraphina Dawn", 
-        "Species": "Human", 
-        "HomeLocation": "Sunstone Temple", 
-        "CurrentLocation": "Sunstone Temple", 
-        "Faction": "The Sunstone Order", 
-        "OwnedItems": {
-            "Sunstone Amulet": 1, "Health Potion": 3}, 
-            "Role": "Priest", 
-            "Relations": [{"Target": "Player", "Favorability": 2}, {"Target": "The Shadow Syndicate", "Favorability": -4}]
-    }, 
-    "Thorne Blackwood": {
-        "Name": "Thorne Blackwood", 
-        "Faction": "The Shadow Syndicate", 
-        "CurrentLocation": "Shadowfen"
-        }
-    }, 
+      "Pippin Thistlefoot": {
+        "Name": "Pippin Thistlefoot",
+        "NamePossessive": "Pippin Thistlefoot's",
+        "Species": "Halfling",
+        "HomeLocation": "Verdantia",
+        "CurrentLocation": "Verdantia",
+        "Faction": null,
+        "Role": "Innkeeper",
+        "Relations": [
+          {"Target": "The Traveler", "Favorability": 15}
+        ]
+      }
+    },
     "Locations": {
-        "Sunstone Temple": {
-            "Name": "Sunstone Temple", 
-            "Enemies": [], 
-            "Resources": ["Sunstone Amulet", "Health Potion"]
-        }, 
-        "Shadowfen": {
-            "Name": "Shadowfen", 
-            "Enemies": ["Shadow Stalker", "Goblin Scavenger"], 
-            "Resources": ["Lockpick Set", "Shadowfang Dagger"]
-            }
-        }, 
-    "Factions": {
-        "The Shadow Syndicate": {
-            "Name": "The Shadow Syndicate", 
-            "Relations": [{"Target": "Player", "Favorability": -1}, {"Target": "The Sunstone Order", "Favorability": -5}], 
-            "Members": ["Thorne Blackwood"]
-        }, 
-        "The Sunstone Order": {
-            "Name": "The Sunstone Order", 
-            "Relations": [{"Target": "The Shadow Syndicate", "Favorability": -5}], 
-            "Members": ["Seraphina Dawn"], 
-            "Treasury": {"Sunstone Amulet": 3, "Health Potion": 10}
-        }
+      "Whispering Woods": {
+        "Name": "Whispering Woods",
+        "NameDefinitive": "the Whispering Woods",
+        "Enemies": ["Forest Spider", "Dire Wolf", "Harpy"],
+        "Resources": ["Elven Shortbow", "Glowdust", "Mana Vial", "Elven Bread"]
+      },
+      "Verdantia": {
+        "Name": "Verdantia",
+        "Enemies": ["Forest Spider"],
+        "Resources": ["Nightshade Petal", "Elven Bread", "Fresh Water"]
+      }
+    },
+    "Enemies": {
+      "Forest Spider": {
+        "Name": "Forest Spider",
+        "NamePlural": "forest spiders",
+        "Loot": ["Nightshade Petal", "Copper Coin"]
+      }
     }
 };
 {"Quest": {
-    "Name": "Sunstone Heist", 
-    "Giver": "The Shadow Syndicate", 
-    "Actions": ["goto Sunstone Temple", "stealth Seraphina Dawn", "take Sunstone Amulet", "goto Shadowfen", "give Thorne Blackwood"]
-    }
+    "Structure": "Attack threatening entities", 
+    "Name": "The Spider Infestation", 
+    "Giver": "Pippin Thistlefoot", 
+    "Reward": {
+        "Copper Coin": 25, 
+        "Salted Meat": 3
+    }, 
+    "Favorability": {
+        "Pippin Thistlefoot": 5
+    }, 
+    "Actions": ["goto Whispering Woods", "damage Forest Spider", "goto Verdantia", "report Pippin Thistlefoot"]
+  }
 };
-"The Shadow Syndicate wants you to steal a Sunstone Amulet from the temple to prove your worth.";
-"That Sunstone Amulet holds secrets that could ruin us. Bring it to me, and you'll have my gratitude";
-"Steal stuff"
+"Pippin Thistlefoot, the innkeeper of Verdantia, is worried about the increasing number of forest spiders creeping closer to the village. Several of his regulars have reported being attacked on the road to the Whispering Woods. Pippin needs someone to thin out the spider population and report back. He's offering a pouch of copper coins and some salted meat from his pantry as payment.";
+"Ah, Traveler! Just the person I was hoping to see. Those eight-legged freaks are getting bolder by the day—I found one in my root cellar last night! Could you head into the Whispering Woods and deal with a few forest spiders? Nothing too fancy, just make sure they think twice before skittering toward Verdantia again. I'll make it worth your while.";
+"Attack threatening entities"
 ```

@@ -2,34 +2,55 @@ Now for each of the 50 quests take relavent data for the quest from the game sta
 
 example:
 ```
-Quest 1: The Poisoned Grove
+Quest 1: The Spider Infestation
 json
 {
   "Quest": {
-    "Name": "The Poisoned Grove",
-    "Giver": "The Verdant Circle",
-    "Actions": ["goto Verdant Vale", "damage Corrupted Treant", "goto The Verdant Circle", "report"]
+    "Structure": "Attack threatening entities", 
+    "Name": "The Spider Infestation", 
+    "Giver": "Pippin Thistlefoot", 
+    "Reward": {
+        "Copper Coin": 25, 
+        "Salted Meat": 3
+    }, 
+    "Favorability": {
+        "Pippin Thistlefoot": 5
+    }, 
+    "Actions": ["goto Whispering Woods", "damage Forest Spider", "goto Verdantia", "report Pippin Thistlefoot"]
   },
   "RelevantData": {
-    "Factions": {
-      "The Verdant Circle": {
-        "Name": "The Verdant Circle",
-        "Relations": [{"Target": "Player", "Favorability": 3}],
-        "Members": ["Eldrin Moonbrook", "Elara Whisperwind", "Doric Ironwood"],
-        "FactionLog": [{"Originator": "The Verdant Circle", "Type": "AttackThreateningEntities", "Target": ["Corrupted Treant"], "For": "The Verdant Circle"}]
+    "NPCs": {
+      "Pippin Thistlefoot": {
+        "Name": "Pippin Thistlefoot",
+        "NamePossessive": "Pippin Thistlefoot's",
+        "Species": "Halfling",
+        "HomeLocation": "Verdantia",
+        "CurrentLocation": "Verdantia",
+        "Faction": null,
+        "Role": "Innkeeper",
+        "Relations": [
+          {"Target": "The Traveler", "Favorability": 15}
+        ]
       }
     },
     "Locations": {
-      "Verdant Vale": {
-        "Name": "Verdant Vale",
-        "Enemies": ["Corrupted Treant", "Forest Spider Matriarch"],
-        "Resources": ["Healing Herb", "Iron Ore"]
+      "Whispering Woods": {
+        "Name": "Whispering Woods",
+        "NameDefinitive": "the Whispering Woods",
+        "Enemies": ["Forest Spider", "Dire Wolf", "Harpy"],
+        "Resources": ["Elven Shortbow", "Glowdust", "Mana Vial", "Elven Bread"]
+      },
+      "Verdantia": {
+        "Name": "Verdantia",
+        "Enemies": ["Forest Spider"],
+        "Resources": ["Nightshade Petal", "Elven Bread", "Fresh Water"]
       }
     },
     "Enemies": {
-      "Corrupted Treant": {
-        "Name": "Corrupted Treant",
-        "Loot": ["Healing Herb", "Iron Ore"]
+      "Forest Spider": {
+        "Name": "Forest Spider",
+        "NamePlural": "forest spiders",
+        "Loot": ["Nightshade Petal", "Copper Coin"]
       }
     }
   }
