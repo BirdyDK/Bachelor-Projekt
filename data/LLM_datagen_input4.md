@@ -5,21 +5,26 @@ example:
 {"NPCs": {
       "Pippin Thistlefoot": {
         "Name": "Pippin Thistlefoot",
-        "NamePossessive": "Pippin Thistlefoot's",
         "Species": "Halfling",
         "HomeLocation": "Verdantia",
         "CurrentLocation": "Verdantia",
         "Faction": null,
+        "OwnedItems": {
+            "Cooking Spices": 2,
+            "Salted Meat": 5
+        }
         "Role": "Innkeeper",
         "Relations": [
           {"Target": "The Traveler", "Favorability": 15}
         ]
       }
     },
+    "Factions": {
+        /* only if there are any factions */
+    },
     "Locations": {
       "Whispering Woods": {
         "Name": "Whispering Woods",
-        "NameDefinitive": "the Whispering Woods",
         "Enemies": ["Forest Spider", "Dire Wolf", "Harpy"],
         "Resources": ["Elven Shortbow", "Glowdust", "Mana Vial", "Elven Bread"]
       },
@@ -32,9 +37,18 @@ example:
     "Enemies": {
       "Forest Spider": {
         "Name": "Forest Spider",
-        "NamePlural": "forest spiders",
         "Loot": ["Nightshade Petal", "Copper Coin"]
       }
+    },
+    "Items": {
+        "Copper Coin": {
+            "Type": "Currency",
+            "Name": "Copper Coin"
+        },
+        "Salted Meat": {
+            "Type": "Food",
+            "Name": "Salted Meat"
+        }
     }
 };
 {"Quest": {

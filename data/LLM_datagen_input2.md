@@ -72,8 +72,10 @@ example structure:
 QUEST NAME //Replace with the quest name
 Structure: STRUCTURE //Repalce with the chosen quest structure
 JSON:
-{"Quest": {"Structure":"", "Name": "", "Giver": "NPC", "Reward": {"ITEM": QUANTITY (can be more than one item) }, "Favorability":{"NPC/FACTION":VALUE (can be more than one NPC or Faction, and if someone has been negatively affect it should appear here as well)}, "Actions": [(a list of atomic actions followed by their target, eg. "goto LOCATION")]}}
+{"Quest": {"Structure":"", "Name": "", "Giver": "(NPC/Faction)", "Reward": {"ITEM": QUANTITY (can be more than one item) }, "Favorability":{"NPC/FACTION":VALUE (can be more than one NPC or Faction, and if someone has been negatively affect it should appear here as well)}, "Actions": [(a list of atomic actions followed by their target, eg. "goto LOCATION")]}}
 
 Description:  //A flavorful description for the quest. It is important that the plurality of topics in the description are correct.
 Quest Hook: //A flavorful hook said by the quest giver to the player.
 ```
+There can only be one thing after atomic actions  example "goto LOCATION" "report NPC" "give ITEM" and not "give ITEM NPC"
+And all quest should refer to at least one NPC even if the quest giver is a Faction. 
