@@ -11,13 +11,9 @@ import random
 import argparse
 from typing import Dict, Any
 
-# Add current directory to path so pcg package can be found
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-
 import pcg.parser as world_parser
 import pcg.world_state as world_state
 import pcg.quest_generator as quest_generator
-import pcg.quest_hook_generator as quest_hook_generator
 from pcg.slm_interface import SLMQuestGenerator
 from pcg.world_reducer import WorldReducer
 
@@ -91,18 +87,6 @@ def generate_and_save(world: world_state.WorldState, script_dir: str, data_filen
     print("\nActual generated quests (after target availability):")
     for qtype, quests in all_quests_by_type.items():
         print(f"  {qtype}: {len(quests)} quests")
-
-    print("\nGenerating quest hooks...")
-    hook_gen = quest_hook_generator.QuestHookGenerator(world)
-    hooked_quests = hook_gen.add_hooks_to_quests(all_quests_by_type)
-    hooked_output_file = os.path.join(output_dir, "generated_quests_with_hooks.json")
-    hooked_output_data = {
-        "world_data_source": data_filename,
-        "quests": hooked_quests
-    }
-    with open(hooked_output_file, 'w', encoding='utf-8') as f:
-        json.dump(hooked_output_data, f, indent=2, ensure_ascii=False)
-    print(f"Quests with hooks saved to {hooked_output_file}")
 
 def export_reduced_world(output_dir: str, focus_type: str, focus_name: str, reduced_data: Dict[str, Any]):
     """Export reduced world data to a JSON file."""

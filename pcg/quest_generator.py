@@ -1,35 +1,227 @@
 import random
+import json
+import os
 from typing import Dict, Any, List, Optional, Tuple
 from .world_state import WorldState
 
 class QuestGenerator:
-    def __init__(self, world_state: WorldState, debug: bool = False):
+    def __init__(self, world_state: WorldState, debug: bool = False, templates_file: str = None):
         self.ws = world_state
         self.eligible_quests = []
         self.debug = debug
+        self.player_name = self.ws.player_name
+        
+        # Load hook templates
+        if templates_file is None:
+            templates_file = os.path.join(os.path.dirname(__file__), "hook_templates.json")
+        with open(templates_file, 'r', encoding='utf-8') as f:
+            self.templates = json.load(f)
 
     def log(self, msg: str):
         if self.debug:
             print(f"[DEBUG] {msg}")
 
+    # ---------- Hook generation helpers (merged from quest_hook_generator) ----------
+    def _get_entity_properties(self, entity_type: str, entity_name: str) -> Dict[str, str]:
+        props = {}
+        if entity_type == "npc":
+            data = self.ws.npcs.get(entity_name, {})
+            props["name"] = entity_name
+            props["name_possessive"] = data.get("NamePossessive", f"{entity_name}'s")
+            props["name_definitive"] = entity_name
+            props["name_definitive_caps"] = entity_name
+            props["name_definitive_possessive"] = data.get("NamePossessive", f"{entity_name}'s")
+            props["name_definitive_possessive_caps"] = data.get("NamePossessive", f"{entity_name}'s")
+            props["species"] = data.get("Species", "person")
+            props["role"] = data.get("Role", "person")
+        elif entity_type == "faction":
+            data = self.ws.factions.get(entity_name, {})
+            props["name"] = entity_name
+            props["name_definitive"] = data.get("NameDefinitive", entity_name)
+            props["name_definitive_caps"] = data.get("NameDefinitiveCaps", props["name_definitive"])
+            props["name_possessive"] = data.get("NamePossessive", f"{entity_name}'s")
+            props["name_definitive_possessive"] = data.get("NameDefinitivePossessive", f"the {entity_name}'s")
+            props["name_definitive_possessive_caps"] = data.get("NameDefinitivePossessiveCaps", props["name_definitive_possessive"])
+        elif entity_type == "location":
+            data = self.ws.locations.get(entity_name, {})
+            props["name"] = entity_name
+            props["name_definitive"] = data.get("NameDefinitive", entity_name)
+            props["name_definitive_caps"] = data.get("NameDefinitiveCaps", props["name_definitive"])
+            props["name_possessive"] = data.get("NamePossessive", f"{entity_name}'s")
+            props["name_definitive_possessive"] = data.get("NameDefinitivePossessive", f"the {entity_name}'s")
+            props["name_definitive_possessive_caps"] = data.get("NameDefinitivePossessiveCaps", props["name_definitive_possessive"])
+        elif entity_type == "item":
+            data = self.ws.items.get(entity_name, {})
+            props["name"] = entity_name
+            props["name_singular"] = data.get("NameSingular", entity_name)
+            props["name_plural"] = data.get("NamePlural", f"{entity_name}s")
+            props["name_possessive_singular"] = data.get("NamePossessiveSingular", f"{entity_name}'s")
+            props["name_possessive_plural"] = data.get("NamePossessivePlural", f"{entity_name}s'")
+            props["indefinite_article"] = data.get("IndefiniteArticle", "a")
+            props["indefinite_article_caps"] = data.get("IndefiniteArticleCaps", "A")
+        elif entity_type == "enemy":
+            data = self.ws.enemies.get(entity_name, {})
+            props["name"] = entity_name
+            props["name_singular"] = data.get("NameSingular", entity_name)
+            props["name_plural"] = data.get("NamePlural", f"{entity_name}s")
+            props["name_possessive_singular"] = data.get("NamePossessiveSingular", f"{entity_name}'s")
+            props["name_possessive_plural"] = data.get("NamePossessivePlural", f"{entity_name}s'")
+            props["indefinite_article"] = data.get("IndefiniteArticle", "a")
+            props["indefinite_article_caps"] = data.get("IndefiniteArticleCaps", "A")
+        else:
+            props["name"] = entity_name
+            props["name_possessive"] = f"{entity_name}'s"
+            props["name_definitive"] = entity_name
+            props["name_definitive_caps"] = entity_name
+            props["name_definitive_possessive"] = f"{entity_name}'s"
+            props["name_definitive_possessive_caps"] = f"{entity_name}'s"
+        return props
+
+    def _generate_hook(self, quest: Dict[str, Any]) -> str:
+        qtype = quest["type"]
+        giver = quest["giver"]
+        giver_type = giver["type"]
+        giver_name = giver["name"]
+        target = quest.get("target", {})
+
+        giver_props = self._get_entity_properties(giver_type, giver_name)
+        target_type = target.get("type", "")
+        target_name = target.get("name", "")
+        target_props = self._get_entity_properties(target_type, target_name) if target_name else {}
+
+        thief = target.get("thief", {})
+        thief_props = self._get_entity_properties(thief.get("type", ""), thief.get("name", "")) if thief else {}
+        victim = target.get("victim", {})
+        victim_props = self._get_entity_properties(victim.get("type", ""), victim.get("name", "")) if victim else {}
+
+        location_name = target.get("location", "unknown")
+        location_props = self._get_entity_properties("location", location_name) if location_name != "unknown" else {
+            "name": location_name,
+            "name_definitive": location_name,
+            "name_definitive_caps": location_name,
+            "name_possessive": f"{location_name}'s",
+            "name_definitive_possessive": f"the {location_name}'s",
+            "name_definitive_possessive_caps": f"The {location_name}'s"
+        }
+
+        placeholders = {
+            "player_name": self.player_name,
+            "player_name_possessive": f"{self.player_name}'s",
+            "giver_name": giver_props.get("name", giver_name),
+            "giver_name_definitive": giver_props.get("name_definitive", giver_name),
+            "giver_name_definitive_caps": giver_props.get("name_definitive_caps", giver_name),
+            "giver_name_possessive": giver_props.get("name_possessive", f"{giver_name}'s"),
+            "giver_name_definitive_possessive": giver_props.get("name_definitive_possessive", f"the {giver_name}'s"),
+            "giver_name_definitive_possessive_caps": giver_props.get("name_definitive_possessive_caps", f"The {giver_name}'s"),
+            "giver_species": giver_props.get("species", "person"),
+            "giver_role": giver_props.get("role", "person"),
+            "giver_faction": self.ws.npcs.get(giver_name, {}).get("Faction", "unknown") if giver_type == "npc" else "",
+            "target_name": target_props.get("name", target_name),
+            "target_name_definitive": target_props.get("name_definitive", target_name),
+            "target_name_definitive_caps": target_props.get("name_definitive_caps", target_name),
+            "target_name_possessive": target_props.get("name_possessive", f"{target_name}'s"),
+            "target_name_definitive_possessive": target_props.get("name_definitive_possessive", f"the {target_name}'s"),
+            "target_name_definitive_possessive_caps": target_props.get("name_definitive_possessive_caps", f"The {target_name}'s"),
+            "target_type": target_type,
+            "enemy_name_singular": target_props.get("name_singular", target_name),
+            "enemy_name_plural": target_props.get("name_plural", f"{target_name}s"),
+            "enemy_indefinite_article": target_props.get("indefinite_article", "a"),
+            "enemy_indefinite_article_caps": target_props.get("indefinite_article_caps", "A"),
+            "item_name": target_props.get("name", target_name),
+            "item_name_singular": target_props.get("name_singular", target_name),
+            "item_name_plural": target_props.get("name_plural", f"{target_name}s"),
+            "item_indefinite_article": target_props.get("indefinite_article", "a"),
+            "item_indefinite_article_caps": target_props.get("indefinite_article_caps", "A"),
+            "item_name_possessive_singular": target_props.get("name_possessive_singular", f"{target_name}'s"),
+            "item_name_possessive_plural": target_props.get("name_possessive_plural", f"{target_name}s'"),
+            "location_name": location_props.get("name", location_name),
+            "location_name_definitive": location_props.get("name_definitive", location_name),
+            "location_name_definitive_caps": location_props.get("name_definitive_caps", location_name),
+            "location_name_possessive": location_props.get("name_possessive", f"{location_name}'s"),
+            "location_name_definitive_possessive": location_props.get("name_definitive_possessive", f"the {location_name}'s"),
+            "location_name_definitive_possessive_caps": location_props.get("name_definitive_possessive_caps", f"The {location_name}'s"),
+            "thief_name": thief_props.get("name", "a thief"),
+            "thief_name_definitive": thief_props.get("name_definitive", "a thief"),
+            "thief_name_definitive_caps": thief_props.get("name_definitive_caps", "A Thief"),
+            "thief_name_possessive": thief_props.get("name_possessive", "the thief's"),
+            "thief_name_definitive_possessive": thief_props.get("name_definitive_possessive", "the thief's"),
+            "thief_name_definitive_possessive_caps": thief_props.get("name_definitive_possessive_caps", "The thief's"),
+            "thief_type": thief.get("type", ""),
+            "victim_name": victim_props.get("name", "someone"),
+            "victim_name_definitive": victim_props.get("name_definitive", "someone"),
+            "victim_name_definitive_caps": victim_props.get("name_definitive_caps", "Someone"),
+            "victim_name_possessive": victim_props.get("name_possessive", "someone's"),
+            "victim_name_definitive_possessive": victim_props.get("name_definitive_possessive", "someone's"),
+            "victim_name_definitive_possessive_caps": victim_props.get("name_definitive_possessive_caps", "Someone's"),
+        }
+
+        q_templates = self.templates.get(qtype, {})
+        generic = self.templates.get("generic", {})
+        categories = q_templates.get("categories", {})
+        sequences = q_templates.get("sequences", [])
+        optional = q_templates.get("optional_categories", [])
+
+        if not sequences:
+            return self._fallback_hook(quest, placeholders)
+
+        sequence = random.choice(sequences)
+        sentences = []
+        for cat in sequence:
+            if cat in optional and random.random() < 0.3:
+                continue
+            templates = categories.get(cat, generic.get(cat, []))
+            if not templates:
+                continue
+            template = random.choice(templates)
+            sentences.append(template.format(**placeholders))
+
+        return " ".join(sentences)
+
+    def _fallback_hook(self, quest: Dict[str, Any], placeholders: Dict[str, str]) -> str:
+        qtype = quest["type"]
+        q_templates = self.templates.get(qtype, {})
+        generic = self.templates.get("generic", {})
+        parts = []
+        if "greeting" in generic:
+            parts.append(random.choice(generic["greeting"]).format(**placeholders))
+        openers = q_templates.get("openers", [])
+        if openers:
+            parts.append(random.choice(openers).format(**placeholders))
+        reasons = q_templates.get("reason", [])
+        if reasons and random.random() < 0.7:
+            parts.append(random.choice(reasons).format(**placeholders))
+        if qtype == "RecoverStolenItem":
+            thief_info = q_templates.get("thief_info", [])
+            if thief_info:
+                parts.append(random.choice(thief_info).format(**placeholders))
+        elif qtype == "StealStuff":
+            target_info = q_templates.get("target_info", [])
+            if target_info:
+                parts.append(random.choice(target_info).format(**placeholders))
+        elif qtype in ("AttackEnemy", "KillEnemies"):
+            target_info = q_templates.get("target_info", [])
+            if target_info:
+                parts.append(random.choice(target_info).format(**placeholders))
+        ask = q_templates.get("ask", ["Get it done."])
+        parts.append(random.choice(ask).format(**placeholders))
+        closing = generic.get("closing", ["What do you say?"])
+        parts.append(random.choice(closing).format(**placeholders))
+        return " ".join(parts)
+
+    # ---------- Original quest generation logic (unchanged) ----------
     def compute_eligible_quests(self):
-        """Compute eligible quests based on new relationship thresholds."""
+        """Compute eligible quests based on relationship thresholds."""
         self.eligible_quests = []
         for npc_name in self.ws.npcs:
             relation = self.ws.get_relation("npc", npc_name)
-            # AttackThreateningEntities: relation >= -15 (was -2)
             if relation >= -15:
                 self.eligible_quests.append(("npc", npc_name, "AttackThreateningEntities"))
-            # RecoverStolenItem: relation >= 30 (was 3)
             if relation >= 30:
                 self.eligible_quests.append(("npc", npc_name, "RecoverStolenItem"))
-            # AttackEnemy: relation >= 5 (was 1)
             if relation >= 5:
                 self.eligible_quests.append(("npc", npc_name, "AttackEnemy"))
-            # StealStuff: relation >= 15 (was 2)
             if relation >= 15:
                 self.eligible_quests.append(("npc", npc_name, "StealStuff"))
-            # KillEnemies: relation >= 30 or <= -30 (was >=4 or <=-4)
             if relation >= 30 or relation <= -30:
                 self.eligible_quests.append(("npc", npc_name, "KillEnemies"))
 
@@ -39,7 +231,6 @@ class QuestGenerator:
                 self.eligible_quests.append(("faction", faction_name, "AttackThreateningEntities"))
             if relation >= 30:
                 self.eligible_quests.append(("faction", faction_name, "RecoverStolenItem"))
-            # GuardEntity: only factions, relation >= 15 (was 2)
             if relation >= 15:
                 self.eligible_quests.append(("faction", faction_name, "GuardEntity"))
             if relation >= 5:
@@ -60,6 +251,7 @@ class QuestGenerator:
         return None
 
     def generate_all_quests(self) -> Dict[str, List[Dict[str, Any]]]:
+        """Generate all eligible quests and add hooks directly."""
         if not self.eligible_quests:
             self.compute_eligible_quests()
         result = {qt: [] for qt in ["AttackThreateningEntities", "RecoverStolenItem", "GuardEntity",
@@ -67,13 +259,14 @@ class QuestGenerator:
         for giver_type, giver_name, quest_type in self.eligible_quests:
             quest = self.generate_quest(giver_type, giver_name, quest_type)
             if quest is not None:
+                # Add hook directly
+                quest["hook"] = self._generate_hook(quest)
                 result[quest_type].append(quest)
         return result
 
-    # ---------- Helper for rewards and favorability ----------
+    # ---------- Reward and favorability helper (unchanged) ----------
     def _generate_reward_and_favorability(self, quest_type: str, giver_type: str, giver_name: str,
                                           target_info: Dict[str, Any]) -> Tuple[Dict[str, int], Dict[str, int]]:
-        """Return (received, favorability) for the quest."""
         received = {}
         favorability = {}
 
@@ -98,7 +291,6 @@ class QuestGenerator:
         if target_type in ("npc", "faction") and target_name:
             favorability[target_name] = favorability.get(target_name, 0) - base_favor
 
-        # Determine rewards based on quest type
         if quest_type == "AttackThreateningEntities":
             enemy_name = target_info.get("name")
             enemy_data = self.ws.enemies.get(enemy_name, {})
@@ -140,10 +332,9 @@ class QuestGenerator:
 
         return received, favorability
 
-    # ---------- Quest generation methods (unchanged except location handling) ----------
+    # ---------- Generation methods (unchanged) ----------
     def _generate_AttackThreateningEntities(self, giver_type: str, giver_name: str) -> Optional[Dict[str, Any]]:
         locs = self.ws.get_all_locations_with_enemies()
-        #print(f"DEBUG: locations with enemies = {self.ws.locations.keys()}")
         if not locs:
             return None
         location, enemies = random.choice(locs)
