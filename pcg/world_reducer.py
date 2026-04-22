@@ -1,4 +1,3 @@
-import json
 import random
 from typing import Dict, Any, List, Optional, Tuple, Set
 from .world_state import WorldState
@@ -13,22 +12,15 @@ class WorldReducer:
         result = []
         if entity_type == "npc":
             data = self.ws.npcs.get(entity_name, {})
-            for rel in data.get("Relations", []):
-                if rel.get("Favorability", 0) < 0:
-                    target = rel["Target"]
-                    if target in self.ws.npcs:
-                        result.append(("npc", target))
-                    elif target in self.ws.factions:
-                        result.append(("faction", target))
         elif entity_type == "faction":
             data = self.ws.factions.get(entity_name, {})
-            for rel in data.get("Relations", []):
-                if rel.get("Favorability", 0) < 0:
-                    target = rel["Target"]
-                    if target in self.ws.npcs:
-                        result.append(("npc", target))
-                    elif target in self.ws.factions:
-                        result.append(("faction", target))
+        for rel in data.get("Relations", []):
+            if rel.get("Favorability", 0) < 0:
+                target = rel["Target"]
+                if target in self.ws.npcs:
+                    result.append(("npc", target))
+                elif target in self.ws.factions:
+                    result.append(("faction", target))
         return result
 
     def _get_random_member(self, faction_name: str) -> Optional[str]:
@@ -114,7 +106,6 @@ class WorldReducer:
         result = {}
 
         allowed_entities = {faction_name, enemy_faction_name, focus_member, enemy_npc, self.ws.player_name}
-        allowed_entities.add(self.ws.player_name)
 
         result["Factions"] = {
             faction_name: self._simplify_faction(faction_name, allowed_entities, keep_members=False),
@@ -159,8 +150,7 @@ class WorldReducer:
         npc_rels = player.get("NPCRelations", [])
         filtered_npc_rels = [r for r in npc_rels if r.get("Target") in allowed_entities]
         player["NPCRelations"] = filtered_npc_rels
-        if filtered_faction_rels or filtered_npc_rels:
-            result["Player"] = player
+        result["Player"] = player
 
         return result
 
@@ -171,9 +161,8 @@ class WorldReducer:
         - the focus NPC
         - its faction
         - one disliked NPC (negative relation) prioritised by:
-            1. different faction from focus NPC
-            2. any other faction (still different)
-            3. same faction (fallback)
+            1. any other faction than focus NPC
+            2. same faction as focus NPC (fallback)
         If no disliked NPC, fallback to a disliked faction (or focus's faction's enemy),
         then pick an NPC from that enemy faction.
         """
@@ -188,14 +177,13 @@ class WorldReducer:
         disliked_npcs = [t[1] for t in disliked if t[0] == "npc"]
 
         # Categorise disliked NPCs by faction
-        # priority 1: NPCs with a faction different from focus_faction
-        # priority 2: NPCs with no faction (or faction is None) – treat as different? We'll treat as different.
-        # priority 3: NPCs with the same faction as focus_faction
+        # priority 1: NPCs with a faction different from focus_faction, excluding those with no faction
+        # priority 2: NPCs with the same faction as focus_faction
         different_faction_npcs = []
         same_faction_npcs = []
         for dnp in disliked_npcs:
             dnp_faction = self.ws.npcs.get(dnp, {}).get("Faction")
-            if dnp_faction != focus_faction:
+            if dnp_faction and dnp_faction != focus_faction:
                 different_faction_npcs.append(dnp)
             else:
                 same_faction_npcs.append(dnp)
@@ -238,22 +226,17 @@ class WorldReducer:
 
         result = {}
 
-        allowed_entities = {npc_name, disliked_npc_name, self.ws.player_name}
-        if focus_faction:
-            allowed_entities.add(focus_faction)
-        if enemy_faction_name:
-            allowed_entities.add(enemy_faction_name)
+        allowed_entities = {npc_name, focus_faction, disliked_npc_name, enemy_faction_name, self.ws.player_name}
 
         result["NPCs"] = {
             npc_name: self._simplify_npc(npc_name, allowed_entities),
             disliked_npc_name: self._simplify_npc(disliked_npc_name, allowed_entities)
         }
 
-        result["Factions"] = {}
-        if focus_faction:
-            result["Factions"][focus_faction] = self._simplify_faction(focus_faction, allowed_entities, keep_members=False)
-        if enemy_faction_name:
-            result["Factions"][enemy_faction_name] = self._simplify_faction(enemy_faction_name, allowed_entities, keep_members=False)
+        result["Factions"] = {
+            focus_faction: self._simplify_faction(focus_faction, allowed_entities, keep_members=False),
+            enemy_faction_name: self._simplify_faction(enemy_faction_name, allowed_entities, keep_members=False)
+        }
 
         # Collect locations
         locs = set()

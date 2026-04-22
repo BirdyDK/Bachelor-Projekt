@@ -17,7 +17,7 @@ class WorldState:
         elif isinstance(player_data, str):
             self.player_name = player_data
         else:
-            self.player_name = "Kaelen"  # fallback
+            self.player_name = "Player"  # fallback
 
     def get_relation(self, giver_type: str, giver_name: str, target: str = None) -> int:
         if target is None:
@@ -64,9 +64,6 @@ class WorldState:
                 friends.append(rel["Target"])
         return friends
 
-    def get_enemies_in_region(self, location: str) -> List[str]:
-        return self.locations.get(location, {}).get("Enemies", [])
-
     def get_all_locations_with_enemies(self) -> List[Tuple[str, List[str]]]:
         return [(loc, data.get("Enemies", [])) for loc, data in self.locations.items() if data.get("Enemies")]
 
@@ -88,7 +85,7 @@ class WorldState:
                     result.append(rel["Target"])
         return result
 
-    def get_npcs_with_high_negative_relation(self, giver_type: str, giver_name: str, threshold: int = -3) -> List[str]:
+    def get_npcs_with_high_negative_relation(self, giver_type: str, giver_name: str, threshold: int = -26) -> List[str]:
         result = []
         if giver_type == "npc":
             npc = self.npcs.get(giver_name)
@@ -112,15 +109,9 @@ class WorldState:
         elif giver_type == "faction":
             return list(self.factions.get(giver_name, {}).get("Treasury", {}).keys())
         return []
-
-    def get_potential_thief(self, giver_type: str, giver_name: str, item: str) -> Optional[str]:
-        disliked = self.get_npcs_with_negative_relation(giver_type, giver_name)
-        if disliked:
-            return disliked[0]
-        return None
     
     def get_factions_with_negative_relation(self, giver_type: str, giver_name: str) -> List[str]:
-        """Return factions that giver dislikes (negative relation)."""
+        """Return factions that giver dislikes."""
         result = []
         if giver_type == "npc":
             npc = self.npcs.get(giver_name)
@@ -139,7 +130,7 @@ class WorldState:
         return result
 
     def get_faction_location(self, faction_name: str) -> str:
-        """Return the default location of a faction (from its data), or fallback."""
+        """Return the default location of a faction, or fallback to the current location of its first member."""
         faction = self.factions.get(faction_name)
         if faction:
             loc = faction.get("Default_Location")

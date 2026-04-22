@@ -182,11 +182,6 @@ def interactive_mode(initial_world_file: str, script_dir: str):
                         print("Generating quest using SLM with reduced world data...")
                         if slm_gen is None:
                             slm_gen = SLMQuestGenerator()
-                        # Print the input JSON
-                        input_json = json.dumps(reduced_data, separators=(',', ':'), ensure_ascii=False)
-                        print("\n--- Input to SLM ---")
-                        print(input_json)
-                        print("----------------------\n")
                         result = slm_gen.generate_quest(reduced_data)
                         if result:
                             print("\n=== SLM Generated Quest ===\n")

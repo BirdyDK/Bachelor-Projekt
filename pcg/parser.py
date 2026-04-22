@@ -1,6 +1,6 @@
 import re
 import json
-from typing import Dict, Any, List, Union
+from typing import Dict, Any, Union
 
 DEFAULT_RELATION_MAP = {
     "Sworn Enemy": -50,
