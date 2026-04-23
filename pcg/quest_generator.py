@@ -21,7 +21,6 @@ class QuestGenerator:
         if self.debug:
             print(f"[DEBUG] {msg}")
 
-    # ---------- Hook generation helpers (merged from quest_hook_generator) ----------
     def _get_entity_properties(self, entity_type: str, entity_name: str) -> Dict[str, str]:
         props = {}
         if entity_type == "npc":
@@ -97,8 +96,8 @@ class QuestGenerator:
         location_name = target.get("location", "unknown")
         location_props = self._get_entity_properties("location", location_name) if location_name != "unknown" else {
             "name": location_name,
-            "name_definitive": location_name,
-            "name_definitive_caps": location_name,
+            "name_definitive": f"the {location_name}",
+            "name_definitive_caps": f"The {location_name}",
             "name_possessive": f"{location_name}'s",
             "name_definitive_possessive": f"the {location_name}'s",
             "name_definitive_possessive_caps": f"The {location_name}'s"
@@ -180,8 +179,8 @@ class QuestGenerator:
     def _fallback_hook(self, quest: Dict[str, Any], placeholders: Dict[str, str]) -> str:
         qtype = quest["type"]
         q_templates = self.templates.get(qtype, {})
-        generic = self.templates.get("generic", {})
         parts = []
+        generic = self.templates.get("generic", {})
         if "greeting" in generic:
             parts.append(random.choice(generic["greeting"]).format(**placeholders))
         openers = q_templates.get("openers", [])
@@ -208,7 +207,6 @@ class QuestGenerator:
         parts.append(random.choice(closing).format(**placeholders))
         return " ".join(parts)
 
-    # ---------- Original quest generation logic (unchanged) ----------
     def compute_eligible_quests(self):
         """Compute eligible quests based on relationship thresholds."""
         self.eligible_quests = []
@@ -264,7 +262,6 @@ class QuestGenerator:
                 result[quest_type].append(quest)
         return result
 
-    # ---------- Reward and favorability helper (unchanged) ----------
     def _generate_reward_and_favorability(self, quest_type: str, giver_type: str, giver_name: str,
                                           target_info: Dict[str, Any]) -> Tuple[Dict[str, int], Dict[str, int]]:
         received = {}
@@ -303,7 +300,7 @@ class QuestGenerator:
 
         elif quest_type == "RecoverStolenItem":
             if giver_type == "npc":
-                items = self.ws.get_giver_items(giver_type, giver_name)
+                items = self.ws.get_entity_items(giver_type, giver_name)
                 if items:
                     item = random.choice(items)
                     received[item] = 1
@@ -332,7 +329,6 @@ class QuestGenerator:
 
         return received, favorability
 
-    # ---------- Generation methods (unchanged) ----------
     def _generate_AttackThreateningEntities(self, giver_type: str, giver_name: str) -> Optional[Dict[str, Any]]:
         locs = self.ws.get_all_locations_with_enemies()
         if not locs:
@@ -363,7 +359,7 @@ class QuestGenerator:
         }
 
     def _generate_RecoverStolenItem(self, giver_type: str, giver_name: str) -> Optional[Dict[str, Any]]:
-        items = self.ws.get_giver_items(giver_type, giver_name)
+        items = self.ws.get_entity_items(giver_type, giver_name)
         if not items:
             return None
         item = random.choice(items)
@@ -465,7 +461,7 @@ class QuestGenerator:
         victim_type, victim_name = None, None
         victim_item = None
         for vt, vn in victims:
-            items = self.ws.get_giver_items(vt, vn)
+            items = self.ws.get_entity_items(vt, vn)
             if items:
                 victim_type, victim_name = vt, vn
                 victim_item = random.choice(items)

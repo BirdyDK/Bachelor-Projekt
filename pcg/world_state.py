@@ -103,7 +103,7 @@ class WorldState:
                     result.append(rel["Target"])
         return result
 
-    def get_giver_items(self, giver_type: str, giver_name: str) -> List[str]:
+    def get_entity_items(self, giver_type: str, giver_name: str) -> List[str]:
         if giver_type == "npc":
             return list(self.npcs.get(giver_name, {}).get("OwnedItems", {}).keys())
         elif giver_type == "faction":
