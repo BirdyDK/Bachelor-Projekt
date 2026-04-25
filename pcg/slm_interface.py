@@ -59,7 +59,8 @@ class SLMQuestGenerator:
             "content": (
                 "You are a quest generator for a fantasy RPG. Your output must strictly follow this two-part format:\n"
                 "1. A JSON object: {\"Quest\": {\"Name\": \"...\", \"Giver\": \"...\", \"Actions\": [...]}}\n"
-                "2. Two newlines, followed by a separate plain-text description.\n\n"
+                "2. Two newlines, followed by a separate plain-text description.\n"
+                "3. One newline, followed by the **hook** .\n\n"
                 "--- QUEST GENERATION LOGIC ---\n"
                 "To generate 'Actions', start with a 'Quest Structure' and expand the <RULES> recursively until only Atomic Actions remain. "
                 "Every final action must be a string in the format: 'action Target'.\n\n"
@@ -87,7 +88,8 @@ class SLMQuestGenerator:
                 "Step 3 (Final Atomic): ['goto Shadowfen', 'goto Dark Cave', 'kill Goblin', 'goto Keep', 'report Brom']\n\n"
                 "--- OUTPUT EXAMPLE ---\n"
                 '{"Quest": {"Name": "The Cave Menace", "Giver": "Brom", "Actions": ["goto Dark Cave", "kill Goblin", "goto Keep", "report Brom"]}}\n\n'
-                "Brom is tired of the goblins in the Dark Cave. Go kill their leader and report back."
+                "Brom is tired of the goblins in the Dark Cave. Go kill their leader and report back.\n\n"
+                "Goblins! Nasty little buggers have overrun the path to the east vein. Clear out a few of them, and I'll make it worth your while!"
             )
         }
         user_message = {
