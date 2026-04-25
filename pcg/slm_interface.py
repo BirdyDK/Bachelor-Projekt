@@ -5,8 +5,8 @@ from peft import PeftModel
 from typing import Dict, Any, Optional
 
 # Configuration – adjust these paths as needed
-BASE_MODEL = "HuggingFaceTB/SmolLM2-1.7B-Instruct"
-ADAPTER_PATH = "./TestTraining/Results/SmolLM2-1.7B-Instruct_ebs8_lr5e-05_r32_epochs3"
+BASE_MODEL = "meta-llama/Llama-3.2-1B-Instruct"
+ADAPTER_PATH = "./TestTraining/Results/Llama-3.2-1B-Instruct_ebs16_lr0.0002_r32"
 
 class SLMQuestGenerator:
     _instance = None
