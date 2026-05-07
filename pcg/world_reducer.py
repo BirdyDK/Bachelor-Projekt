@@ -53,10 +53,12 @@ class WorldReducer:
         relations = faction.get("Relations", [])
         filtered_relations = self._filter_relations(relations, allowed_targets)
         default_loc = faction.get("DefaultLocation") or faction.get("Default_Location", "")
+        treasury = faction.get("Treasury", {})
         simplified = {
             "Name": faction.get("Name", faction_name),
             "Relations": filtered_relations,
-            "Default_Location": default_loc
+            "Default_Location": default_loc,
+            "Treasury": treasury
         }
         if keep_members:
             simplified["Members"] = faction.get("Members", [])
