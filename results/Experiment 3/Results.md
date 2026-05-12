@@ -132,29 +132,65 @@
 # Output
 
 ## Prompt 1 llama eb16_lr2e-4_r32
+
+### Run 1
 {"Quest": {"Name": "Cinderfall Mine Delight", "Giver": "Thalia Ironvein", "Actions": ["goto Cinderfall Mine", "kill Cave Troll", "goto Cinderfall Mine", "report"]}}
 
 Thalia Ironvein wants you to hunt down a Cave Troll that's been terrorizing the Cinderfall Mine. She'll reward you with 10 Gold and a Pickaxe.
 
+### Run 2
+{"Quest": {"Name": "Kill enemies in Cinderfall Mine", "Giver": "Thalia Ironvein", "Actions": ["goto Cinderfall Mine", "kill Cave Troll", "goto Thalia Ironvein", "report Thalia Ironvein"]}}
+
+Thalia Ironvein wants you to kill the Cave Troll that's been terrorizing Cinderfall Mine.
+
+
 ## Prompt 2 llama eb16_lr2e-4_r32
+
+### Run 1
 {"Quest": {"Name": "The Lost Ore", "Giver": "Miners Guild", "Actions": ["goto Cinderfall Mine", "kill Cave Troll", "goto Cinderfall Mine", "take Iron Ore"]}}
 
 Thalia Ironvein needs you to kill a Cave Troll guarding a vein of valuable Iron Ore at Cinderfall Mine.
 
+### Run 2
+{"Quest": {"Name": "Cave Troll Ambush", "Giver": "Miners Guild", "Actions": ["goto Cinderfall Mine", "damage Cave Troll"]}}
+
+Thalia Ironvein warns the Miners Guild that a Cave Troll has been spotted near Cinderfall Mine. She wants you to take care of it.
+
 ## Prompt 3 llama eb16_lr2e-4_r32
+
+### Run 1
 {"Quest": {"Name": "Iron Ore Hoard", "Giver": "Thalia Ironvein", "Actions": ["goto Cinderfall Mine", "get Iron Ore", "goto Miners Guild", "give Iron Ore"]}}
 
 The Miners Guild wants you to retrieve an Iron Ore deposit from Cinderfall Mine. If you're able to collect it, report back to Thalia Ironvein and she'll give you the Iron Ore.
 
+### Run 2
+{"Quest": {"Name": "The Iron Ore Heist", "Giver": "Thalia Ironvein", "Actions": ["goto Cinderfall Mine", "damage Cave Troll", "goto Cinderfall Mine", "report"]}}
+
+Thalia Ironvein needs you to steal a shipment of Iron Ore from a Cave Troll at Cinderfall Mine. Destroy it and report back to her.
+
 ## Prompt 4 llama eb16_lr2e-4_r32
+
+### Run 1
 {"Quest": {"Name": "The Miner's Stolen Goods", "Giver": "Thalia Ironvein", "Actions": ["goto Cinderfall Mine", "goto Cave Troll", "kill Cave Troll", "goto Thalia Ironvein", "get Iron Ore", "goto Miners Guild", "give Iron Ore"]}}
 
 Thalia Ironvein's iron ore was stolen by a Cave Troll. She wants it back.
 
+### Run 2
+{"Quest": {"Name": "Cinderfall Mine Debacle", "Giver": "Thalia Ironvein", "Actions": ["goto Cinderfall Mine", "damage Cave Troll", "goto Cinderfall Mine", "report"]}}
+
+Thalia Ironvein's miners are suffering from a mysterious affliction that's turning them into Cave Trolls. She needs you to deal with them before she loses her most valuable ore reserves.
+
 ## Prompt 5 llama eb16_lr2e-4_r32
+
+### Run 1
 {"Quest": {"Name": "Iron Ore Heist", "Giver": "Thalia Ironvein", "Actions": ["goto Cinderfall Mine", "goto Cave Troll", "kill Cave Troll", "goto Thalia Ironvein", "report"]}}
 
 Thalia Ironvein needs you to steal a shipment of Iron Ore from the Cave Troll's stash.
+
+### Run 2
+{"Quest": {"Name": "Cinderfall Mine Heist", "Giver": "Thalia Ironvein", "Actions": ["goto Cinderfall Mine", "goto Cave Troll", "stealth Cave Troll", "take Troll Hide", "goto Ironhold Keep", "report Thalia Ironvein"]}}
+
+Thalia Ironvein needs you to steal a stash of Troll Hide from a Cave Troll's lair. Be careful, though - the Cave Troll is guarding the entrance.
 
 ## Prompt 6 llama eb16_lr2e-4_r32
 
@@ -320,15 +356,52 @@ A Sturdy Shield is a sacred symbol of protection in the Iron Circle's tradition,
 As a reward for his friend's bravery, Magnus Runehammer asks that the Iron Circle return the stolen Sturdy Shield to him as soon as possible, along with a Gold Crown to make up for the damage it was damaged in the fight. The Iron Circle will not be swayed by the threat of a Sturdy Shield, but they will consider the gesture a gesture of goodwill and a commitment to the bond between the Iron Circle and the dwarven clan.
 
 ## Prompt 1 llama  eb32_lr5e-5_r32
+
+### Run 1
 {"Quest": {"Name": "The Iron Ore Cartel", "Giver": "Thalia Ironvein", "Actions": [{"Target": "Player", "Reward": {"Gold": 200}, "Favorability": "Ally"}], "Structure": {"Faction": "Miners Guild", "Members": ["Thalia Ironvein"]}, "Name": "The Iron Ore Cartel"}} {"Faction": "Miners Guild", "Name": "Miners Guild", "Relations": [{"Target": "Player", "Favorability": "Ally"}], "OwnedItems": {"Iron Ore": 300}, "Treasury": {"Gold": 300}, "Role": "Faction", "Name": "Miners Guild"}} {"NPC": "Thalia Ironvein", "Name": "Thalia Ironvein", "Species": "Dwarf", "HomeLocation": "Ironhold Keep", "CurrentLocation": "Ironhold Keep", "Faction": "Miners Guild", "Role": "Foreman", "Relations": [{"Target": "Player", "Favorability": "Ally"}], "OwnedItems": {"Iron Ore": 5, "Pickaxe": 1}, "Role": "NPC", "Name": "Thalia Ironvein"}} {"Location": "Cinderfall Mine", "Name": "Cinderfall Mine", "Enemies": ["Cave Troll", "Cinder Elemental"], "Resources": ["Iron Ore", "Fire Crystal"]}} {"Enemy": "Cave Troll", "Name": "Cave Troll", "Loot": ["Troll Hide", "Gold", "Troll Bone"]}}
 
+### Run 2
+Here is the quest JSON:
+
+```json
+{
+  "Name": "Reclaim the Cinderfall Mine",
+  "Giver": "Thalia Ironvein",
+  "Actions": [
+    "Explore the Cinderfall Mine",
+    "Slay the Cave Troll",
+    "Slay the Cinder Elemental"
+  ]
+}
+```
+
 ## Prompt 2 llama  eb32_lr5e-5_r32
+
+### Run 1
 {"Name":"The Iron Ore Hoard of the Miners Guild",""Giver":"Thalia Ironvein","Actions":[{"Target":"Miners Guild","Favorability":-10,"Reward":"Iron Ore:50","Role":"Trader"}]} {"Name":"The Lost Mine Cavern",""Giver":"Thalia Ironvein","Actions":[{"Target":"Cinderfall Mine","Favorability":-15,"Reward":"Iron Ore:20","Role":"Explorer"}]} {"Name":"The Cave Troll Plague",""Giver":"Thalia Ironvein","Actions":[{"Target":"Cave Troll","Favorability":-5","Reward":"Troll Hide:2","Role":"Guard"}]} {"Name":"The Iron Ore Market",""Giver":"Thalia Ironvein","Actions":[{"Target":"Miners Guild","Favorability":5,"Reward":"Iron Ore:20","Role":"Trader"}]} {"Name":"The Miners Guild's Lost Mine",""Giver":"Thalia Ironvein","Actions":[{"Target":"Miners Guild","Favorability":10,"Reward":"Iron Ore:50","Role":"Treasure Hunter"}]} {"Name":"The Iron Ore Cavern",""Giver":"Thalia Ironvein","Actions":[{"Target":"Cinderfall Mine","Favorability":15,"Reward":"Iron Ore:30","Role":"Explorer"}]} {"Name":"The Cave Troll's Lair",""Giver":"Thalia Ironvein","Actions":[{"Target":"Cave Troll","Favorability":-10","Reward":"Troll Bone:1","Role":"Guard"}]} {"Name":"The Iron Ore Cartel",""Giver":"Thalia Ironvein","Actions":[{"Target":"Miners Guild","Favorability":-15","Reward":"Iron Ore:15","Role":"Spy"}]} {"Name":"The Lost Mine Cavern",""Giver":"Thalia Ironvein","Actions":[{"Target":"Cinderfall Mine","Favorability":-15","Reward":"Iron Ore:15","Role":"Explorer"}]} {"Name":"The Miners Guild's Secret Vault",""Giver":"Thalia Ironvein","Actions":[{"Target":"Miners Guild","Favorability":20,"Reward":"Gold:50","Role":"Treasure Hunter"}]} {"Name":"The Iron Ore Ruin",""Giver":"Thalia Ironvein","Actions":[{"Target":"Miners Guild","Favorability":-15","Reward":"Iron Ore:10","Role":"Treasure Hunter"}]} {"Name":"The Miners Guild's Ironworks",""Giver":"Thalia Ironvein","Actions":[{"Target":"Miners Guild","Favorability":15,"Reward":"Iron Ore:20","Role":"Crafting"}]} {"Name":"The Cave Troll's Den",""Giver":"Thalia Ironvein","Actions":[{"Target":"Cave Troll","Favorability":-10","Reward":"Troll Bone:1","Role":"Guard"}]} {"Name":"The Iron Ore Cartel",""Giver":"Thalia Ironvein","Actions":[{"Target":"Miners Guild","Favorability":-15","Reward":"Iron Ore:10","Role":"Spy"}]} {"Name":"The Lost Mine Cavern",""Giver":"Thalia Ironvein","Actions":[{"Target":"Cinderfall Mine","Favorability":-15","Reward":"Iron Ore:15","Role":"Explorer"}]} {"Name":"The Miners Guild's Ironworks",""Giver":"Thalia Ironvein","Actions":[{"Target":"Miners Guild","Favorability":10,"Reward":"Iron Ore:10","Role":"Crafting"}]} {"Name":"The Iron Ore Cavern",""Giver":"Thalia Ironvein","Actions":[{"Target":"Cinderfall Mine","Favorability":-10","Reward":"Iron Ore:10","Role":"Explorer"}]} {"Name":"The Cave Troll's Lair",""Giver":"Thalia Ironvein","Actions":[{"Target":"Cave Troll","Favorability":-10","Reward":"Troll Bone:1","Role":"Guard"}]} {"Name":"The Iron Ore Hoard of the Miners Guild",""Giver":"Thalia Ironvein","Actions":[{"Target":"Miners Guild","Favorability":-10,"Reward":"Iron Ore:10","Role":"Trader"}]} {"Name":"The Miners Guild's Lost Mine",""Giver":"Thalia Ironvein","Actions":[{"Target":"Miners Guild","Favorability":-10","Reward":"Iron Ore:10","Role":"Treasure Hunter"}]} {"Name":"The Iron Ore Cartel",""Giver":"Thalia Ironvein","Actions":[{"Target":"Miners Guild","Favorability":-10","Reward":"Iron Ore:10","Role":"Spy"}]} {"Name":"The Miners Guild's Ironworks",""G
 
+### Run 2
+{
+  "Name": "Unlock the Ancient Mine Shaft",
+  "Giver": "Thalia Ironvein",
+  "Actions": [
+    "Find the Ancient Mine Shaft",
+    "Search the surrounding area",
+    "Use a pickaxe to dig"
+  ]
+}
+
 ## Prompt 3 llama  eb32_lr5e-5_r32
+
+### Run 1
 {"Name":"The Lost Mine Shaft",","Giver":"Thalia Ironvein","Actions":[{"Target":"Cave Troll","Favorability":-10},{"Target":"Player","Favorability":-10},{"Target":"Miners Guild","Favorability":-5},{"Target":"Iron Horde","Favorability":-10},{"Target":"Cinderfall Mine","Favorability":-5},{"Target":"Thalia Ironvein","Favorability":-5},{"Target":"Player","Favorability":-5},{"Target":"Miners Guild","Favorability":-5},{"Target":"Cinderfall Mine","Favorability":-5},{"Target":"Cave Troll","Favorability":-5},{"Target":"Thalia Ironvein","Favorability":-5},{"Target":"Miners Guild","Favorability":-5},{"Target":"Player","Favorability":-5},{"Target":"Cinderfall Mine","Favorability":-5},{"Target":"Cave Troll","Favorability":-5}],"Recover stolen item":"goto Cinderfall Mine gather Iron Ore goto stealth take goto kill take","Guard entity":"goto Cinderfall Mine defend","Attack enemy":"goto Cinderfall Mine damage","Steal stuff":"goto Cinderfall Mine stealth take goto give","Kill enemies":"goto Cinderfall Mine kill goto report"}}  
 
+### Run 2
+{"Name":"Retrieve Iron Ore from Cinderfall Mine","Actions":[{"get":"Cinderfall Mine","goto":"Cinderfall Mine","report":"Cinderfall Mine"}]}
+
 ## Prompt 4 llama  eb32_lr5e-5_r32
+
+### Run 1
 {"Quest": {"Name": "The Iron Ore Cartel", "Giver": "Thalia Ironvein", "Actions": ["goto", "take", "goto", "kill"]}}
 
 Thalia Ironvein has been approached by a group of miners from the Miners Guild who have been experiencing a severe shortage of iron ore in the Cinderfall Mine. They need her to escort a shipment of freshly harvested ore to the guild's treasury in Ironhold Keep, which is located near the Cinderfall Mine. The miners are willing to pay 50 gold coins per ton of ore, and Thalia has promised to provide the guild with a 10% cut of the profit.
@@ -343,8 +416,20 @@ goto the Ironhold Keep to deliver the ore and report back to the Miners Guild
 
 The miners are currently located at the Cinderfall Mine. They are friendly and willing to cooperate, but they are being watched by a group of goblin scouts who are likely to be hostile if things get out of hand. Thalia has a 20% chance of being ambushed by the goblins while trying to deliver the ore.
 
+### Run 2
+{"Quest": {"Name": "Defend Ironhold Keep", "Giver": "Thalia Ironvein", "Actions": ["defend", "explore", "get"]}}
+
+Thalia Ironvein warns you that the cave troll has attacked the miners and you must defend Ironhold Keep. Gather your gear and report back to the miners.
+
 ## Prompt 5 llama  eb32_lr5e-5_r32
+
+### Run 1
 {"Quest": {"Name": "The Lost Iron Ore", "Giver": "Thalia Ironvein", "Actions": ["goto Cinderfall Mine", "stealth Thalia Ironvein", "take Iron Ore", "goto Ironhold Keep", "give Iron Ore", "goto Cinderfall Mine", "kill Cave Troll", "goto Ironhold Keep", "report Thalia Ironvein"]}, "Faction": "Miners Guild", "Relations": [{"Target": "Miners Guild", "Favorability": "Ally"}, {"Target": "Thalia Ironvein", "Favorability": "Ally"}], "Role": "Foreman", "Name": "The Lost Iron Ore", "Enemies": [{"Name": "Cave Troll", "Loot": ["Troll Hide", "Gold", "Troll Bone"]}]}},"NPCs": {"Thalia Ironvein": {"Name": "Thalia Ironvein", "Species": "Dwarf", "HomeLocation": "Ironhold Keep", "CurrentLocation": "Ironhold Keep", "Faction": "Miners Guild", "OwnedItems": {"Iron Ore": 5, "Pickaxe": 1}, "Role": "Foreman", "Relations": [{"Target": "Player", "Favorability": "Ally"}], "Name": "Thalia Ironvein"}},"Enemies": {"Cave Troll": {"Name": "Cave Troll", "Loot": ["Troll Hide", "Gold", "Troll Bone"]}},"Locations": {"Cinderfall Mine": {"Name": "Cinderfall Mine", "Enemies": ["Cave Troll", "Cinder Elemental"], "Resources": ["Iron Ore", "Fire Crystal"]}}},"Factions": {"Miners Guild": {"Name": "Miners Guild", "Relations": [{"Target": "Miners Guild", "Favorability": "Ally"}], "Role": "Faction", "Name": "Miners Guild"}}}
+
+### Run 2
+{"Quest": {"Name": "Miners Guild", "Giver": "Thalia Ironvein", "Actions": ["goto Ironhold Keep", "goto Cinderfall Mine", "goto Wildborne Circle", "goto Keep", "report Wildborne Circle"]}}
+
+Thalia Ironvein is seeking allies to aid her in her quest to unite the factions of Ironhold. She needs the help of the Miners Guild to take down the Wildborne Circle. Go to Ironhold Keep and gather the resources to aid in this cause.
 
 ## Prompt 6 llama  eb32_lr5e-5_r32
 
